@@ -11,7 +11,7 @@ class Register:
         self.addr = addr
         self.size = size
 
-    def decode_value(self, values):
+    def decode(self, values):
         assert len(values) == self.size
         if self.type == 'U32':
             result = self._to_uint32(values)
@@ -69,7 +69,7 @@ class Device:
 
     def peek(self):
         data = []
-        for array in self._add_register_arrays:
+        for array in self._register_arrays:
             data.extend(self._read_register_array(array))
         data.extend(self._read_sparse_registers(self._sparse_registers))
         return data

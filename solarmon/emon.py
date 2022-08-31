@@ -2,6 +2,7 @@ import json
 import logging
 import requests
 
+
 class EmonCMS:
 
     def __init__(self, api_base_uri, api_key):
