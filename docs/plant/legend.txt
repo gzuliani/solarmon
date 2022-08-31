@@ -1,0 +1,4 @@
+Blue thick lines: AC
+Orange thick lines: DC
+Dashed lines: control lines
+Little squares: power meters
