@@ -29,10 +29,9 @@ class Dongle(Device):
         Device.__init__(self, connection, timeout)
         self._add_register_array([
             Register('total_input_power',                      'U32', 'kW',  1000, 37498, 2), # Total input power
-            Register('load_power',                             'U32', 'kW',  1000, 37500, 2), # Load power       
+            Register('load_power',                             'U32', 'kW',  1000, 37500, 2), # Load power
             Register('grid_power',                             'I32', 'kW',  1000, 37502, 2), # Grid power
             Register('total_battery_power',                    'I32', 'kW',  1000, 37504, 2), # Total battery power
-            Register('total_active_power',                     'I32', 'kW',  1000, 37506, 2), # Total active power
         ])
 
 
@@ -48,7 +47,11 @@ class Inverter(Device):
             Register('daily_yield_energy',                     'U32', 'kW',   100, 32114, 2), # Daily energy yield
         ])
         self._add_register_array([
+            Register('grid_voltage_a_phase',                   'I32',   'V',   10, 37101, 2), # Grid voltage (A phase)
+            Register('b_phase_voltage',                        'I32',   'V',   10, 37103, 2), # B phase voltage
+            Register('c_phase_voltage',                        'I32',   'V',   10, 37105, 2), # C phase voltage
             Register('power_meter_active_power',               'I32',   'W',    1, 37113, 2), # [Power meter collection] Active power
+            Register('grid_frequency',                         'I16',  'Hz',  100, 37118, 1), # Grid frequency
             Register('grid_exported_energy',                   'I32', 'kWh',  100, 37119, 2), # Positive active electricity
             Register('grid_accumulated_energy',                'I32', 'kWh',  100, 37121, 2), # Reverse active power
         ])
@@ -62,7 +65,6 @@ class Inverter(Device):
             Register('system_time',                            'U32', '',       1, 40000, 2), # System time
             Register('backup_switch_to_off_grid',              'U16', '',       1, 47604, 1), # [Backup] Switch to off-grid
         ])
-
 
 class _ConnectionPool:
 

@@ -1,7 +1,17 @@
 #!env/bin/python -u
 # the line above disables stdout/stderr buffering
 
-sampling_period = 30 # seconds
+import datetime
+import logging
+import signal
+
+import clock
+import emon
+import huawei_sun2000
+import meters
+import persistence
+
+sampling_period = 15 # seconds
 
 # huawei modbus
 timeout = 5
@@ -13,15 +23,12 @@ dongle_node_number = 101
 inverter_node_number = 102
 heat_pump_meter_node_number = 103
 
-import datetime
-import logging
-import signal
+# csv
+save_to_csv = False
 
-import clock
-import emon
-import huawei_sun2000
-import meters
-import persistence
+def csv_file_path():
+    return 'huawei_sun2000_{}.csv'.format(
+            datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
 
 
 class ShutdownRequest:
@@ -64,13 +71,15 @@ if __name__ == '__main__':
     exit_guard = ShutdownRequest()
     timer = clock.Timer(sampling_period)
 
-    csv_file = persistence.CsvFile('huawei_sun2000_{}.csv'.format(
-            datetime.datetime.now().strftime('%Y%m%d%H%M%S')))
-    csv_file.write_heading(
+    if save_to_csv:
+        csv_file = persistence.CsvFile(csv_file_path())
+        csv_file.write_heading(
             ['local_time'] + \
             dongle_register_names + \
             inverter_register_names + \
             heat_pump_register_names)
+    else:
+        csv_file = None
 
     while not exit_guard.should_exit:
         timer.wait_next_tick(abort_guard=lambda: exit_guard.should_exit)
@@ -112,12 +121,13 @@ if __name__ == '__main__':
         except Exception as e:
             logging.error('Error while talking to EmonCMS: {}'.format(e))
 
-        try:
-            csv_file.write_values(
-                    [datetime.datetime.now().isoformat()] + \
-                    dongle_data + inverter_data + heat_pump_meter_data)
-        except Exception as e:
-            logging.error('Error while writing on CSV file: {}'.format(e))
+        if csv_file:
+            try:
+                csv_file.write_values(
+                        [datetime.datetime.now().isoformat()] + \
+                        dongle_data + inverter_data + heat_pump_meter_data)
+            except Exception as e:
+                logging.error('Error while writing on CSV file: {}'.format(e))
 
     logging.info('Shutting down...')
     tcp_connection_pool.close()
