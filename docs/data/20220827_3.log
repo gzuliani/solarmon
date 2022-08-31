@@ -1,0 +1,991 @@
+2022-08-26T10:46:26 DEBUG about to read param "Total input power"...
+2022-08-26T10:46:26 DEBUG Current transaction state - IDLE
+2022-08-26T10:46:26 DEBUG Running transaction 1
+2022-08-26T10:46:26 DEBUG SEND: 0x0 0x1 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7a 0x0 0x2
+2022-08-26T10:46:26 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:26 DEBUG RECV: 0x0 0x1 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x18 0xc8
+2022-08-26T10:46:26 DEBUG Processing: 0x0 0x1 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x18 0xc8
+2022-08-26T10:46:26 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:26 DEBUG Adding transaction 1
+2022-08-26T10:46:26 DEBUG Getting transaction 1
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:26 DEBUG "Total input power": 6.344kW
+2022-08-26T10:46:26 DEBUG about to read param "Load power"...
+2022-08-26T10:46:26 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:26 DEBUG Running transaction 2
+2022-08-26T10:46:26 DEBUG SEND: 0x0 0x2 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7c 0x0 0x2
+2022-08-26T10:46:26 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:26 DEBUG RECV: 0x0 0x2 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xe9
+2022-08-26T10:46:26 DEBUG Processing: 0x0 0x2 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xe9
+2022-08-26T10:46:26 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:26 DEBUG Adding transaction 2
+2022-08-26T10:46:26 DEBUG Getting transaction 2
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:26 DEBUG "Load power": 0.233kW
+2022-08-26T10:46:26 DEBUG about to read param "Grid power"...
+2022-08-26T10:46:26 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:26 DEBUG Running transaction 3
+2022-08-26T10:46:26 DEBUG SEND: 0x0 0x3 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7e 0x0 0x2
+2022-08-26T10:46:26 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:26 DEBUG RECV: 0x0 0x3 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x99
+2022-08-26T10:46:26 DEBUG Processing: 0x0 0x3 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x99
+2022-08-26T10:46:26 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:26 DEBUG Adding transaction 3
+2022-08-26T10:46:26 DEBUG Getting transaction 3
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:26 DEBUG "Grid power": -1.383kW
+2022-08-26T10:46:26 DEBUG about to read param "Total battery power"...
+2022-08-26T10:46:26 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:26 DEBUG Running transaction 4
+2022-08-26T10:46:26 DEBUG SEND: 0x0 0x4 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:46:26 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:26 DEBUG RECV: 0x0 0x4 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0x78
+2022-08-26T10:46:26 DEBUG Processing: 0x0 0x4 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0x78
+2022-08-26T10:46:26 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:26 DEBUG Adding transaction 4
+2022-08-26T10:46:26 DEBUG Getting transaction 4
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:26 DEBUG "Total battery power": 4.728kW
+2022-08-26T10:46:26 DEBUG about to read param "Total active power"...
+2022-08-26T10:46:26 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:26 DEBUG Running transaction 5
+2022-08-26T10:46:26 DEBUG SEND: 0x0 0x5 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:46:26 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:26 DEBUG RECV: 0x0 0x5 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0x78
+2022-08-26T10:46:26 DEBUG Processing: 0x0 0x5 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0x78
+2022-08-26T10:46:26 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:26 DEBUG Adding transaction 5
+2022-08-26T10:46:26 DEBUG Getting transaction 5
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:26 DEBUG "Total active power": 4.728kW
+2022-08-26T10:46:26 DEBUG about to read param "Input power"...
+2022-08-26T10:46:26 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:26 DEBUG Running transaction 6
+2022-08-26T10:46:26 DEBUG SEND: 0x0 0x6 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x40 0x0 0x2
+2022-08-26T10:46:26 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:26 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:27 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:27 DEBUG RECV: 0x0 0x6 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x9b
+2022-08-26T10:46:27 DEBUG Processing: 0x0 0x6 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x9b
+2022-08-26T10:46:27 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:27 DEBUG Adding transaction 6
+2022-08-26T10:46:27 DEBUG Getting transaction 6
+2022-08-26T10:46:27 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:27 DEBUG "Input power": 4.763kW
+2022-08-26T10:46:27 DEBUG about to read param "Peak active power of current day"...
+2022-08-26T10:46:27 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:27 DEBUG Running transaction 7
+2022-08-26T10:46:27 DEBUG SEND: 0x0 0x7 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x4e 0x0 0x2
+2022-08-26T10:46:27 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:27 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:27 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:27 DEBUG RECV: 0x0 0x7 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:46:27 DEBUG Processing: 0x0 0x7 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:46:27 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:27 DEBUG Adding transaction 7
+2022-08-26T10:46:27 DEBUG Getting transaction 7
+2022-08-26T10:46:27 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:27 DEBUG "Peak active power of current day": 1.229kW
+2022-08-26T10:46:27 DEBUG about to read param "Active power"...
+2022-08-26T10:46:27 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:27 DEBUG Running transaction 8
+2022-08-26T10:46:27 DEBUG SEND: 0x0 0x8 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x50 0x0 0x2
+2022-08-26T10:46:27 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:27 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:28 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:28 DEBUG RECV: 0x0 0x8 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:46:28 DEBUG Processing: 0x0 0x8 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:46:28 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:28 DEBUG Adding transaction 8
+2022-08-26T10:46:28 DEBUG Getting transaction 8
+2022-08-26T10:46:28 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:28 DEBUG "Active power": 0.0kW
+2022-08-26T10:46:28 DEBUG about to read param "Accumulated energy yield"...
+2022-08-26T10:46:28 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:28 DEBUG Running transaction 9
+2022-08-26T10:46:28 DEBUG SEND: 0x0 0x9 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x6a 0x0 0x2
+2022-08-26T10:46:28 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:28 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:29 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:29 DEBUG RECV: 0x0 0x9 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:46:29 DEBUG Processing: 0x0 0x9 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:46:29 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:29 DEBUG Adding transaction 9
+2022-08-26T10:46:29 DEBUG Getting transaction 9
+2022-08-26T10:46:29 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:29 DEBUG "Accumulated energy yield": 6920.19kW
+2022-08-26T10:46:29 DEBUG about to read param "Daily energy yield"...
+2022-08-26T10:46:29 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:29 DEBUG Running transaction 10
+2022-08-26T10:46:29 DEBUG SEND: 0x0 0xa 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x72 0x0 0x2
+2022-08-26T10:46:29 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:29 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:30 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:30 DEBUG RECV: 0x0 0xa 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:46:30 DEBUG Processing: 0x0 0xa 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:46:30 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:30 DEBUG Adding transaction 10
+2022-08-26T10:46:30 DEBUG Getting transaction 10
+2022-08-26T10:46:30 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:30 DEBUG "Daily energy yield": 1.56kW
+2022-08-26T10:46:30 DEBUG about to read param "[Power meter collection] Active power"...
+2022-08-26T10:46:30 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:30 DEBUG Running transaction 11
+2022-08-26T10:46:30 DEBUG SEND: 0x0 0xb 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xf9 0x0 0x2
+2022-08-26T10:46:30 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:30 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:31 DEBUG RECV: 0x0 0xb 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0x76
+2022-08-26T10:46:31 DEBUG Processing: 0x0 0xb 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0x76
+2022-08-26T10:46:31 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:31 DEBUG Adding transaction 11
+2022-08-26T10:46:31 DEBUG Getting transaction 11
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:31 DEBUG "[Power meter collection] Active power": 1398.0W
+2022-08-26T10:46:31 DEBUG about to read param "Positive active electricity"...
+2022-08-26T10:46:31 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:31 DEBUG Running transaction 12
+2022-08-26T10:46:31 DEBUG SEND: 0x0 0xc 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xff 0x0 0x2
+2022-08-26T10:46:31 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:31 DEBUG RECV: 0x0 0xc 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x24
+2022-08-26T10:46:31 DEBUG Processing: 0x0 0xc 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x24
+2022-08-26T10:46:31 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:31 DEBUG Adding transaction 12
+2022-08-26T10:46:31 DEBUG Getting transaction 12
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:31 DEBUG "Positive active electricity": 5937.0kWh
+2022-08-26T10:46:31 DEBUG about to read param "Reverse active power"...
+2022-08-26T10:46:31 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:31 DEBUG Running transaction 13
+2022-08-26T10:46:31 DEBUG SEND: 0x0 0xd 0x0 0x0 0x0 0x6 0x1 0x3 0x91 0x1 0x0 0x2
+2022-08-26T10:46:31 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:31 DEBUG RECV: 0x0 0xd 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:46:31 DEBUG Processing: 0x0 0xd 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:46:31 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:31 DEBUG Adding transaction 13
+2022-08-26T10:46:31 DEBUG Getting transaction 13
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:31 DEBUG "Reverse active power": 854.53kWh
+2022-08-26T10:46:31 DEBUG about to read param "[Energy storage] SOC"...
+2022-08-26T10:46:31 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:31 DEBUG Running transaction 14
+2022-08-26T10:46:31 DEBUG SEND: 0x0 0xe 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x80 0x0 0x1
+2022-08-26T10:46:31 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:31 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:32 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:32 DEBUG RECV: 0x0 0xe 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x3 0x52
+2022-08-26T10:46:32 DEBUG Processing: 0x0 0xe 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x3 0x52
+2022-08-26T10:46:32 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:32 DEBUG Adding transaction 14
+2022-08-26T10:46:32 DEBUG Getting transaction 14
+2022-08-26T10:46:32 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:32 DEBUG "[Energy storage] SOC": 85.0%
+2022-08-26T10:46:32 DEBUG about to read param "[Energy storage] Charge/Discharge power"...
+2022-08-26T10:46:32 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:32 DEBUG Running transaction 15
+2022-08-26T10:46:32 DEBUG SEND: 0x0 0xf 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x85 0x0 0x2
+2022-08-26T10:46:32 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:32 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:33 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:33 DEBUG RECV: 0x0 0xf 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x99
+2022-08-26T10:46:33 DEBUG Processing: 0x0 0xf 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x99
+2022-08-26T10:46:33 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:33 DEBUG Adding transaction 15
+2022-08-26T10:46:33 DEBUG Getting transaction 15
+2022-08-26T10:46:33 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:33 DEBUG "[Energy storage] Charge/Discharge power": 4761.0W
+2022-08-26T10:46:33 DEBUG about to read param "[Energy storage] Current-day charge capacity"...
+2022-08-26T10:46:33 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:33 DEBUG Running transaction 16
+2022-08-26T10:46:33 DEBUG SEND: 0x0 0x10 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x98 0x0 0x2
+2022-08-26T10:46:33 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:33 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:34 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:34 DEBUG RECV: 0x0 0x10 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x3 0x8a
+2022-08-26T10:46:34 DEBUG Processing: 0x0 0x10 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x3 0x8a
+2022-08-26T10:46:34 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:34 DEBUG Adding transaction 16
+2022-08-26T10:46:34 DEBUG Getting transaction 16
+2022-08-26T10:46:34 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:34 DEBUG "[Energy storage] Current-day charge capacity": 9.06kWh
+2022-08-26T10:46:34 DEBUG about to read param "[Energy storage] Current-day discharge capacity"...
+2022-08-26T10:46:34 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:34 DEBUG Running transaction 17
+2022-08-26T10:46:34 DEBUG SEND: 0x0 0x11 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x9a 0x0 0x2
+2022-08-26T10:46:34 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:34 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:34 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:34 DEBUG RECV: 0x0 0x11 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x1 0x18
+2022-08-26T10:46:34 DEBUG Processing: 0x0 0x11 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x1 0x18
+2022-08-26T10:46:34 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:34 DEBUG Adding transaction 17
+2022-08-26T10:46:34 DEBUG Getting transaction 17
+2022-08-26T10:46:34 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:34 DEBUG "[Energy storage] Current-day discharge capacity": 2.8kWh
+2022-08-26T10:46:34 DEBUG about to read param "System time"...
+2022-08-26T10:46:34 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:34 DEBUG Running transaction 18
+2022-08-26T10:46:34 DEBUG SEND: 0x0 0x12 0x0 0x0 0x0 0x6 0x1 0x3 0x9c 0x40 0x0 0x2
+2022-08-26T10:46:34 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:34 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:36 DEBUG RECV: 0x0 0x12 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x63 0x8 0xa4 0x86
+2022-08-26T10:46:36 DEBUG Processing: 0x0 0x12 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x63 0x8 0xa4 0x86
+2022-08-26T10:46:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:36 DEBUG Adding transaction 18
+2022-08-26T10:46:36 DEBUG Getting transaction 18
+2022-08-26T10:46:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:36 DEBUG "System time": 1661510790.0
+2022-08-26T10:46:36 DEBUG about to read param "[Backup] Switch to off-grid"...
+2022-08-26T10:46:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:46:36 DEBUG Running transaction 19
+2022-08-26T10:46:36 DEBUG SEND: 0x0 0x13 0x0 0x0 0x0 0x6 0x1 0x3 0xb9 0xf4 0x0 0x1
+2022-08-26T10:46:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:46:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:46:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:46:36 DEBUG RECV: 0x0 0x13 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x0 0x0
+2022-08-26T10:46:36 DEBUG Processing: 0x0 0x13 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x0 0x0
+2022-08-26T10:46:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:46:36 DEBUG Adding transaction 19
+2022-08-26T10:46:36 DEBUG Getting transaction 19
+2022-08-26T10:46:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:46:36 DEBUG "[Backup] Switch to off-grid": 0.0
+2022-08-26T10:47:36 DEBUG about to read param "Total input power"...
+2022-08-26T10:47:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:36 DEBUG Running transaction 20
+2022-08-26T10:47:36 DEBUG SEND: 0x0 0x14 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7a 0x0 0x2
+2022-08-26T10:47:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:36 DEBUG RECV: 0x0 0x14 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x19 0x20
+2022-08-26T10:47:36 DEBUG Processing: 0x0 0x14 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x19 0x20
+2022-08-26T10:47:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:36 DEBUG Adding transaction 20
+2022-08-26T10:47:36 DEBUG Getting transaction 20
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:36 DEBUG "Total input power": 6.432kW
+2022-08-26T10:47:36 DEBUG about to read param "Load power"...
+2022-08-26T10:47:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:36 DEBUG Running transaction 21
+2022-08-26T10:47:36 DEBUG SEND: 0x0 0x15 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7c 0x0 0x2
+2022-08-26T10:47:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:36 DEBUG RECV: 0x0 0x15 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xfb
+2022-08-26T10:47:36 DEBUG Processing: 0x0 0x15 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xfb
+2022-08-26T10:47:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:36 DEBUG Adding transaction 21
+2022-08-26T10:47:36 DEBUG Getting transaction 21
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:36 DEBUG "Load power": 0.251kW
+2022-08-26T10:47:36 DEBUG about to read param "Grid power"...
+2022-08-26T10:47:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:36 DEBUG Running transaction 22
+2022-08-26T10:47:36 DEBUG SEND: 0x0 0x16 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7e 0x0 0x2
+2022-08-26T10:47:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:36 DEBUG RECV: 0x0 0x16 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x8e
+2022-08-26T10:47:36 DEBUG Processing: 0x0 0x16 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x8e
+2022-08-26T10:47:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:36 DEBUG Adding transaction 22
+2022-08-26T10:47:36 DEBUG Getting transaction 22
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:36 DEBUG "Grid power": -1.394kW
+2022-08-26T10:47:36 DEBUG about to read param "Total battery power"...
+2022-08-26T10:47:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:36 DEBUG Running transaction 23
+2022-08-26T10:47:36 DEBUG SEND: 0x0 0x17 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:47:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:36 DEBUG RECV: 0x0 0x17 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:47:36 DEBUG Processing: 0x0 0x17 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:47:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:36 DEBUG Adding transaction 23
+2022-08-26T10:47:36 DEBUG Getting transaction 23
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:36 DEBUG "Total battery power": 4.787kW
+2022-08-26T10:47:36 DEBUG about to read param "Total active power"...
+2022-08-26T10:47:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:36 DEBUG Running transaction 24
+2022-08-26T10:47:36 DEBUG SEND: 0x0 0x18 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:47:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:36 DEBUG RECV: 0x0 0x18 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:47:36 DEBUG Processing: 0x0 0x18 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:47:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:36 DEBUG Adding transaction 24
+2022-08-26T10:47:36 DEBUG Getting transaction 24
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:36 DEBUG "Total active power": 4.787kW
+2022-08-26T10:47:36 DEBUG about to read param "Input power"...
+2022-08-26T10:47:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:36 DEBUG Running transaction 25
+2022-08-26T10:47:36 DEBUG SEND: 0x0 0x19 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x40 0x0 0x2
+2022-08-26T10:47:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:36 DEBUG RECV: 0x0 0x19 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0xae
+2022-08-26T10:47:36 DEBUG Processing: 0x0 0x19 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0xae
+2022-08-26T10:47:36 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:36 DEBUG Adding transaction 25
+2022-08-26T10:47:36 DEBUG Getting transaction 25
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:36 DEBUG "Input power": 4.782kW
+2022-08-26T10:47:36 DEBUG about to read param "Peak active power of current day"...
+2022-08-26T10:47:36 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:36 DEBUG Running transaction 26
+2022-08-26T10:47:36 DEBUG SEND: 0x0 0x1a 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x4e 0x0 0x2
+2022-08-26T10:47:36 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:36 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:37 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:37 DEBUG RECV: 0x0 0x1a 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:47:37 DEBUG Processing: 0x0 0x1a 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:47:37 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:37 DEBUG Adding transaction 26
+2022-08-26T10:47:37 DEBUG Getting transaction 26
+2022-08-26T10:47:37 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:37 DEBUG "Peak active power of current day": 1.229kW
+2022-08-26T10:47:37 DEBUG about to read param "Active power"...
+2022-08-26T10:47:37 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:37 DEBUG Running transaction 27
+2022-08-26T10:47:37 DEBUG SEND: 0x0 0x1b 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x50 0x0 0x2
+2022-08-26T10:47:37 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:37 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:38 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:38 DEBUG RECV: 0x0 0x1b 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:47:38 DEBUG Processing: 0x0 0x1b 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:47:38 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:38 DEBUG Adding transaction 27
+2022-08-26T10:47:38 DEBUG Getting transaction 27
+2022-08-26T10:47:38 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:38 DEBUG "Active power": 0.0kW
+2022-08-26T10:47:38 DEBUG about to read param "Accumulated energy yield"...
+2022-08-26T10:47:38 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:38 DEBUG Running transaction 28
+2022-08-26T10:47:38 DEBUG SEND: 0x0 0x1c 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x6a 0x0 0x2
+2022-08-26T10:47:38 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:38 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:39 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:39 DEBUG RECV: 0x0 0x1c 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:47:39 DEBUG Processing: 0x0 0x1c 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:47:39 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:39 DEBUG Adding transaction 28
+2022-08-26T10:47:39 DEBUG Getting transaction 28
+2022-08-26T10:47:39 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:39 DEBUG "Accumulated energy yield": 6920.19kW
+2022-08-26T10:47:39 DEBUG about to read param "Daily energy yield"...
+2022-08-26T10:47:39 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:39 DEBUG Running transaction 29
+2022-08-26T10:47:39 DEBUG SEND: 0x0 0x1d 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x72 0x0 0x2
+2022-08-26T10:47:39 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:39 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:39 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:39 DEBUG RECV: 0x0 0x1d 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:47:39 DEBUG Processing: 0x0 0x1d 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:47:39 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:39 DEBUG Adding transaction 29
+2022-08-26T10:47:39 DEBUG Getting transaction 29
+2022-08-26T10:47:39 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:39 DEBUG "Daily energy yield": 1.56kW
+2022-08-26T10:47:39 DEBUG about to read param "[Power meter collection] Active power"...
+2022-08-26T10:47:39 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:39 DEBUG Running transaction 30
+2022-08-26T10:47:39 DEBUG SEND: 0x0 0x1e 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xf9 0x0 0x2
+2022-08-26T10:47:39 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:39 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:40 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:40 DEBUG RECV: 0x0 0x1e 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0x62
+2022-08-26T10:47:40 DEBUG Processing: 0x0 0x1e 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0x62
+2022-08-26T10:47:40 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:40 DEBUG Adding transaction 30
+2022-08-26T10:47:40 DEBUG Getting transaction 30
+2022-08-26T10:47:40 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:40 DEBUG "[Power meter collection] Active power": 1378.0W
+2022-08-26T10:47:40 DEBUG about to read param "Positive active electricity"...
+2022-08-26T10:47:40 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:40 DEBUG Running transaction 31
+2022-08-26T10:47:40 DEBUG SEND: 0x0 0x1f 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xff 0x0 0x2
+2022-08-26T10:47:40 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:40 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:41 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:41 DEBUG RECV: 0x0 0x1f 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x28
+2022-08-26T10:47:41 DEBUG Processing: 0x0 0x1f 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x28
+2022-08-26T10:47:41 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:41 DEBUG Adding transaction 31
+2022-08-26T10:47:41 DEBUG Getting transaction 31
+2022-08-26T10:47:41 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:41 DEBUG "Positive active electricity": 5937.04kWh
+2022-08-26T10:47:41 DEBUG about to read param "Reverse active power"...
+2022-08-26T10:47:41 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:41 DEBUG Running transaction 32
+2022-08-26T10:47:41 DEBUG SEND: 0x0 0x20 0x0 0x0 0x0 0x6 0x1 0x3 0x91 0x1 0x0 0x2
+2022-08-26T10:47:41 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:41 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:41 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:41 DEBUG RECV: 0x0 0x20 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:47:41 DEBUG Processing: 0x0 0x20 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:47:41 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:41 DEBUG Adding transaction 32
+2022-08-26T10:47:41 DEBUG Getting transaction 32
+2022-08-26T10:47:41 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:41 DEBUG "Reverse active power": 854.53kWh
+2022-08-26T10:47:41 DEBUG about to read param "[Energy storage] SOC"...
+2022-08-26T10:47:41 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:41 DEBUG Running transaction 33
+2022-08-26T10:47:41 DEBUG SEND: 0x0 0x21 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x80 0x0 0x1
+2022-08-26T10:47:41 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:41 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:42 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:42 DEBUG RECV: 0x0 0x21 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x3 0x52
+2022-08-26T10:47:42 DEBUG Processing: 0x0 0x21 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x3 0x52
+2022-08-26T10:47:42 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:42 DEBUG Adding transaction 33
+2022-08-26T10:47:42 DEBUG Getting transaction 33
+2022-08-26T10:47:42 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:42 DEBUG "[Energy storage] SOC": 85.0%
+2022-08-26T10:47:42 DEBUG about to read param "[Energy storage] Charge/Discharge power"...
+2022-08-26T10:47:42 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:42 DEBUG Running transaction 34
+2022-08-26T10:47:42 DEBUG SEND: 0x0 0x22 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x85 0x0 0x2
+2022-08-26T10:47:42 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:42 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:43 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:43 DEBUG RECV: 0x0 0x22 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0xba
+2022-08-26T10:47:43 DEBUG Processing: 0x0 0x22 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0xba
+2022-08-26T10:47:43 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:43 DEBUG Adding transaction 34
+2022-08-26T10:47:43 DEBUG Getting transaction 34
+2022-08-26T10:47:43 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:43 DEBUG "[Energy storage] Charge/Discharge power": 4794.0W
+2022-08-26T10:47:43 DEBUG about to read param "[Energy storage] Current-day charge capacity"...
+2022-08-26T10:47:43 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:43 DEBUG Running transaction 35
+2022-08-26T10:47:43 DEBUG SEND: 0x0 0x23 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x98 0x0 0x2
+2022-08-26T10:47:43 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:43 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:44 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:44 DEBUG RECV: 0x0 0x23 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x3 0x8a
+2022-08-26T10:47:44 DEBUG Processing: 0x0 0x23 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x3 0x8a
+2022-08-26T10:47:44 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:44 DEBUG Adding transaction 35
+2022-08-26T10:47:44 DEBUG Getting transaction 35
+2022-08-26T10:47:44 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:44 DEBUG "[Energy storage] Current-day charge capacity": 9.06kWh
+2022-08-26T10:47:44 DEBUG about to read param "[Energy storage] Current-day discharge capacity"...
+2022-08-26T10:47:44 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:44 DEBUG Running transaction 36
+2022-08-26T10:47:44 DEBUG SEND: 0x0 0x24 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x9a 0x0 0x2
+2022-08-26T10:47:44 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:44 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:44 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:44 DEBUG RECV: 0x0 0x24 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x1 0x18
+2022-08-26T10:47:44 DEBUG Processing: 0x0 0x24 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x1 0x18
+2022-08-26T10:47:44 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:44 DEBUG Adding transaction 36
+2022-08-26T10:47:44 DEBUG Getting transaction 36
+2022-08-26T10:47:44 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:44 DEBUG "[Energy storage] Current-day discharge capacity": 2.8kWh
+2022-08-26T10:47:44 DEBUG about to read param "System time"...
+2022-08-26T10:47:44 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:44 DEBUG Running transaction 37
+2022-08-26T10:47:44 DEBUG SEND: 0x0 0x25 0x0 0x0 0x0 0x6 0x1 0x3 0x9c 0x40 0x0 0x2
+2022-08-26T10:47:44 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:44 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:45 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:45 DEBUG RECV: 0x0 0x25 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x63 0x8 0xa4 0xcd
+2022-08-26T10:47:45 DEBUG Processing: 0x0 0x25 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x63 0x8 0xa4 0xcd
+2022-08-26T10:47:45 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:45 DEBUG Adding transaction 37
+2022-08-26T10:47:45 DEBUG Getting transaction 37
+2022-08-26T10:47:45 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:45 DEBUG "System time": 1661510861.0
+2022-08-26T10:47:45 DEBUG about to read param "[Backup] Switch to off-grid"...
+2022-08-26T10:47:45 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:47:45 DEBUG Running transaction 38
+2022-08-26T10:47:45 DEBUG SEND: 0x0 0x26 0x0 0x0 0x0 0x6 0x1 0x3 0xb9 0xf4 0x0 0x1
+2022-08-26T10:47:45 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:47:45 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:47:46 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:47:46 DEBUG RECV: 0x0 0x26 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x0 0x0
+2022-08-26T10:47:46 DEBUG Processing: 0x0 0x26 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x0 0x0
+2022-08-26T10:47:46 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:47:46 DEBUG Adding transaction 38
+2022-08-26T10:47:46 DEBUG Getting transaction 38
+2022-08-26T10:47:46 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:47:46 DEBUG "[Backup] Switch to off-grid": 0.0
+2022-08-26T10:48:46 DEBUG about to read param "Total input power"...
+2022-08-26T10:48:46 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:46 DEBUG Running transaction 39
+2022-08-26T10:48:46 DEBUG SEND: 0x0 0x27 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7a 0x0 0x2
+2022-08-26T10:48:46 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:46 DEBUG RECV: 0x0 0x27 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x19 0x20
+2022-08-26T10:48:46 DEBUG Processing: 0x0 0x27 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x19 0x20
+2022-08-26T10:48:46 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:46 DEBUG Adding transaction 39
+2022-08-26T10:48:46 DEBUG Getting transaction 39
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:46 DEBUG "Total input power": 6.432kW
+2022-08-26T10:48:46 DEBUG about to read param "Load power"...
+2022-08-26T10:48:46 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:46 DEBUG Running transaction 40
+2022-08-26T10:48:46 DEBUG SEND: 0x0 0x28 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7c 0x0 0x2
+2022-08-26T10:48:46 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:46 DEBUG RECV: 0x0 0x28 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xfb
+2022-08-26T10:48:46 DEBUG Processing: 0x0 0x28 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xfb
+2022-08-26T10:48:46 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:46 DEBUG Adding transaction 40
+2022-08-26T10:48:46 DEBUG Getting transaction 40
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:46 DEBUG "Load power": 0.251kW
+2022-08-26T10:48:46 DEBUG about to read param "Grid power"...
+2022-08-26T10:48:46 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:46 DEBUG Running transaction 41
+2022-08-26T10:48:46 DEBUG SEND: 0x0 0x29 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7e 0x0 0x2
+2022-08-26T10:48:46 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:46 DEBUG RECV: 0x0 0x29 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x8e
+2022-08-26T10:48:46 DEBUG Processing: 0x0 0x29 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x8e
+2022-08-26T10:48:46 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:46 DEBUG Adding transaction 41
+2022-08-26T10:48:46 DEBUG Getting transaction 41
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:46 DEBUG "Grid power": -1.394kW
+2022-08-26T10:48:46 DEBUG about to read param "Total battery power"...
+2022-08-26T10:48:46 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:46 DEBUG Running transaction 42
+2022-08-26T10:48:46 DEBUG SEND: 0x0 0x2a 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:48:46 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:46 DEBUG RECV: 0x0 0x2a 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:48:46 DEBUG Processing: 0x0 0x2a 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:48:46 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:46 DEBUG Adding transaction 42
+2022-08-26T10:48:46 DEBUG Getting transaction 42
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:46 DEBUG "Total battery power": 4.787kW
+2022-08-26T10:48:46 DEBUG about to read param "Total active power"...
+2022-08-26T10:48:46 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:46 DEBUG Running transaction 43
+2022-08-26T10:48:46 DEBUG SEND: 0x0 0x2b 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:48:46 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:46 DEBUG RECV: 0x0 0x2b 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:48:46 DEBUG Processing: 0x0 0x2b 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xb3
+2022-08-26T10:48:46 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:46 DEBUG Adding transaction 43
+2022-08-26T10:48:46 DEBUG Getting transaction 43
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:46 DEBUG "Total active power": 4.787kW
+2022-08-26T10:48:46 DEBUG about to read param "Input power"...
+2022-08-26T10:48:46 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:46 DEBUG Running transaction 44
+2022-08-26T10:48:46 DEBUG SEND: 0x0 0x2c 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x40 0x0 0x2
+2022-08-26T10:48:46 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:46 DEBUG RECV: 0x0 0x2c 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x9f
+2022-08-26T10:48:46 DEBUG Processing: 0x0 0x2c 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x9f
+2022-08-26T10:48:46 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:46 DEBUG Adding transaction 44
+2022-08-26T10:48:46 DEBUG Getting transaction 44
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:46 DEBUG "Input power": 4.767kW
+2022-08-26T10:48:46 DEBUG about to read param "Peak active power of current day"...
+2022-08-26T10:48:46 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:46 DEBUG Running transaction 45
+2022-08-26T10:48:46 DEBUG SEND: 0x0 0x2d 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x4e 0x0 0x2
+2022-08-26T10:48:46 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:46 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:47 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:47 DEBUG RECV: 0x0 0x2d 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:48:47 DEBUG Processing: 0x0 0x2d 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:48:47 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:47 DEBUG Adding transaction 45
+2022-08-26T10:48:47 DEBUG Getting transaction 45
+2022-08-26T10:48:47 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:47 DEBUG "Peak active power of current day": 1.229kW
+2022-08-26T10:48:47 DEBUG about to read param "Active power"...
+2022-08-26T10:48:47 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:47 DEBUG Running transaction 46
+2022-08-26T10:48:47 DEBUG SEND: 0x0 0x2e 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x50 0x0 0x2
+2022-08-26T10:48:47 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:47 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:47 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:47 DEBUG RECV: 0x0 0x2e 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:48:47 DEBUG Processing: 0x0 0x2e 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:48:47 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:47 DEBUG Adding transaction 46
+2022-08-26T10:48:47 DEBUG Getting transaction 46
+2022-08-26T10:48:47 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:47 DEBUG "Active power": 0.0kW
+2022-08-26T10:48:47 DEBUG about to read param "Accumulated energy yield"...
+2022-08-26T10:48:47 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:47 DEBUG Running transaction 47
+2022-08-26T10:48:47 DEBUG SEND: 0x0 0x2f 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x6a 0x0 0x2
+2022-08-26T10:48:47 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:47 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:48 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:48 DEBUG RECV: 0x0 0x2f 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:48:48 DEBUG Processing: 0x0 0x2f 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:48:48 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:48 DEBUG Adding transaction 47
+2022-08-26T10:48:48 DEBUG Getting transaction 47
+2022-08-26T10:48:48 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:48 DEBUG "Accumulated energy yield": 6920.19kW
+2022-08-26T10:48:48 DEBUG about to read param "Daily energy yield"...
+2022-08-26T10:48:48 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:48 DEBUG Running transaction 48
+2022-08-26T10:48:48 DEBUG SEND: 0x0 0x30 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x72 0x0 0x2
+2022-08-26T10:48:48 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:48 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:49 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:49 DEBUG RECV: 0x0 0x30 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:48:49 DEBUG Processing: 0x0 0x30 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:48:49 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:49 DEBUG Adding transaction 48
+2022-08-26T10:48:49 DEBUG Getting transaction 48
+2022-08-26T10:48:49 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:49 DEBUG "Daily energy yield": 1.56kW
+2022-08-26T10:48:49 DEBUG about to read param "[Power meter collection] Active power"...
+2022-08-26T10:48:49 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:49 DEBUG Running transaction 49
+2022-08-26T10:48:49 DEBUG SEND: 0x0 0x31 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xf9 0x0 0x2
+2022-08-26T10:48:49 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:49 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:50 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:50 DEBUG RECV: 0x0 0x31 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0xa6
+2022-08-26T10:48:50 DEBUG Processing: 0x0 0x31 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0xa6
+2022-08-26T10:48:50 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:50 DEBUG Adding transaction 49
+2022-08-26T10:48:50 DEBUG Getting transaction 49
+2022-08-26T10:48:50 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:50 DEBUG "[Power meter collection] Active power": 1446.0W
+2022-08-26T10:48:50 DEBUG about to read param "Positive active electricity"...
+2022-08-26T10:48:50 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:50 DEBUG Running transaction 50
+2022-08-26T10:48:50 DEBUG SEND: 0x0 0x32 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xff 0x0 0x2
+2022-08-26T10:48:50 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:50 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:51 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:51 DEBUG RECV: 0x0 0x32 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x2a
+2022-08-26T10:48:51 DEBUG Processing: 0x0 0x32 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x2a
+2022-08-26T10:48:51 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:51 DEBUG Adding transaction 50
+2022-08-26T10:48:51 DEBUG Getting transaction 50
+2022-08-26T10:48:51 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:51 DEBUG "Positive active electricity": 5937.06kWh
+2022-08-26T10:48:51 DEBUG about to read param "Reverse active power"...
+2022-08-26T10:48:51 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:51 DEBUG Running transaction 51
+2022-08-26T10:48:51 DEBUG SEND: 0x0 0x33 0x0 0x0 0x0 0x6 0x1 0x3 0x91 0x1 0x0 0x2
+2022-08-26T10:48:51 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:51 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:51 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:51 DEBUG RECV: 0x0 0x33 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:48:51 DEBUG Processing: 0x0 0x33 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:48:51 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:51 DEBUG Adding transaction 51
+2022-08-26T10:48:51 DEBUG Getting transaction 51
+2022-08-26T10:48:51 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:51 DEBUG "Reverse active power": 854.53kWh
+2022-08-26T10:48:51 DEBUG about to read param "[Energy storage] SOC"...
+2022-08-26T10:48:51 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:51 DEBUG Running transaction 52
+2022-08-26T10:48:51 DEBUG SEND: 0x0 0x34 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x80 0x0 0x1
+2022-08-26T10:48:51 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:51 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:52 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:52 DEBUG RECV: 0x0 0x34 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x3 0x52
+2022-08-26T10:48:52 DEBUG Processing: 0x0 0x34 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x3 0x52
+2022-08-26T10:48:52 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:52 DEBUG Adding transaction 52
+2022-08-26T10:48:52 DEBUG Getting transaction 52
+2022-08-26T10:48:52 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:52 DEBUG "[Energy storage] SOC": 85.0%
+2022-08-26T10:48:52 DEBUG about to read param "[Energy storage] Charge/Discharge power"...
+2022-08-26T10:48:52 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:52 DEBUG Running transaction 53
+2022-08-26T10:48:52 DEBUG SEND: 0x0 0x35 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x85 0x0 0x2
+2022-08-26T10:48:52 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:52 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:54 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:54 DEBUG RECV: 0x0 0x35 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x98
+2022-08-26T10:48:54 DEBUG Processing: 0x0 0x35 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0x98
+2022-08-26T10:48:54 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:54 DEBUG Adding transaction 53
+2022-08-26T10:48:54 DEBUG Getting transaction 53
+2022-08-26T10:48:54 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:54 DEBUG "[Energy storage] Charge/Discharge power": 4760.0W
+2022-08-26T10:48:54 DEBUG about to read param "[Energy storage] Current-day charge capacity"...
+2022-08-26T10:48:54 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:54 DEBUG Running transaction 54
+2022-08-26T10:48:54 DEBUG SEND: 0x0 0x36 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x98 0x0 0x2
+2022-08-26T10:48:54 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:54 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:54 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:54 DEBUG RECV: 0x0 0x36 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x3 0x8a
+2022-08-26T10:48:54 DEBUG Processing: 0x0 0x36 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x3 0x8a
+2022-08-26T10:48:54 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:54 DEBUG Adding transaction 54
+2022-08-26T10:48:54 DEBUG Getting transaction 54
+2022-08-26T10:48:54 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:54 DEBUG "[Energy storage] Current-day charge capacity": 9.06kWh
+2022-08-26T10:48:54 DEBUG about to read param "[Energy storage] Current-day discharge capacity"...
+2022-08-26T10:48:54 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:54 DEBUG Running transaction 55
+2022-08-26T10:48:54 DEBUG SEND: 0x0 0x37 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x9a 0x0 0x2
+2022-08-26T10:48:54 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:54 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:55 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:55 DEBUG RECV: 0x0 0x37 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x1 0x18
+2022-08-26T10:48:55 DEBUG Processing: 0x0 0x37 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x1 0x18
+2022-08-26T10:48:55 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:55 DEBUG Adding transaction 55
+2022-08-26T10:48:55 DEBUG Getting transaction 55
+2022-08-26T10:48:55 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:55 DEBUG "[Energy storage] Current-day discharge capacity": 2.8kWh
+2022-08-26T10:48:55 DEBUG about to read param "System time"...
+2022-08-26T10:48:55 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:55 DEBUG Running transaction 56
+2022-08-26T10:48:55 DEBUG SEND: 0x0 0x38 0x0 0x0 0x0 0x6 0x1 0x3 0x9c 0x40 0x0 0x2
+2022-08-26T10:48:55 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:55 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:56 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:56 DEBUG RECV: 0x0 0x38 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x63 0x8 0xa5 0x13
+2022-08-26T10:48:56 DEBUG Processing: 0x0 0x38 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x63 0x8 0xa5 0x13
+2022-08-26T10:48:56 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:56 DEBUG Adding transaction 56
+2022-08-26T10:48:56 DEBUG Getting transaction 56
+2022-08-26T10:48:56 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:56 DEBUG "System time": 1661510931.0
+2022-08-26T10:48:56 DEBUG about to read param "[Backup] Switch to off-grid"...
+2022-08-26T10:48:56 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:48:56 DEBUG Running transaction 57
+2022-08-26T10:48:56 DEBUG SEND: 0x0 0x39 0x0 0x0 0x0 0x6 0x1 0x3 0xb9 0xf4 0x0 0x1
+2022-08-26T10:48:56 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:48:56 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:48:56 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:48:56 DEBUG RECV: 0x0 0x39 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x0 0x0
+2022-08-26T10:48:56 DEBUG Processing: 0x0 0x39 0x0 0x0 0x0 0x5 0x1 0x3 0x2 0x0 0x0
+2022-08-26T10:48:56 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:48:56 DEBUG Adding transaction 57
+2022-08-26T10:48:56 DEBUG Getting transaction 57
+2022-08-26T10:48:56 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:48:56 DEBUG "[Backup] Switch to off-grid": 0.0
+2022-08-26T10:49:56 DEBUG about to read param "Total input power"...
+2022-08-26T10:49:56 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:56 DEBUG Running transaction 58
+2022-08-26T10:49:56 DEBUG SEND: 0x0 0x3a 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7a 0x0 0x2
+2022-08-26T10:49:56 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:56 DEBUG RECV: 0x0 0x3a 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x19 0x22
+2022-08-26T10:49:56 DEBUG Processing: 0x0 0x3a 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x19 0x22
+2022-08-26T10:49:56 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:56 DEBUG Adding transaction 58
+2022-08-26T10:49:56 DEBUG Getting transaction 58
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:56 DEBUG "Total input power": 6.434kW
+2022-08-26T10:49:56 DEBUG about to read param "Load power"...
+2022-08-26T10:49:56 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:56 DEBUG Running transaction 59
+2022-08-26T10:49:56 DEBUG SEND: 0x0 0x3b 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7c 0x0 0x2
+2022-08-26T10:49:56 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:56 DEBUG RECV: 0x0 0x3b 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xb7
+2022-08-26T10:49:56 DEBUG Processing: 0x0 0x3b 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x0 0xb7
+2022-08-26T10:49:56 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:56 DEBUG Adding transaction 59
+2022-08-26T10:49:56 DEBUG Getting transaction 59
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:56 DEBUG "Load power": 0.183kW
+2022-08-26T10:49:56 DEBUG about to read param "Grid power"...
+2022-08-26T10:49:56 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:56 DEBUG Running transaction 60
+2022-08-26T10:49:56 DEBUG SEND: 0x0 0x3c 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x7e 0x0 0x2
+2022-08-26T10:49:56 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:56 DEBUG RECV: 0x0 0x3c 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x55
+2022-08-26T10:49:56 DEBUG Processing: 0x0 0x3c 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0xff 0xff 0xfa 0x55
+2022-08-26T10:49:56 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:56 DEBUG Adding transaction 60
+2022-08-26T10:49:56 DEBUG Getting transaction 60
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:56 DEBUG "Grid power": -1.451kW
+2022-08-26T10:49:56 DEBUG about to read param "Total battery power"...
+2022-08-26T10:49:56 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:56 DEBUG Running transaction 61
+2022-08-26T10:49:56 DEBUG SEND: 0x0 0x3d 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:49:56 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:56 DEBUG RECV: 0x0 0x3d 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xc0
+2022-08-26T10:49:56 DEBUG Processing: 0x0 0x3d 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xc0
+2022-08-26T10:49:56 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:56 DEBUG Adding transaction 61
+2022-08-26T10:49:56 DEBUG Getting transaction 61
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:56 DEBUG "Total battery power": 4.8kW
+2022-08-26T10:49:56 DEBUG about to read param "Total active power"...
+2022-08-26T10:49:56 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:56 DEBUG Running transaction 62
+2022-08-26T10:49:56 DEBUG SEND: 0x0 0x3e 0x0 0x0 0x0 0x6 0x64 0x3 0x92 0x80 0x0 0x2
+2022-08-26T10:49:56 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:56 DEBUG RECV: 0x0 0x3e 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xc0
+2022-08-26T10:49:56 DEBUG Processing: 0x0 0x3e 0x0 0x0 0x0 0x7 0x64 0x3 0x4 0x0 0x0 0x12 0xc0
+2022-08-26T10:49:56 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:56 DEBUG Adding transaction 62
+2022-08-26T10:49:56 DEBUG Getting transaction 62
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:56 DEBUG "Total active power": 4.8kW
+2022-08-26T10:49:56 DEBUG about to read param "Input power"...
+2022-08-26T10:49:56 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:56 DEBUG Running transaction 63
+2022-08-26T10:49:56 DEBUG SEND: 0x0 0x3f 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x40 0x0 0x2
+2022-08-26T10:49:56 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:56 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:57 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:57 DEBUG RECV: 0x0 0x3f 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0xad
+2022-08-26T10:49:57 DEBUG Processing: 0x0 0x3f 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x12 0xad
+2022-08-26T10:49:57 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:57 DEBUG Adding transaction 63
+2022-08-26T10:49:57 DEBUG Getting transaction 63
+2022-08-26T10:49:57 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:57 DEBUG "Input power": 4.781kW
+2022-08-26T10:49:57 DEBUG about to read param "Peak active power of current day"...
+2022-08-26T10:49:57 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:57 DEBUG Running transaction 64
+2022-08-26T10:49:57 DEBUG SEND: 0x0 0x40 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x4e 0x0 0x2
+2022-08-26T10:49:57 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:57 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:58 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:58 DEBUG RECV: 0x0 0x40 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:49:58 DEBUG Processing: 0x0 0x40 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x4 0xcd
+2022-08-26T10:49:58 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:58 DEBUG Adding transaction 64
+2022-08-26T10:49:58 DEBUG Getting transaction 64
+2022-08-26T10:49:58 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:58 DEBUG "Peak active power of current day": 1.229kW
+2022-08-26T10:49:58 DEBUG about to read param "Active power"...
+2022-08-26T10:49:58 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:58 DEBUG Running transaction 65
+2022-08-26T10:49:58 DEBUG SEND: 0x0 0x41 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x50 0x0 0x2
+2022-08-26T10:49:58 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:58 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:59 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:59 DEBUG RECV: 0x0 0x41 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:49:59 DEBUG Processing: 0x0 0x41 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x0
+2022-08-26T10:49:59 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:59 DEBUG Adding transaction 65
+2022-08-26T10:49:59 DEBUG Getting transaction 65
+2022-08-26T10:49:59 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:59 DEBUG "Active power": 0.0kW
+2022-08-26T10:49:59 DEBUG about to read param "Accumulated energy yield"...
+2022-08-26T10:49:59 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:59 DEBUG Running transaction 66
+2022-08-26T10:49:59 DEBUG SEND: 0x0 0x42 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x6a 0x0 0x2
+2022-08-26T10:49:59 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:59 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:49:59 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:49:59 DEBUG RECV: 0x0 0x42 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:49:59 DEBUG Processing: 0x0 0x42 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0xa 0x8f 0x33
+2022-08-26T10:49:59 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:49:59 DEBUG Adding transaction 66
+2022-08-26T10:49:59 DEBUG Getting transaction 66
+2022-08-26T10:49:59 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:49:59 DEBUG "Accumulated energy yield": 6920.19kW
+2022-08-26T10:49:59 DEBUG about to read param "Daily energy yield"...
+2022-08-26T10:49:59 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:49:59 DEBUG Running transaction 67
+2022-08-26T10:49:59 DEBUG SEND: 0x0 0x43 0x0 0x0 0x0 0x6 0x1 0x3 0x7d 0x72 0x0 0x2
+2022-08-26T10:49:59 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:49:59 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:50:01 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:50:01 DEBUG RECV: 0x0 0x43 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:50:01 DEBUG Processing: 0x0 0x43 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x0 0x9c
+2022-08-26T10:50:01 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:50:01 DEBUG Adding transaction 67
+2022-08-26T10:50:01 DEBUG Getting transaction 67
+2022-08-26T10:50:01 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:50:01 DEBUG "Daily energy yield": 1.56kW
+2022-08-26T10:50:01 DEBUG about to read param "[Power meter collection] Active power"...
+2022-08-26T10:50:01 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:50:01 DEBUG Running transaction 68
+2022-08-26T10:50:01 DEBUG SEND: 0x0 0x44 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xf9 0x0 0x2
+2022-08-26T10:50:01 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:50:01 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:50:01 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:50:01 DEBUG RECV: 0x0 0x44 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0xa9
+2022-08-26T10:50:01 DEBUG Processing: 0x0 0x44 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x0 0x5 0xa9
+2022-08-26T10:50:01 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:50:01 DEBUG Adding transaction 68
+2022-08-26T10:50:01 DEBUG Getting transaction 68
+2022-08-26T10:50:01 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:50:01 DEBUG "[Power meter collection] Active power": 1449.0W
+2022-08-26T10:50:01 DEBUG about to read param "Positive active electricity"...
+2022-08-26T10:50:01 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:50:01 DEBUG Running transaction 69
+2022-08-26T10:50:01 DEBUG SEND: 0x0 0x45 0x0 0x0 0x0 0x6 0x1 0x3 0x90 0xff 0x0 0x2
+2022-08-26T10:50:01 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:50:01 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:50:02 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:50:02 DEBUG RECV: 0x0 0x45 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x2c
+2022-08-26T10:50:02 DEBUG Processing: 0x0 0x45 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x9 0xf 0x2c
+2022-08-26T10:50:02 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:50:02 DEBUG Adding transaction 69
+2022-08-26T10:50:02 DEBUG Getting transaction 69
+2022-08-26T10:50:02 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:50:02 DEBUG "Positive active electricity": 5937.08kWh
+2022-08-26T10:50:02 DEBUG about to read param "Reverse active power"...
+2022-08-26T10:50:02 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:50:02 DEBUG Running transaction 70
+2022-08-26T10:50:02 DEBUG SEND: 0x0 0x46 0x0 0x0 0x0 0x6 0x1 0x3 0x91 0x1 0x0 0x2
+2022-08-26T10:50:02 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:50:02 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:50:03 DEBUG Changing transaction state from 'WAITING FOR REPLY' to 'PROCESSING REPLY'
+2022-08-26T10:50:03 DEBUG RECV: 0x0 0x46 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:50:03 DEBUG Processing: 0x0 0x46 0x0 0x0 0x0 0x7 0x1 0x3 0x4 0x0 0x1 0x4d 0xcd
+2022-08-26T10:50:03 DEBUG Factory Response[ReadHoldingRegistersResponse: 3]
+2022-08-26T10:50:03 DEBUG Adding transaction 70
+2022-08-26T10:50:03 DEBUG Getting transaction 70
+2022-08-26T10:50:03 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:50:03 DEBUG "Reverse active power": 854.53kWh
+2022-08-26T10:50:03 DEBUG about to read param "[Energy storage] SOC"...
+2022-08-26T10:50:03 DEBUG Current transaction state - TRANSACTION_COMPLETE
+2022-08-26T10:50:03 DEBUG Running transaction 71
+2022-08-26T10:50:03 DEBUG SEND: 0x0 0x47 0x0 0x0 0x0 0x6 0x1 0x3 0x93 0x80 0x0 0x1
+2022-08-26T10:50:03 DEBUG New Transaction state 'SENDING'
+2022-08-26T10:50:03 DEBUG Changing transaction state from 'SENDING' to 'WAITING FOR REPLY'
+2022-08-26T10:50:06 DEBUG Transaction failed. (Modbus Error: [Invalid Message] No response received, expected at least 8 bytes (0 received))
+2022-08-26T10:50:06 DEBUG Processing:
+2022-08-26T10:50:06 DEBUG Getting transaction 71
+2022-08-26T10:50:06 DEBUG Changing transaction state from 'PROCESSING REPLY' to 'TRANSACTION_COMPLETE'
+2022-08-26T10:50:06 ERROR Error: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 8 bytes (0 received)

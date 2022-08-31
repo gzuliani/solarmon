@@ -1,0 +1,4 @@
+Total input power,Load power,Grid power,Total battery power,Total active power,Input power,Peak active power of current day,Active power,Accumulated energy yield,Daily energy yield,[Power meter collection] Active power,Positive active electricity,Reverse active power,[Energy storage] SOC,[Energy storage] Charge/Discharge power,[Energy storage] Current-day charge capacity,[Energy storage] Current-day discharge capacity,System time,[Backup] Switch to off-grid
+6.344,0.233,-1.383,4.728,4.728,4.763,1.229,0.0,6920.19,1.56,1398.0,5937.0,854.53,85.0,4761.0,9.06,2.8,1661510790.0,0.0
+6.432,0.251,-1.394,4.787,4.787,4.782,1.229,0.0,6920.19,1.56,1378.0,5937.04,854.53,85.0,4794.0,9.06,2.8,1661510861.0,0.0
+6.432,0.251,-1.394,4.787,4.787,4.767,1.229,0.0,6920.19,1.56,1446.0,5937.06,854.53,85.0,4760.0,9.06,2.8,1661510931.0,0.0
