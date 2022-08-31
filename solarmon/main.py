@@ -1,7 +1,7 @@
 #!env/bin/python -u
 # the line above disables stdout/stderr buffering
 
-# modbus
+# huawei modbus
 timeout = 5
 
 # emoncms webapi
@@ -9,7 +9,7 @@ api_base_uri = 'http://127.0.0.1'
 api_key = '92361dc1aacccbed7c284d6387bf9b54'
 dongle_node_number = 101
 inverter_node_number = 102
-three_phase_meter_node_number = 103
+grid_meter_node_number = 103
 
 import datetime
 import logging
@@ -21,6 +21,7 @@ import huawei_sun2000
 import meters
 import persistence
 
+
 class ShutdownRequest:
 
     def __init__(self):
@@ -31,6 +32,7 @@ class ShutdownRequest:
     def _exit(self, *args):
         logging.info('Received shutdown request...')
         self.should_exit = True
+
 
 if __name__ == '__main__':
 
@@ -51,52 +53,54 @@ if __name__ == '__main__':
 
     usb_connection = meters.USBConnection('/dev/ttyUSB0') # Could this throw?!
     usb_connection.connect()
-    three_phase_meter = usb_connection.attach_to_JSY_MK_323_meter(1)
+    grid_meter = usb_connection.attach_to_JSY_MK_323_meter(1)
 
     exit_guard = ShutdownRequest()
     clock = clock.WallClock()
 
     csv_file = persistence.CsvFile('huawei_sun2000_{}.csv'.format(
         datetime.datetime.now().strftime('%Y%m%d%H%M%S')))
+    csv_file.write_heading(
+            ['local_time'] + \
+            [x.name for x in dongle.registers()] + \
+            [x.name for x in inverter.registers()] + \
+            [x.name for x in grid_meter.registers()])
 
     while not exit_guard.should_exit:
         clock.wait_next_minute(abort_guard=lambda: exit_guard.should_exit)
 
         try:
-            dongle_values = dongle.read_registers()
+            dongle_data = dongle.read_registers()
         except Exception as e:
-            dongle_values = [('', '')] * dongle.register_count()
             logging.error('Error while reading dongle: {}'.format(e))
             logging.info('Reconnecting after a bad TCP response...')
             tcp_connection_pool.reconnect()
 
         try:
-            inverter_values = inverter.read_registers()
+            inverter_data = inverter.read_registers()
         except Exception as e:
-            inverter_values = [('', '')] * inverter.register_count()
             logging.error('Error while reading inverter: {}'.format(e))
             logging.info('Reconnecting after a bad TCP response...')
             tcp_connection_pool.reconnect()
 
         try:
-            meter_values = three_phase_meter.read_registers()
+            grid_meter_data = grid_meter.read_registers()
         except Exception as e:
-            meter_values = [('', '')] * three_phase_meter.register_count()
             logging.error('Error while reading three-phase meter: {}'.format(e))
             logging.info('Reconnecting after a bad USB response...')
             usb_connection.reconnect()
 
         try:
-            emoncms.send(dongle_values, dongle_node_number)
-            emoncms.send(inverter_values, inverter_node_number)
-            emoncms.send(meter_values, three_phase_meter_node_number)
+            emoncms.send(dongle_data, dongle_node_number)
+            emoncms.send(inverter_data, inverter_node_number)
+            emoncms.send(grid_meter_data, grid_meter_node_number)
         except Exception as e:
             logging.error('Error while talking to EmonCMS: {}'.format(e))
 
         try:
-            csv_file.write(
-                    [('local_time', datetime.datetime.now().isoformat())] + \
-                    dongle_values + inverter_values + meter_values)
+            csv_file.write_values(
+                    [datetime.datetime.now().isoformat()] + \
+                    dongle_data + inverter_data + grid_meter_data)
         except Exception as e:
             logging.error('Error while writing on CSV file: {}'.format(e))
 

@@ -4,6 +4,7 @@ import time
 
 from modbus import Connection, Device, Register
 
+
 class DongleEndPoint:
     host = '192.168.0.11'
     port = '502'
@@ -26,59 +27,42 @@ class Dongle(Device):
 
     def __init__(self, connection, timeout=5):
         Device.__init__(self, connection, timeout)
-        self._registers = [
-            Register('Total input power',                               'total_input_power',                      'U32', 'kW',  1000, 37498, 2),
-            Register('Load power',                                      'load_power',                             'U32', 'kW',  1000, 37500, 2),
-            Register('Grid power',                                      'grid_power',                             'I32', 'kW',  1000, 37502, 2),
-            Register('Total battery power',                             'total_battery_power',                    'I32', 'kW',  1000, 37504, 2),
-            Register('Total active power',                              'total_active_power',                     'I32', 'kW',  1000, 37506, 2),
-        ]
-
-    def read_registers(self):
-        return self._read_register_array(self._registers)
-
-    def register_count(self):
-        return len(self._registers)
+        self._add_register_array([
+            Register('total_input_power',                      'U32', 'kW',  1000, 37498, 2), # Total input power
+            Register('load_power',                             'U32', 'kW',  1000, 37500, 2), # Load power       
+            Register('grid_power',                             'I32', 'kW',  1000, 37502, 2), # Grid power
+            Register('total_battery_power',                    'I32', 'kW',  1000, 37504, 2), # Total battery power
+            Register('total_active_power',                     'I32', 'kW',  1000, 37506, 2), # Total active power
+        ])
 
 
 class Inverter(Device):
 
     def __init__(self, connection, timeout=5):
         Device.__init__(self, connection, timeout)
-        self._inverter_registers = [
-            Register('Input power',                                     'input_power',                            'I32', 'kW',  1000, 32064, 2),
-            Register('Peak active power of current day',                'day_active_power_peak',                  'I32', 'kW',  1000, 32078, 2),
-            Register('Active power',                                    'active_power',                           'I32', 'kW',  1000, 32080, 2),
-            Register('Accumulated energy yield',                        'accumulated_yield_energy',               'U32', 'kW',   100, 32106, 2),
-            Register('Daily energy yield',                              'daily_yield_energy',                     'U32', 'kW',   100, 32114, 2),
-        ]
-        self._power_meter_registers = [
-            Register('[Power meter collection] Active power',           'power_meter_active_power',               'I32', 'W',      1, 37113, 2),
-            Register('Positive active electricity',                     'grid_exported_energy',                   'I32', 'kWh',  100, 37119, 2),
-            Register('Reverse active power',                            'grid_accumulated_energy',                'I32', 'kWh',  100, 37121, 2),
-        ]
-        self._storage_registers = [
-            Register('[Energy storage] SOC',                            'storage_state_of_capacity',              'U16', '%',     10, 37760, 1),
-            Register('[Energy storage] Charge/Discharge power',         'storage_charge_discharge_power',         'I32', 'W',      1, 37765, 2),
-            Register('[Energy storage] Current-day charge capacity',    'storage_current_day_charge_capacity',    'U32', 'kWh',  100, 37784, 2),
-            Register('[Energy storage] Current-day discharge capacity', 'storage_current_day_discharge_capacity', 'U32', 'kWh',  100, 37786, 2),
-        ]
-        self._misc_registers = [
-            Register('System time',                                     'system_time',                            'U32', '',       1, 40000, 2),
-            Register('[Backup] Switch to off-grid',                     'backup_switch_to_off_grid',              'U16', '',       1, 47604, 1),
-        ]
+        self._add_register_array([
+            Register('input_power',                            'I32', 'kW',  1000, 32064, 2), # Input power
+            Register('day_active_power_peak',                  'I32', 'kW',  1000, 32078, 2), # Peak active power of current day
+            Register('active_power',                           'I32', 'kW',  1000, 32080, 2), # Active power
+            Register('accumulated_yield_energy',               'U32', 'kW',   100, 32106, 2), # Accumulated energy yield
+            Register('daily_yield_energy',                     'U32', 'kW',   100, 32114, 2), # Daily energy yield
+        ])
+        self._add_register_array([
+            Register('power_meter_active_power',               'I32',   'W',    1, 37113, 2), # [Power meter collection] Active power
+            Register('grid_exported_energy',                   'I32', 'kWh',  100, 37119, 2), # Positive active electricity
+            Register('grid_accumulated_energy',                'I32', 'kWh',  100, 37121, 2), # Reverse active power
+        ])
+        self._add_register_array([
+            Register('storage_state_of_capacity',              'U16',   '%',   10, 37760, 1), # [Energy storage] SOC
+            Register('storage_charge_discharge_power',         'I32',   'W',    1, 37765, 2), # [Energy storage] Charge/Discharge power
+            Register('storage_current_day_charge_capacity',    'U32', 'kWh',  100, 37784, 2), # [Energy storage] Current-day charge capacity
+            Register('storage_current_day_discharge_capacity', 'U32', 'kWh',  100, 37786, 2), # [Energy storage] Current-day discharge capacity
+        ])
+        self._add_sparse_registers([
+            Register('system_time',                            'U32', '',       1, 40000, 2), # System time
+            Register('backup_switch_to_off_grid',              'U16', '',       1, 47604, 1), # [Backup] Switch to off-grid
+        ])
 
-    def read_registers(self):
-        return self._read_register_array(self._inverter_registers) + \
-                self._read_register_array(self._power_meter_registers) + \
-                self._read_register_array(self._storage_registers) + \
-                self._read_registers_one_by_one(self._misc_registers)
-
-    def register_count(self):
-        return len(self._inverter_registers) + \
-                len(self._power_meter_registers) + \
-                len(self._storage_registers) + \
-                len(self._misc_registers)
 
 class _ConnectionPool:
 

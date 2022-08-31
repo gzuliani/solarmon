@@ -1,6 +1,49 @@
 from collections import namedtuple
 
-Register = namedtuple("Register", "name code type unit gain addr size")
+
+class Register:
+
+    def __init__(self, name, type, unit, gain, addr, size):
+        self.name = name
+        self. type = type
+        self.unit = unit
+        self.gain = gain
+        self.addr = addr
+        self.size = size
+
+    def decode_value(self, values):
+        assert len(values) == self.size
+        if self.type == 'U32':
+            result = self._to_uint32(values)
+        elif self.type == 'I32':
+            result = self._to_int32(values)
+        elif self.type == 'U16':
+            result = self._to_uint16(values)
+        elif self.type == 'I16':
+            result = self._to_int16(values)
+        else:
+            raise RuntimeError('unsupported type {}'.format(self.type))
+        return result / self.gain
+
+    def _to_uint32(self, values):
+        assert len(values) == 2
+        return values[0] * 65536 + values[1]
+
+    def _to_int32(self, values):
+        result = self._to_uint32(values)
+        if (result & 0x80000000) == 0x80000000:
+            result = -((result ^ 0xFFFFFFFF) + 1)
+        return result
+
+    def _to_uint16(self, values):
+        assert len(values) == 1
+        return values[0]
+
+    def _to_int16(self, values):
+        result = self._to_uint16(values)
+        if (result & 0x8000) == 0x8000:
+            result = -((result ^ 0xFFFF) + 1)
+        return result
 
 
 class Connection:
@@ -16,31 +59,40 @@ class Device:
         self.addr = connection.addr
         self._client = connection.modbus_client
         self._timeout = timeout
+        self._register_arrays = []
+        self._sparse_registers = []
 
-    def read_registers(self):
-        raise NotImplementedError
+    def registers(self):
+        return [
+                x for array in self._register_arrays for x in array
+        ] + self._sparse_registers
 
-    def register_count(self):
-        raise NotImplementedError
+    def peek(self):
+        data = []
+        for array in self._add_register_arrays:
+            data.extend(self._read_register_array(array))
+        data.extend(self._read_sparse_registers(self._sparse_registers))
+        return data
+
+    def _add_register_array(self, registers):
+        self._register_arrays.append(registers)
+
+    def _add_sparse_registers(self, registers):
+        self._sparse_registers.extend(registers)
 
     def _read_register_array(self, registers):
         base_addr = min(r.addr for r in registers)
         past_last_addr = max(r.addr + r.size for r in registers)
         size = past_last_addr - base_addr
         response = self._read_holding_registers(base_addr, size)
-        values = []
+        data = []
         for r in registers:
             pos = r.addr - base_addr
-            values.append(response[pos:pos + r.size])
-        return self._decode_register_values(registers, values)
+            data.append(r.decode(response[pos:pos + r.size]))
+        return data
 
-    def _read_registers_one_by_one(self, registers):
-        values = [self._read_register_value(r) for r in registers]
-        return self._decode_register_values(registers, values)
-
-    def _decode_register_values(self, registers, values):
-        return [(r.code, self._decode(v, r.type, r.gain), r.unit)
-                for r, v in zip(registers, values)]
+    def _read_sparse_registers(self, registers):
+        return [r.decode(self._read_register_value(r)) for r in registers]
 
     def _read_register_value(self, register):
         return self._read_holding_registers(register.addr, register.size)
@@ -51,36 +103,3 @@ class Device:
         if response.isError():
             raise RuntimeError(response)
         return response.registers
-
-    def _decode(self, registers, type, gain):
-        if type == 'U32':
-            value = self._to_uint32(registers)
-        elif type == 'I32':
-            value = self._to_int32(registers)
-        elif type == 'U16':
-            value = self._to_uint16(registers)
-        elif type == 'I16':
-            value = self._to_int16(registers)
-        else:
-            raise RuntimeError('unsupported type {}'.format(type))
-        return value / gain
-
-    def _to_uint32(self, registers):
-        assert len(registers) == 2
-        return registers[0] * 65536 + registers[1]
-
-    def _to_int32(self, registers):
-        value = self._to_uint32(registers)
-        if (value & 0x80000000) == 0x80000000:
-            value = -((value ^ 0xFFFFFFFF) + 1)
-        return value
-
-    def _to_uint16(self, registers):
-        assert len(registers) == 1
-        return registers[0]
-
-    def _to_int16(self, registers):
-        value = self._to_uint16(registers)
-        if (value & 0x8000) == 0x8000:
-            value = -((value ^ 0xFFFF) + 1)
-        return value

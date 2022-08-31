@@ -3,6 +3,7 @@ from pymodbus.client.sync import ModbusSerialClient
 
 from modbus import Connection, Device, Register
 
+
 class USBConnection:
 
     def __init__(self, port):
@@ -32,14 +33,9 @@ class JSY_MK_323(Device):
 
     def __init__(self, connection, timeout=1):
         Device.__init__(self, connection, timeout=timeout)
-        self._registers = [
-            Register('Three-phase active total electric energy (forward)', 'forward_energy', 'U32', 'kWh', 800, 0x0063, 2),
-            Register('Frequency',                                          'frequency',      'U16',  'Hz', 100, 0x0065, 1),
-            Register('Three-phase active total electric energy (reverse)', 'reverse_energy', 'U32', 'kWh', 800, 0x0066, 2),
-        ]
-
-    def read_registers(self):
-        return self._read_register_array(self._registers)
-
-    def register_count(self):
-        return len(self._registers)
+        self._add_register_array([
+            Register('a_phase_active_power', 'U16',   'W',   1, 0x004A, 1), # A phase active power
+            Register('b_phase_active_power', 'U16',   'W',   1, 0x0053, 1), # B phase active power
+            Register('c_phase_active_power', 'U16',   'W',   1, 0x005C, 1), # C phase active power
+            Register('forward_energy',       'U32', 'kWh', 800, 0x0063, 2), # Three-phase active total electric energy (forward)
+        ])
