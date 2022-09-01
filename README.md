@@ -1,3 +1,3 @@
 # SolarMon
 
-Monitors a Huawei SUN200-based photovoltaic system.
+Monitors a Huawei SUN2000-based photovoltaic system.
