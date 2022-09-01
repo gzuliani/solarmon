@@ -1,4 +1,60 @@
-from collections import namedtuple
+import logging
+from pymodbus.client.sync import ModbusSerialClient, ModbusTcpClient
+
+
+class Connection:
+
+    def __init__(self, name, client):
+        self._name = name
+        self._client = client
+        self._connected = False
+
+    def connect(self):
+        if not self._connected:
+            logging.info('Connecting to {}...'.format(self._name))
+            try:
+                if self._client.connect():
+                    error = ''
+                else:
+                    error = 'unknown error'
+            except Exception as e:
+                error = str(e)
+            if error:
+                logging.info('Could not connect, reason: {}'.format(error))
+            else:
+                self._connected = True
+                logging.info('Connection established!')
+
+    def disconnect(self):
+        if self._connected:
+            try:
+                logging.info('Disconnecting from {}...'.format(self._name))
+                self._client.close()
+                self._connected = False
+                logging.info('Connection closed!'.format())
+            except Exception as e:
+                logging.info('Could not disconnect, reason: {}...'.format(e))
+
+    def reconnect(self):
+        self.disconnect()
+        self.connect()
+
+    def client(self):
+        return self._client
+
+
+class UsbRtuAdapter(Connection):
+
+    def __init__(self, port):
+        Connection.__init__(self, port,
+                ModbusSerialClient(method='rtu', port=port, baudrate=9600))
+
+
+class TcpLink(Connection):
+
+    def __init__(self, host, port):
+        Connection.__init__(self, '{}:{}'.format(host, port),
+                ModbusTcpClient(host, port=port))
 
 
 class Register:
@@ -46,18 +102,11 @@ class Register:
         return result
 
 
-class Connection:
-
-    def __init__(self, addr, client):
-        self.addr = addr
-        self.modbus_client = client
-
-
 class Device:
 
-    def __init__(self, connection, timeout):
-        self.addr = connection.addr
-        self._client = connection.modbus_client
+    def __init__(self, connection, addr, timeout):
+        self.addr = addr
+        self._client = connection.client()
         self._timeout = timeout
         self._register_arrays = []
         self._sparse_registers = []

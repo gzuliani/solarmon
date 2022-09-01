@@ -15,5 +15,5 @@ class EmonCMS:
             'apikey': self._api_key,
             'json': json.dumps(dict([(s[0], s[1]) for s in sample]))})
         if response.reason != 'OK':
-            logging.warning('EmonCMS responded {} - {}'.format(
+            logging.warning('Unexpected EmonCMS response: {} - {}'.format(
                 response.status_code, response.reason))
