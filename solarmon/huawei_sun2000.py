@@ -54,6 +54,5 @@ class Inverter(Device):
             Register('storage_current_day_discharge_capacity', 'U32', 'kWh',  100, 37786, 2), # [Energy storage] Current-day discharge capacity
         ])
         self._add_sparse_registers([
-            Register('system_time',                            'U32',    '',    1, 40000, 2), # System time
             Register('backup_switch_to_off_grid',              'U16',    '',    1, 47604, 1), # [Backup] Switch to off-grid
         ])
