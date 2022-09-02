@@ -489,3 +489,17 @@ Contatore pompa di calore
 * a_phase_active_power
 * b_phase_active_power
 * c_phase_active_power
+
+## 20220902
+
+Continua l'analisi del tasso di errori di comunicazione in funzione del periodo di campionamento. Ad oggi i risultati sono:
+
+    sampling policy     samples dongle_misses inverter_misses dongle_misses(%) inverter_misses(%)
+    when minute expires    1226           186             224           15.17%             18.27%
+    every 30s              2284            21              32            0.92%              1.40%
+    every 67s               967             6              16            0.62%              1.65%
+    every 15s              4852            56              87            1.15%              1.79%
+
+----
+
+Rimosso il parametro `system_time` tra quelli campionati, non serve.
