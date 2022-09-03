@@ -503,3 +503,14 @@ Continua l'analisi del tasso di errori di comunicazione in funzione del periodo 
 ----
 
 Rimosso il parametro `system_time` tra quelli campionati, non serve.
+
+## 20220903
+
+Grazie al contatore ad impulsi presente sulla linea del vecchio impianto si può rinunciare ai dati forniti dalla dongle in quanto, indicato con `power` la potenza fornita dal vecchio impianto (attualmente ricavata da un contatore a impulsi):
+
+* `total_input_power` = `power` + `input_power`
+* `load_power` = `power` + `input_power` - `storage_charge_discharge_power` - `power_meter_active_power`
+* `grid_power` = -`power_meter_active_power`
+* `total_battery_power` = `storage_charge_discharge_power`
+
+Non sarebbe male svincolarsi dalla dongle perché, a giudicare dai grafici prodotti da EmonCMS in questi giorni di prove sembra applichi una sorta di filtro passa basso ai dati, a spanne una media mobile determinata su una finestra di 5 minuti.
