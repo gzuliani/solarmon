@@ -506,11 +506,28 @@ Rimosso il parametro `system_time` tra quelli campionati, non serve.
 
 ## 20220903
 
-Grazie al contatore ad impulsi presente sulla linea del vecchio impianto si pu� rinunciare ai dati forniti dalla dongle in quanto, indicato con `power` la potenza fornita dal vecchio impianto (attualmente ricavata da un contatore a impulsi):
+Grazie al contatore ad impulsi presente sulla linea del vecchio impianto si può rinunciare ai dati forniti dalla dongle in quanto, indicato con `power` la potenza fornita dal vecchio impianto (attualmente ricavata da un contatore a impulsi):
 
 * `total_input_power` = `power` + `input_power`
 * `load_power` = `power` + `input_power` - `storage_charge_discharge_power` - `power_meter_active_power`
 * `grid_power` = -`power_meter_active_power`
 * `total_battery_power` = `storage_charge_discharge_power`
 
-Non sarebbe male svincolarsi dalla dongle perch�, a giudicare dai grafici prodotti da EmonCMS in questi giorni di prove sembra applichi una sorta di filtro passa basso ai dati, a spanne una media mobile determinata su una finestra di 5 minuti.
+Non sarebbe male svincolarsi dalla dongle perché, a giudicare dai grafici prodotti da EmonCMS in questi giorni di prove sembra applichi una sorta di filtro passa basso ai dati, a spanne una media mobile determinata su una finestra di 5 minuti.
+
+## 20220904
+
+Semplificato l'accesso all'inverter: prima era mediato da un access point, ora è realizzato tramite una dongle wifi connessa ad una delle porte USB della Raspberry Pi. La connessione non è molto stabile, a volte cade senza apparente ragione; nel log si legge:
+
+    2022-09-04T17:51:12 ERROR Could not read inverter, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 8 bytes (0 received)
+    2022-09-04T17:51:12 INFO Reconnecting after a bad TCP response...
+
+Contemporaneamente l'applicativo segnala l'assenza di collegamento:
+
+    2022-09-04T17:51:12 ERROR Could not read inverter, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 8 bytes (0 received)
+    2022-09-04T17:51:12 INFO Reconnecting after a bad TCP response...
+    
+Negli stessi istanti si nota l'assenza dei dati dell'inverter nel file CSV:
+
+    2022-09-04T17:51:14.596105,,,,,,,,,,,,,,,,,,0.002,0.001,0.029,11.12375
+    2022-09-04T17:51:44.784021,,,,,,,,,,,,,,,,,,0.001,0.002,0.029,11.12375
