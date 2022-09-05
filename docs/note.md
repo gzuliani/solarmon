@@ -7,7 +7,7 @@ Alcuni riferimenti preliminari circa il collegamento all'inverter Huawei SUN2000
 * attraverso il Cloud di Huawei: [https://forum.huawei.com/enterprise/en/communicate-with-fusionsolar-through-an-openapi-account/thread/591478-100027](Communicate with FusionSolar through an openAPI account)
 * in locale, via RS485 o Modbus/TCP: [https://forum.huawei.com/enterprise/en/modbus-tcp-guide/thread/789585-100027](MODBUS TCP Guide)
 
-L'inverter è dotato di una Smart Dongle che rappresenta un secondo punto d'accesso locale Modbus/TCP via WiFi; sembra però meno efficiente rispetto a quello offerto dall'inverter, cfr. articolo [https://forum.huawei.com/enterprise/en/is-it-possible-to-make-usb-dongle-tcp-modbus-as-fast-reliable-as-rs-485/thread/822261-100027](Is it possible to make USB Dongle TCP Modbus as fast reliable as RS-485?) sui forum Huawei.
+L'inverter è dotato di una Smart Dongle che rappresenta un secondo punto d'accesso locale Modbus/TCP via Wifi; sembra però meno efficiente rispetto a quello offerto dall'inverter, cfr. articolo [https://forum.huawei.com/enterprise/en/is-it-possible-to-make-usb-dongle-tcp-modbus-as-fast-reliable-as-rs-485/thread/822261-100027](Is it possible to make USB Dongle TCP Modbus as fast reliable as RS-485?) sui forum Huawei.
 
 Il forum generale per gli impianti fotovoltaici Huawei è [https://forum.huawei.com/enterprise/en/Digital-Power/forum/100027](Smart PV).
 
@@ -517,7 +517,7 @@ Non sarebbe male svincolarsi dalla dongle perché, a giudicare dai grafici prodo
 
 ## 20220904
 
-Semplificato l'accesso all'inverter: prima era mediato da un access point, ora è realizzato tramite una dongle wifi connessa ad una delle porte USB della Raspberry Pi. La connessione non è molto stabile, a volte cade senza apparente ragione; nel log si legge:
+Semplificato l'accesso all'inverter: prima era mediato da un access point, ora è realizzato tramite una dongle Wifi connessa ad una delle porte USB della Raspberry Pi. La connessione non è molto stabile, a volte cade senza apparente ragione; nel log si legge:
 
     2022-09-04T17:51:12 ERROR Could not read inverter, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 8 bytes (0 received)
     2022-09-04T17:51:12 INFO Reconnecting after a bad TCP response...
@@ -531,3 +531,18 @@ Negli stessi istanti si nota l'assenza dei dati dell'inverter nel file CSV:
 
     2022-09-04T17:51:14.596105,,,,,,,,,,,,,,,,,,0.002,0.001,0.029,11.12375
     2022-09-04T17:51:44.784021,,,,,,,,,,,,,,,,,,0.001,0.002,0.029,11.12375
+
+----
+
+Cambiato l'adattatore USB/Wifi, dopo due ore di acquisizione continua non è stato registrato alcun errore di comunucazione o perdita di campioni.
+
+## 20220905
+
+Con il nuovo adattatore e utilizzando la connessione diretta all'inverter finalmente un risultato di tutto rispetto:
+
+    start: 2022-09-04T19:39:01
+    end: 2022-09-05T19:06:14
+    samples: 2764
+    dongle misses: n/a
+    inverter misses: 0
+    meter misses: 0
