@@ -4,6 +4,7 @@
 import datetime
 import logging
 import signal
+import time
 
 import clock
 import emon
@@ -22,6 +23,7 @@ api_base_uri = 'http://127.0.0.1'
 api_key = '92361dc1aacccbed7c284d6387bf9b54'
 inverter_node_number = 102
 heat_pump_meter_node_number = 103
+old_pv_meter_node_number = 104
 
 # csv
 save_to_csv = False
@@ -58,13 +60,15 @@ if __name__ == '__main__':
     inverter = huawei_sun2000.Inverter(huawei_wifi, 0, timeout)
 
     usb_adapter = modbus.UsbRtuAdapter('/dev/ttyUSB0')
-    heat_pump_meter = meters.JSY_MK_323(usb_adapter, 1)
+    heat_pump_meter = meters.JSY_MK_323(usb_adapter, 22)
+    old_pv_meter = meters.DDS238_1_ZN(usb_adapter, 21)
 
     huawei_wifi.connect()
     usb_adapter.connect()
 
     inverter_register_names = [x.name for x in inverter.registers()]
-    heat_pump_register_names = [x.name for x in heat_pump_meter.registers()]
+    heat_pump_meter_register_names = [x.name for x in heat_pump_meter.registers()]
+    old_pv_meter_register_names = [x.name for x in old_pv_meter.registers()]
 
     exit_guard = ShutdownRequest()
     timer = clock.Timer(sampling_period)
@@ -72,7 +76,10 @@ if __name__ == '__main__':
     if save_to_csv:
         csv_file = persistence.CsvFile(csv_file_path())
         csv_file.write_heading(
-            ['local_time'] + inverter_register_names + heat_pump_register_names)
+            ['local_time'] + \
+            inverter_register_names + \
+            heat_pump_meter_register_names + \
+            old_pv_meter_register_names)
     else:
         csv_file = None
 
@@ -95,13 +102,26 @@ if __name__ == '__main__':
             logging.info('Reconnecting after a bad USB response...')
             usb_adapter.reconnect()
 
+        time.sleep(1) # pause between peeking different devices on /dev/ttyUSB0
+
+        try:
+            old_pv_meter_data = old_pv_meter.peek()
+        except Exception as e:
+            old_pv_meter_data = [''] * len(old_pv_meter_register_names)
+            logging.error('Could not read old PV, reason: {}'.format(e))
+            logging.info('Reconnecting after a bad USB response...')
+            usb_adapter.reconnect()
+
         try:
             emoncms.send(
                 zip(inverter_register_names, inverter_data),
                 inverter_node_number)
             emoncms.send(
-                zip(heat_pump_register_names, heat_pump_meter_data),
+                zip(heat_pump_meter_register_names, heat_pump_meter_data),
                 heat_pump_meter_node_number)
+            emoncms.send(
+                zip(old_pv_meter_register_names, old_pv_meter_data),
+                old_pv_meter_node_number)
         except Exception as e:
             logging.error('Could not post to EmonCMS, reason: {}'.format(e))
 
@@ -109,7 +129,10 @@ if __name__ == '__main__':
             try:
                 local_time = datetime.datetime.now().isoformat()
                 csv_file.write_values(
-                        [local_time] + inverter_data + heat_pump_meter_data)
+                        [local_time] + \
+                        inverter_data + \
+                        heat_pump_meter_data + \
+                        old_pv_meter_data)
             except Exception as e:
                 logging.error('Could not write to CSV, reason: {}'.format(e))
 
