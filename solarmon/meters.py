@@ -20,7 +20,10 @@ class DDS238_1_ZN(Device):
 
     def __init__(self, connection, addr, timeout=1):
         Device.__init__(self, connection, addr, timeout)
-        self._add_sparse_registers([
+        self._add_register_array([
+            Register('total_kwh',    'U32', 'kWh',  100, 0x0000, 2),
+            Register('export_kwh',   'U32', 'kWh',  100, 0x0008, 2),
+            Register('import_kwh',   'U32', 'kWh',  100, 0x000A, 2),
             # the following register actually has unit 'W' and gain 1
             Register('active_power', 'I16',  'kW', 1000, 0x000E, 1), # Active power
         ])
