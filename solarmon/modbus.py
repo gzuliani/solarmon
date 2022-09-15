@@ -1,13 +1,16 @@
 import logging
 from pymodbus.client.sync import ModbusSerialClient, ModbusTcpClient
 
+import clock
+
 
 class Connection:
 
-    def __init__(self, name, client):
+    def __init__(self, name, client, delay_between_reads = 0):
         self._name = name
         self._client = client
         self._connected = False
+        self._read_timer = clock.Timer(delay_between_reads)
 
     def connect(self):
         if not self._connected:
@@ -39,15 +42,18 @@ class Connection:
         self.disconnect()
         self.connect()
 
-    def client(self):
-        return self._client
+    def read_holding_registers(self, addr, size, timeout, unit):
+        self._read_timer.wait_next_tick()
+        return self._client.read_holding_registers(
+                addr, size, timeout=timeout, unit=unit)
 
 
 class UsbRtuAdapter(Connection):
 
-    def __init__(self, port):
+    def __init__(self, port, delay_between_reads = 0):
         Connection.__init__(self, port,
-                ModbusSerialClient(method='rtu', port=port, baudrate=9600))
+                ModbusSerialClient(method='rtu', port=port, baudrate=9600),
+                delay_between_reads)
 
 
 class TcpLink(Connection):
@@ -104,9 +110,10 @@ class Register:
 
 class Device:
 
-    def __init__(self, connection, addr, timeout):
+    def __init__(self, name, connection, addr, timeout):
+        self.name = name
         self.addr = addr
-        self._client = connection.client()
+        self.connection = connection
         self._timeout = timeout
         self._register_arrays = []
         self._sparse_registers = []
@@ -147,8 +154,8 @@ class Device:
         return self._read_holding_registers(register.addr, register.size)
 
     def _read_holding_registers(self, addr, size):
-        response = self._client.read_holding_registers(
-                addr, size, timeout=self._timeout, unit=self.addr)
+        response = self.connection.read_holding_registers(
+                addr, size, self._timeout, unit=self.addr)
         if response.isError():
             raise RuntimeError(response)
         return response.registers

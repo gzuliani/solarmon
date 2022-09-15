@@ -3,8 +3,8 @@ from modbus import Device, Register
 
 class JSY_MK_323(Device):
 
-    def __init__(self, connection, addr, timeout=1):
-        Device.__init__(self, connection, addr, timeout)
+    def __init__(self, name, connection, addr, timeout=1):
+        Device.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
             # the following register actually has unit 'W' and gain 1
             Register('a_phase_active_power', 'U16',  'kW', 1000, 0x004A, 1), # A phase active power
@@ -18,8 +18,8 @@ class JSY_MK_323(Device):
 
 class DDS238_1_ZN(Device):
 
-    def __init__(self, connection, addr, timeout=1):
-        Device.__init__(self, connection, addr, timeout)
+    def __init__(self, name, connection, addr, timeout=1):
+        Device.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
             Register('total_kwh',    'U32', 'kWh',  100, 0x0000, 2),
             Register('export_kwh',   'U32', 'kWh',  100, 0x0008, 2),

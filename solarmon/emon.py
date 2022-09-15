@@ -5,15 +5,25 @@ import requests
 
 class EmonCMS:
 
-    def __init__(self, api_base_uri, api_key):
+    def __init__(self, api_base_uri, api_key, nodes):
+        self.name = 'EmonCMS'
         self._base_uri = api_base_uri + '/input/post.json'
         self._api_key = api_key
+        self._nodes = nodes
+        self._register_names = {}
 
-    def send(self, sample, node_number):
-        response = requests.post(self._base_uri, data={
-            'node': node_number,
-            'apikey': self._api_key,
-            'json': json.dumps(dict([(s[0], s[1]) for s in sample]))})
-        if response.reason != 'OK':
-            logging.warning('Unexpected EmonCMS response: {} - {}'.format(
-                response.status_code, response.reason))
+    def write(self, data):
+        for device, values in data:
+            if not device.name in self._nodes:
+                continue
+            if not device.name in self._register_names:
+                self._register_names[device.name] = [
+                        x.name for x in device.registers()]
+            response = requests.post(self._base_uri, data={
+                'node': self._nodes[device.name],
+                'apikey': self._api_key,
+                'json': json.dumps(dict(zip(
+                        self._register_names[device.name], values)))})
+            if response.reason != 'OK':
+                logging.warning('Unexpected EmonCMS response: {} - {}'.format(
+                    response.status_code, response.reason))

@@ -15,8 +15,8 @@ class HuaweiWifi(TcpLink):
 
 class Dongle(Device):
 
-    def __init__(self, connection, addr, timeout=5):
-        Device.__init__(self, connection, addr, timeout)
+    def __init__(self, name, connection, addr, timeout=5):
+        Device.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
             Register('total_input_power',                      'U32', 'kW',  1000, 37498, 2), # Total input power
             Register('load_power',                             'U32', 'kW',  1000, 37500, 2), # Load power
@@ -27,8 +27,8 @@ class Dongle(Device):
 
 class Inverter(Device):
 
-    def __init__(self, connection, addr, timeout=5):
-        Device.__init__(self, connection, addr, timeout)
+    def __init__(self, name, connection, addr, timeout=5):
+        Device.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
             Register('input_power',                            'I32', 'kW',  1000, 32064, 2), # Input power
             Register('day_active_power_peak',                  'I32', 'kW',  1000, 32078, 2), # Peak active power of current day
