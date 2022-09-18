@@ -22,6 +22,7 @@ timeout = 5
 inverter_name = 'inverter'
 heat_pump_meter_name = 'heat_pump'
 old_pv_meter_name = 'single_phase_pv'
+single_phase_load_meter = 'single_phase_load'
 
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
@@ -30,6 +31,7 @@ emon_nodes = {
     inverter_name: 102,
     heat_pump_meter_name: 103,
     old_pv_meter_name: 104,
+    single_phase_load_meter: 105,
 }
 
 # csv
@@ -80,6 +82,7 @@ if __name__ == '__main__':
         huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout),
         meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22),
         meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21),
+#        meters.DDS238_1_ZN(single_phase_load_meter, usb_adapter, 23),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)

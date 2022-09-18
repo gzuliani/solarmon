@@ -31,10 +31,19 @@ class Inverter(Device):
         Device.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
             Register('input_power',                            'I32', 'kW',  1000, 32064, 2), # Input power
+            Register('phase_a_voltage',                        'U16',  'V',    10, 32069, 1), # Phase A voltage
+            Register('phase_b_voltage',                        'U16',  'V',    10, 32070, 1), # Phase B voltage
+            Register('phase_c_voltage',                        'U16',  'V',    10, 32071, 1), # Phase C voltage
             Register('day_active_power_peak',                  'I32', 'kW',  1000, 32078, 2), # Peak active power of current day
             Register('active_power',                           'I32', 'kW',  1000, 32080, 2), # Active power
             Register('accumulated_yield_energy',               'U32', 'kW',   100, 32106, 2), # Accumulated energy yield
             Register('daily_yield_energy',                     'U32', 'kW',   100, 32114, 2), # Daily energy yield
+        ])
+        self._add_register_array([
+            # the following register actually has unit 'W' and gain 1
+            Register('maximum_charge_power',                   'U32',  'kW', 1000, 37046, 2), # [Energy storage] Maximum charge power
+            # the following register actually has unit 'W' and gain 1
+            Register('maximum_discharge_power',                'U32',  'kW', 1000, 37048, 2), # [Energy storage] Maximum discharge power
         ])
         self._add_register_array([
             Register('grid_voltage_a_phase',                   'I32',   'V',   10, 37101, 2), # Grid voltage (A phase)
@@ -45,6 +54,12 @@ class Inverter(Device):
             Register('grid_frequency',                         'I16',  'Hz',  100, 37118, 1), # Grid frequency
             Register('grid_exported_energy',                   'I32', 'kWh',  100, 37119, 2), # Positive active electricity
             Register('grid_accumulated_energy',                'I32', 'kWh',  100, 37121, 2), # Reverse active power
+            # the following register actually has unit 'W' and gain 1
+            Register('a_phase_active_power',                   'I32',  'kW', 1000, 37132, 2), # A phase active power
+            # the following register actually has unit 'W' and gain 1
+            Register('b_phase_active_power',                   'I32',  'kW', 1000, 37134, 2), # B phase active power
+            # the following register actually has unit 'W' and gain 1
+            Register('c_phase_active_power',                   'I32',  'kW', 1000, 37136, 2), # C phase active power
         ])
         self._add_register_array([
             Register('storage_state_of_capacity',              'U16',   '%',   10, 37760, 1), # [Energy storage] SOC
@@ -54,5 +69,5 @@ class Inverter(Device):
             Register('storage_current_day_discharge_capacity', 'U32', 'kWh',  100, 37786, 2), # [Energy storage] Current-day discharge capacity
         ])
         self._add_sparse_registers([
-            Register('backup_switch_to_off_grid',              'U16',    '',    1, 47604, 1), # [Backup] Switch to off-grid
+            # No register defined
         ])
