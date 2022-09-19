@@ -65,6 +65,8 @@ class Inverter(Device):
             Register('storage_state_of_capacity',              'U16',   '%',   10, 37760, 1), # [Energy storage] SOC
             # the following register actually has unit 'W' and gain 1
             Register('storage_charge_discharge_power',         'I32',  'kW', 1000, 37765, 2), # [Energy storage] Charge/Discharge power
+            Register('storage_total_charge',                   'U32', 'kWh',  100, 37780, 2), # [Energy storage] Total charge
+            Register('storage_total_discharge',                'U32', 'kWh',  100, 37782, 2), # [Energy storage] Total discharge
             Register('storage_current_day_charge_capacity',    'U32', 'kWh',  100, 37784, 2), # [Energy storage] Current-day charge capacity
             Register('storage_current_day_discharge_capacity', 'U32', 'kWh',  100, 37786, 2), # [Energy storage] Current-day discharge capacity
         ])
