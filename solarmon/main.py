@@ -20,19 +20,13 @@ timeout = 5
 
 # device codes -- should be unique
 inverter_name = 'inverter'
-heat_pump_meter_name = 'heat_pump'
-old_pv_meter_name = 'single_phase_pv'
-single_phase_load_meter = 'single_phase_load'
+heat_pump_meter_name = 'heat-pump'
+old_pv_meter_name = 'old-pv'
+single_phase_load_meter_name = 'house'
 
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
 api_key = '92361dc1aacccbed7c284d6387bf9b54'
-emon_nodes = {
-    inverter_name: 102,
-    heat_pump_meter_name: 103,
-    old_pv_meter_name: 104,
-    single_phase_load_meter: 105,
-}
 
 # csv
 def csv_file_path():
@@ -82,15 +76,15 @@ if __name__ == '__main__':
         huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout),
         meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22),
         meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21),
-#        meters.DDS238_1_ZN(single_phase_load_meter, usb_adapter, 23),
+        meters.DDS238_1_ZN(single_phase_load_meter_name, usb_adapter, 23),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)
                                 for d in input_devices for r in d.registers()]
 
     output_devices = [
-        emon.EmonCMS(api_base_uri, api_key, emon_nodes),
-        persistence.CsvFile('CSV', csv_file_path(), qualified_register_names),
+        emon.EmonCMS(api_base_uri, api_key),
+#        persistence.CsvFile('CSV', csv_file_path(), qualified_register_names),
     ]
 
     exit_guard = ShutdownRequest()

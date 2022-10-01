@@ -30,46 +30,55 @@ class Inverter(Device):
     def __init__(self, name, connection, addr, timeout=5):
         Device.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
-            Register('input_power',                            'I32', 'kW',  1000, 32064, 2), # Input power
-            Register('phase_a_voltage',                        'U16',  'V',    10, 32069, 1), # Phase A voltage
-            Register('phase_b_voltage',                        'U16',  'V',    10, 32070, 1), # Phase B voltage
-            Register('phase_c_voltage',                        'U16',  'V',    10, 32071, 1), # Phase C voltage
-            Register('day_active_power_peak',                  'I32', 'kW',  1000, 32078, 2), # Peak active power of current day
-            Register('active_power',                           'I32', 'kW',  1000, 32080, 2), # Active power
-            Register('accumulated_yield_energy',               'U32', 'kW',   100, 32106, 2), # Accumulated energy yield
-            Register('daily_yield_energy',                     'U32', 'kW',   100, 32114, 2), # Daily energy yield
+            Register('P-PV',                                   'I32', 'kW',  1000, 32064, 2), # Input power
+            Register('V-L1-inverter',                          'U16',  'V',    10, 32069, 1), # Phase A voltage
+            Register('V-L2-inverter',                          'U16',  'V',    10, 32070, 1), # Phase B voltage
+            Register('V-L3-inverter',                          'U16',  'V',    10, 32071, 1), # Phase C voltage
+            Register('P-inverter',                             'I32', 'kW',  1000, 32080, 2), # Active power
+            Register('T-inverter',                             'I16', '°C',    10, 32087, 1), # Internal temperature
+            Register('E-PV-total',                             'U32', 'kW',   100, 32106, 2), # Accumulated energy yield
+            Register('E-PV-day',                               'U32', 'kW',   100, 32114, 2), # Daily energy yield
         ])
         self._add_register_array([
+            Register('V-L1-grid',                              'I32',   'V',   10, 37101, 2), # Grid voltage (A phase)
+            Register('V-L2-grid',                              'I32',   'V',   10, 37103, 2), # B phase voltage
+            Register('V-L3-grid',                              'I32',   'V',   10, 37105, 2), # C phase voltage
             # the following register actually has unit 'W' and gain 1
-            Register('maximum_charge_power',                   'U32',  'kW', 1000, 37046, 2), # [Energy storage] Maximum charge power
+            Register('P-to_grid',                              'I32',  'kW', 1000, 37113, 2), # [Power meter collection] Active power
+            Register('F-grid',                                 'I16',  'Hz',  100, 37118, 1), # Grid frequency
+            Register('E-to_grid-total',                        'I32', 'kWh',  100, 37119, 2), # Positive active electricity
+            Register('E-from_grid-total',                      'I32', 'kWh',  100, 37121, 2), # Reverse active power
             # the following register actually has unit 'W' and gain 1
-            Register('maximum_discharge_power',                'U32',  'kW', 1000, 37048, 2), # [Energy storage] Maximum discharge power
+            Register('P-L1-to_grid',                           'I32',  'kW', 1000, 37132, 2), # A phase active power
+            # the following register actually has unit 'W' and gain 1
+            Register('P-L2-to_grid',                           'I32',  'kW', 1000, 37134, 2), # B phase active power
+            # the following register actually has unit 'W' and gain 1
+            Register('P-L3-to_grid',                           'I32',  'kW', 1000, 37136, 2), # C phase active power
         ])
         self._add_register_array([
-            Register('grid_voltage_a_phase',                   'I32',   'V',   10, 37101, 2), # Grid voltage (A phase)
-            Register('b_phase_voltage',                        'I32',   'V',   10, 37103, 2), # B phase voltage
-            Register('c_phase_voltage',                        'I32',   'V',   10, 37105, 2), # C phase voltage
+            Register('T-esu2',                                 'I16',  '°C',   10, 37752, 1), # [Energy storage unit 2] Battery temperature
+            Register('SOC-battery',                            'U16',   '%',   10, 37760, 1), # [Energy storage] SOC
             # the following register actually has unit 'W' and gain 1
-            Register('power_meter_active_power',               'I32',  'kW', 1000, 37113, 2), # [Power meter collection] Active power
-            Register('grid_frequency',                         'I16',  'Hz',  100, 37118, 1), # Grid frequency
-            Register('grid_exported_energy',                   'I32', 'kWh',  100, 37119, 2), # Positive active electricity
-            Register('grid_accumulated_energy',                'I32', 'kWh',  100, 37121, 2), # Reverse active power
-            # the following register actually has unit 'W' and gain 1
-            Register('a_phase_active_power',                   'I32',  'kW', 1000, 37132, 2), # A phase active power
-            # the following register actually has unit 'W' and gain 1
-            Register('b_phase_active_power',                   'I32',  'kW', 1000, 37134, 2), # B phase active power
-            # the following register actually has unit 'W' and gain 1
-            Register('c_phase_active_power',                   'I32',  'kW', 1000, 37136, 2), # C phase active power
+            Register('P-to_battery',                           'I32',  'kW', 1000, 37765, 2), # [Energy storage] Charge/Discharge power
+            Register('E-to_battery-total',                     'U32', 'kWh',  100, 37780, 2), # [Energy storage] Total charge
+            Register('E-from_battery-total',                   'U32', 'kWh',  100, 37782, 2), # [Energy storage] Total discharge
+            Register('E-to_battery-day',                       'U32', 'kWh',  100, 37784, 2), # [Energy storage] Current-day charge capacity
+            Register('E-from_battery-day',                     'U32', 'kWh',  100, 37786, 2), # [Energy storage] Current-day discharge capacity
         ])
         self._add_register_array([
-            Register('storage_state_of_capacity',              'U16',   '%',   10, 37760, 1), # [Energy storage] SOC
-            # the following register actually has unit 'W' and gain 1
-            Register('storage_charge_discharge_power',         'I32',  'kW', 1000, 37765, 2), # [Energy storage] Charge/Discharge power
-            Register('storage_total_charge',                   'U32', 'kWh',  100, 37780, 2), # [Energy storage] Total charge
-            Register('storage_total_discharge',                'U32', 'kWh',  100, 37782, 2), # [Energy storage] Total discharge
-            Register('storage_current_day_charge_capacity',    'U32', 'kWh',  100, 37784, 2), # [Energy storage] Current-day charge capacity
-            Register('storage_current_day_discharge_capacity', 'U32', 'kWh',  100, 37786, 2), # [Energy storage] Current-day discharge capacity
+            Register('T-esu1-b1-max',                          'I16',  '°C',   10, 38452, 1), # [Energy storage unit 1] [Battery pack 1] Maximum temperature
+            Register('T-esu1-b1-min',                          'I16',  '°C',   10, 38453, 1), # [Energy storage unit 1] [Battery pack 1] Minimum temperature
+            Register('T-esu1-b2-max',                          'I16',  '°C',   10, 38454, 1), # [Energy storage unit 1] [Battery pack 2] Maximum temperature
+            Register('T-esu1-b2-min',                          'I16',  '°C',   10, 38455, 1), # [Energy storage unit 1] [Battery pack 2] Minimum temperature
+            Register('T-esu1-b3-max',                          'I16',  '°C',   10, 38456, 1), # [Energy storage unit 1] [Battery pack 3] Maximum temperature
+            Register('T-esu1-b3-min',                          'I16',  '°C',   10, 38457, 1), # [Energy storage unit 1] [Battery pack 3] Minimum temperature
+            Register('T-esu2-b1-max',                          'I16',  '°C',   10, 38458, 1), # [Energy storage unit 2] [Battery pack 1] Maximum temperature
+            Register('T-esu2-b1-min',                          'I16',  '°C',   10, 38459, 1), # [Energy storage unit 2] [Battery pack 1] Minimum temperature
+            Register('T-esu2-b2-max',                          'I16',  '°C',   10, 38460, 1), # [Energy storage unit 2] [Battery pack 2] Maximum temperature
+            Register('T-esu2-b2-min',                          'I16',  '°C',   10, 38461, 1), # [Energy storage unit 2] [Battery pack 2] Minimum temperature
+            Register('T-esu2-b3-max',                          'I16',  '°C',   10, 38462, 1), # [Energy storage unit 2] [Battery pack 3] Maximum temperature
+            Register('T-esu2-b3-min',                          'I16',  '°C',   10, 38463, 1), # [Energy storage unit 2] [Battery pack 3] Minimum temperature
         ])
         self._add_sparse_registers([
-            # No register defined
+            Register('T-esu1',                                 'I16',  '°C',   10, 37022, 1), # temperature
         ])
