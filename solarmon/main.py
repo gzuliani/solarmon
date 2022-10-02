@@ -30,7 +30,7 @@ api_key = '92361dc1aacccbed7c284d6387bf9b54'
 
 # csv
 def csv_file_path():
-    return 'huawei_sun2000_{}.csv'.format(
+    return 'solarmon_{}.csv'.format(
             datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
 
 
@@ -60,7 +60,7 @@ def read_from(device):
 if __name__ == '__main__':
 
     logging.basicConfig(
-            filename='/var/log/huawei_sun2000.log',
+            filename='/var/log/solarmon.log',
             level=logging.INFO,
             format='%(asctime)s %(levelname)s %(message)s',
             datefmt='%Y-%m-%dT%H:%M:%S')
