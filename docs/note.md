@@ -419,20 +419,20 @@ Impostazione dello script come servizio (systemd):
 
 1. salvare il contenuto che segue nel file `huawei_sun2000.service` in `/lib/systemd/system`:
 
-    [Unit]
-    Description=Huawei SUN2000 monitor
-    After=network-online.target syslog.target
+        [Unit]
+        Description=Huawei SUN2000 monitor
+        After=network-online.target syslog.target
 
-    [Service]
-    Type=simple
-    WorkingDirectory=/home/pi/huawei
-    ExecStart=/usr/bin/python3 /home/pi/huawei/main.py
-    StandardOutput=syslog
-    StandardError=syslog
-    Restart=on-failure
+        [Service]
+        Type=simple
+        WorkingDirectory=/home/pi/huawei
+        ExecStart=/usr/bin/python3 /home/pi/huawei/main.py
+        StandardOutput=syslog
+        StandardError=syslog
+        Restart=on-failure
 
-    [Install]
-    WantedBy=multi-user.target
+        [Install]
+        WantedBy=multi-user.target
 
 2. registrare il nuovo servizio con:
 
