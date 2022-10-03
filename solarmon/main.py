@@ -67,7 +67,7 @@ if __name__ == '__main__':
     logging.info('Booting...')
 
     huawei_wifi = huawei_sun2000.HuaweiWifi('192.168.200.1', '6607')
-    usb_adapter = modbus.UsbRtuAdapter('/dev/ttyUSB0', delay_between_reads = 1)
+    usb_adapter = modbus.UsbRtuAdapter('/dev/ttyUSB0', delay_between_reads=3)
 
     huawei_wifi.connect()
     usb_adapter.connect()

@@ -546,3 +546,18 @@ Con il nuovo adattatore e utilizzando la connessione diretta all'inverter finalm
     dongle misses: n/a
     inverter misses: 0
     meter misses: 0
+
+## 20221003
+
+La nuova versione del servizio Solarmon su una Raspberry reinstallata di fresco mostra qualche problema: dopo poco più di una giornata di lavoro nel log sono stati registrati oltre 130 errori di comunicazione con i contatori monofase:
+
+    2022-10-02T17:26:48 ERROR Could not read old-pv, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    2022-10-02T17:33:28 ERROR Could not read old-pv, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    2022-10-02T17:46:17 ERROR Could not read old-pv, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    2022-10-02T17:56:30 ERROR Could not read old-pv, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    2022-10-02T18:12:57 ERROR Could not read house, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    2022-10-02T18:46:47 ERROR Could not read house, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    2022-10-02T19:00:07 ERROR Could not read old-pv, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    ...
+
+Non sono presenti errori relativi alla comunicazione con l'inverter Huawei o il contatore trifase. Per verificare se si tratta di un problema legato alla presenza di più dispositivi collegati alla dongle, la pausa tra una lettura e l'altra su /dev/ttyUSB è stata aumentata da 1 a 3 secondi. Non dovesse rivelarsi risolutivo, una successiva prova consisterà nell'aumentare il timeout sui contatori monofase, attualmente impostato a 1 secondo.
