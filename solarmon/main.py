@@ -15,14 +15,11 @@ import persistence
 
 sampling_period = 30 # seconds
 
-# huawei modbus parameters
-timeout = 5
-
 # device codes -- should be unique
 inverter_name = 'inverter'
 heat_pump_meter_name = 'heat-pump'
 old_pv_meter_name = 'old-pv'
-single_phase_load_meter_name = 'house'
+house_meter_name = 'house'
 
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
@@ -73,10 +70,10 @@ if __name__ == '__main__':
     usb_adapter.connect()
 
     input_devices = [
-        huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout),
-        meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22),
-        meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21),
-        meters.DDS238_1_ZN(single_phase_load_meter_name, usb_adapter, 23),
+        huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout=5),
+        meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22, timeout=1),
+        meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21, timeout=5),
+        meters.DDS238_1_ZN(house_meter_name, usb_adapter, 23, timeout=5),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)

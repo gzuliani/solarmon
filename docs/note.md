@@ -561,3 +561,25 @@ La nuova versione del servizio Solarmon su una Raspberry reinstallata di fresco 
     ...
 
 Non sono presenti errori relativi alla comunicazione con l'inverter Huawei o il contatore trifase. Per verificare se si tratta di un problema legato alla presenza di più dispositivi collegati alla dongle, la pausa tra una lettura e l'altra su /dev/ttyUSB è stata aumentata da 1 a 3 secondi. Non dovesse rivelarsi risolutivo, una successiva prova consisterà nell'aumentare il timeout sui contatori monofase, attualmente impostato a 1 secondo.
+
+----
+
+Pochi minuti dopo l'allungamento della pausa si sono verificati altri errori di comunicazione:
+
+    2022-10-03T22:23:45 ERROR Could not read old-pv, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+    2022-10-03T22:29:55 ERROR Could not read house, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No respons
+e received, expected at least 2 bytes (0 received)
+    2022-10-03T22:41:09 ERROR Could not read house, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 2 bytes (0 received)
+
+Lo lascio proseguire per verificare se il tasso d'errori diminuisce con la nuova impostazione.
+
+Tasso odierno con `delay_between_reads` a 1: 132/29*24=109 errori/giorno.
+
+## 20221003
+
+Dopo circa una giornata sembra confermato che la nuova impostazione non ha sortito alcun effetto:
+
+    start               end                 duration errors errors/day       note
+    2022-10-02T17:21:02 2022-10-03T22:20:01 28:58:59 131    108.477175360658 delay_between_reads=1
+    2022-10-03T22:20:02 2022-10-04T19:13:37 20:53:35 93     106.829754702437 delay_between_reads=3
+
