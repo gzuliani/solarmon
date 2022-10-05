@@ -71,9 +71,9 @@ if __name__ == '__main__':
 
     input_devices = [
         huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout=5),
-        meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22, timeout=1),
-        meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21, timeout=5),
-        meters.DDS238_1_ZN(house_meter_name, usb_adapter, 23, timeout=5),
+        meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22),
+        meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21),
+        meters.DDS238_1_ZN(house_meter_name, usb_adapter, 23),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)

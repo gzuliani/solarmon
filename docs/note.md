@@ -575,7 +575,7 @@ Lo lascio proseguire per verificare se il tasso d'errori diminuisce con la nuova
 
 Tasso odierno con `delay_between_reads` a 1: 132/29*24=109 errori/giorno.
 
-## 20221003
+## 20221004
 
 Dopo circa una giornata sembra confermato che la nuova impostazione non ha sortito alcun effetto:
 
@@ -583,3 +583,9 @@ Dopo circa una giornata sembra confermato che la nuova impostazione non ha sorti
     2022-10-02T17:21:02 2022-10-03T22:20:01 28:58:59 131    108.477175360658 delay_between_reads=1
     2022-10-03T22:20:02 2022-10-04T19:13:37 20:53:35 93     106.829754702437 delay_between_reads=3
 
+## 20221005
+
+L'aumento del timeout sembra aver peggiorato le cose:
+
+    start               end                 duration errors errors/day       note
+    2022-10-04T21:05:18 2022-10-05 08:28:20 11:23:02 78     164.442926162119 -
