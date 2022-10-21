@@ -36,8 +36,8 @@ class Inverter(Device):
             Register('V-L3-inverter',                          'U16',  'V',    10, 32071, 1), # Phase C voltage
             Register('P-inverter',                             'I32', 'kW',  1000, 32080, 2), # Active power
             Register('T-inverter',                             'I16', '°C',    10, 32087, 1), # Internal temperature
-            Register('E-PV-total',                             'U32', 'kW',   100, 32106, 2), # Accumulated energy yield
-            Register('E-PV-day',                               'U32', 'kW',   100, 32114, 2), # Daily energy yield
+            Register('E-inverter-total',                       'U32', 'kW',   100, 32106, 2), # Accumulated energy yield
+            Register('E-inverter-day',                         'U32', 'kW',   100, 32114, 2), # Daily energy yield
         ])
         self._add_register_array([
             Register('V-L1-grid',                              'I32',   'V',   10, 37101, 2), # Grid voltage (A phase)
