@@ -8,7 +8,6 @@ import time
 
 import clock
 import emon
-import huawei_sun2000
 import meters
 import modbus
 import persistence
@@ -16,14 +15,13 @@ import persistence
 sampling_period = 30 # seconds
 
 # device codes -- should be unique
-inverter_name = 'inverter'
-heat_pump_meter_name = 'heat-pump'
-old_pv_meter_name = 'old-pv'
-house_meter_name = 'house'
+meter_1_name = 'meter-1'
+meter_2_name = 'meter-2'
+meter_3_name = 'meter-3'
 
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
-api_key = '92361dc1aacccbed7c284d6387bf9b54'
+api_key = '****'
 
 # csv
 def csv_file_path():
@@ -63,17 +61,14 @@ if __name__ == '__main__':
             datefmt='%Y-%m-%dT%H:%M:%S')
     logging.info('Booting...')
 
-    huawei_wifi = huawei_sun2000.HuaweiWifi('192.168.200.1', '6607')
     usb_adapter = modbus.UsbRtuAdapter('/dev/ttyUSB0', delay_between_reads=3)
 
-    huawei_wifi.connect()
     usb_adapter.connect()
 
     input_devices = [
-        huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout=5),
-        meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22),
-        meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21),
-        meters.DDS238_1_ZN(house_meter_name, usb_adapter, 23),
+        meters.SDM120M(meter_1_name, usb_adapter, 31),
+        meters.SDM120M(meter_2_name, usb_adapter, 32),
+        meters.SDM120M(meter_3_name, usb_adapter, 33),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)
@@ -100,6 +95,5 @@ if __name__ == '__main__':
                         device.name, e))
 
     logging.info('Shutting down...')
-    huawei_wifi.disconnect()
     usb_adapter.disconnect()
     logging.info('Exiting...')

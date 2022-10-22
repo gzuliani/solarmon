@@ -1,6 +1,6 @@
 import time
 
-from modbus import Device, Register, TcpLink
+from modbus import HoldingRegisters, Register, TcpLink
 
 class HuaweiWifi(TcpLink):
 
@@ -13,10 +13,10 @@ class HuaweiWifi(TcpLink):
         time.sleep(self._boot_time)
 
 
-class Dongle(Device):
+class Dongle(HoldingRegisters):
 
     def __init__(self, name, connection, addr, timeout=5):
-        Device.__init__(self, name, connection, addr, timeout)
+        HoldingRegisters.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
             Register('total_input_power',                      'U32', 'kW',  1000, 37498, 2), # Total input power
             Register('load_power',                             'U32', 'kW',  1000, 37500, 2), # Load power
@@ -25,10 +25,10 @@ class Dongle(Device):
         ])
 
 
-class Inverter(Device):
+class Inverter(HoldingRegisters):
 
     def __init__(self, name, connection, addr, timeout=5):
-        Device.__init__(self, name, connection, addr, timeout)
+        HoldingRegisters.__init__(self, name, connection, addr, timeout)
         self._add_register_array([
             Register('P-PV',                                   'I32', 'kW',  1000, 32064, 2), # Input power
             Register('V-L1-inverter',                          'U16',  'V',    10, 32069, 1), # Phase A voltage

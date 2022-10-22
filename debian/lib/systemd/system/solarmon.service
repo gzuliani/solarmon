@@ -1,0 +1,14 @@
+[Unit]
+Description=Solar plant monitor
+After=network-online.target syslog.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/solarmon/solarmon
+ExecStart=/usr/bin/python3 /home/pi/solarmon/solarmon/main.py
+StandardOutput=syslog
+StandardError=syslog
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

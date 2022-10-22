@@ -1,5 +1,8 @@
 import logging
+import struct
 from pymodbus.client.sync import ModbusSerialClient, ModbusTcpClient
+from pymodbus.constants import Endian
+from pymodbus.payload import BinaryPayloadDecoder
 
 import clock
 
@@ -47,6 +50,11 @@ class Connection:
         return self._client.read_holding_registers(
                 addr, size, timeout=timeout, unit=unit)
 
+    def read_input_registers(self, addr, size, timeout, unit):
+        self._read_timer.wait_next_tick()
+        return self._client.read_input_registers(
+                addr, size, timeout=timeout, unit=unit)
+
 
 class UsbRtuAdapter(Connection):
 
@@ -83,6 +91,8 @@ class Register:
             result = self._to_uint16(values)
         elif self.type == 'I16':
             result = self._to_int16(values)
+        elif self.type == 'F32':
+            result = self._to_float32(values)
         else:
             raise RuntimeError('unsupported type {}'.format(self.type))
         return result / self.gain
@@ -106,6 +116,12 @@ class Register:
         if (result & 0x8000) == 0x8000:
             result = -((result ^ 0xFFFF) + 1)
         return result
+
+    def _to_float32(self, values):
+        assert len(values) == 2
+        return BinaryPayloadDecoder.fromRegisters(
+            values, byteorder=Endian.Big, wordorder=Endian.Big
+            ).decode_32bit_float()
 
 
 class Device:
@@ -140,7 +156,7 @@ class Device:
         base_addr = min(r.addr for r in registers)
         past_last_addr = max(r.addr + r.size for r in registers)
         size = past_last_addr - base_addr
-        response = self._read_holding_registers(base_addr, size)
+        response = self._read_register_span(base_addr, size)
         data = []
         for r in registers:
             pos = r.addr - base_addr
@@ -148,14 +164,34 @@ class Device:
         return data
 
     def _read_sparse_registers(self, registers):
-        return [r.decode(self._read_register_value(r)) for r in registers]
+        return [r.decode(self._read_register(r)) for r in registers]
 
-    def _read_register_value(self, register):
-        return self._read_holding_registers(register.addr, register.size)
+    def _read_register(self, register):
+        return self._read_register_span(register.addr, register.size)
 
-    def _read_holding_registers(self, addr, size):
-        response = self.connection.read_holding_registers(
-                addr, size, self._timeout, unit=self.addr)
+    def _read_register_span(self, addr, size):
+        response = self._read_registers(addr, size, self._timeout, self.addr)
         if response.isError():
             raise RuntimeError(response)
         return response.registers
+
+    def _read_registers(self, addr, size, timeout, unit):
+        raise NotImplementedError
+
+
+class InputRegisters(Device):
+
+    def __init__(self, name, connection, addr, timeout):
+        Device.__init__(self, name, connection, addr, timeout)
+
+    def _read_registers(self, addr, size, timeout, unit):
+        return self.connection.read_input_registers(addr, size, timeout, unit)
+
+
+class HoldingRegisters(Device):
+
+    def __init__(self, name, connection, addr, timeout):
+        Device.__init__(self, name, connection, addr, timeout)
+
+    def _read_registers(self, addr, size, timeout, unit):
+        return self.connection.read_holding_registers(addr, size, timeout, unit)
