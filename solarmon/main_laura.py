@@ -15,9 +15,9 @@ import persistence
 sampling_period = 30 # seconds
 
 # device codes -- should be unique
-meter_1_name = 'meter-1'
-meter_2_name = 'meter-2'
-meter_3_name = 'meter-3'
+meter_1_name = 'house'
+meter_2_name = 'heat-pump'
+meter_3_name = 'pv'
 
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
