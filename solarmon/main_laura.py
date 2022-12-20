@@ -61,14 +61,14 @@ if __name__ == '__main__':
             datefmt='%Y-%m-%dT%H:%M:%S')
     logging.info('Booting...')
 
-    usb_adapter = modbus.UsbRtuAdapter('/dev/ttyUSB0', delay_between_reads=3)
+    rs485_bus = modbus.UsbRtuAdapter('/dev/ttyUSB0', delay_between_reads=3)
 
-    usb_adapter.connect()
+    rs485_bus.connect()
 
     input_devices = [
-        meters.SDM120M(meter_1_name, usb_adapter, 31),
-        meters.SDM120M(meter_2_name, usb_adapter, 32),
-        meters.SDM120M(meter_3_name, usb_adapter, 33),
+        meters.SDM120M(meter_1_name, rs485_bus, 31),
+        meters.SDM120M(meter_2_name, rs485_bus, 32),
+        meters.SDM120M(meter_3_name, rs485_bus, 33),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)
@@ -95,5 +95,5 @@ if __name__ == '__main__':
                         device.name, e))
 
     logging.info('Shutting down...')
-    usb_adapter.disconnect()
+    rs485_bus.disconnect()
     logging.info('Exiting...')

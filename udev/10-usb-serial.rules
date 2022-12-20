@@ -1,0 +1,4 @@
+# CP2102/CP2109 UART Bridge Controller
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyUSB_RS485"
+# OBD/USB "FORD modified ELM327" Adapter
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="ttyUSB_HSCAN"

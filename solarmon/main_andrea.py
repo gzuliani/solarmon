@@ -64,16 +64,16 @@ if __name__ == '__main__':
     logging.info('Booting...')
 
     huawei_wifi = huawei_sun2000.HuaweiWifi('192.168.200.1', '6607')
-    usb_adapter = modbus.UsbRtuAdapter('/dev/ttyUSB0', delay_between_reads=3)
+    rs485_bus = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
 
     huawei_wifi.connect()
-    usb_adapter.connect()
+    rs485_bus.connect()
 
     input_devices = [
         huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout=5),
-        meters.JSY_MK_323(heat_pump_meter_name, usb_adapter, 22),
-        meters.DDS238_1_ZN(old_pv_meter_name, usb_adapter, 21),
-        meters.DDS238_1_ZN(house_meter_name, usb_adapter, 23),
+        meters.JSY_MK_323(heat_pump_meter_name, rs485_bus, 22),
+        meters.DDS238_1_ZN(old_pv_meter_name, rs485_bus, 21),
+        meters.DDS238_1_ZN(house_meter_name, rs485_bus, 23),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)
@@ -101,5 +101,5 @@ if __name__ == '__main__':
 
     logging.info('Shutting down...')
     huawei_wifi.disconnect()
-    usb_adapter.disconnect()
+    rs485_bus.disconnect()
     logging.info('Exiting...')
