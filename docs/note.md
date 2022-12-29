@@ -589,3 +589,404 @@ L'aumento del timeout sembra aver peggiorato le cose:
 
     start               end                 duration errors errors/day       note
     2022-10-04T21:05:18 2022-10-05 08:28:20 11:23:02 78     164.442926162119 -
+
+## 20221208
+
+Si apre un nuovo fronte, l'acquisizione dei parametri di funzionamento della pompa di calore, una Daikin Altherma.
+
+I primi riferimenti sono dei repository di alcune implementazioni già esistenti:
+
+* https://github.com/zanac/pyHPSU
+* https://github.com/Spanni26/pyHPSU
+* https://github.com/raomin/ESPAltherma
+
+Sembra assodato che il protocollo CAN non sia documentato, non c'è nulla di ufficiale reperibile in rete.
+
+## 20221209
+
+Un collaboratore di zanac spiega nel dettaglio come hanno proceduto. Hanno optato per una daugther board CAN/Ethernet (PiCAN2):
+
+* https://lamiacasaelettrica.com/daikin-hpsu-compact-hack-prima-parte/
+* https://lamiacasaelettrica.com/daikin-hpsu-compact-hack-seconda-parte/
+* https://lamiacasaelettrica.com/daikin-hpsu-compact-hack-terza-parte/
+
+I tre articoli sono l'estratto del thread:
+
+* https://cercaenergia.forumcommunity.net/?t=58409485
+
+Le prime due implementazioni (zanac e Spanni26) sfruttano l'interfaccia CAN (connettore J13) nella doppia modalità Ethernet/CAN (con la daughter board) e seriale/OBD con un adattatore basato sull'integrato ELM327. Il terzo (raomin) sfrutta invece una connessione seriale (connettore X10A) che, a detta di Spanni26, è particolarmente inefficiente rispetto al CAN, richiedendo centinaia di millisecondi per la lettura di un singolo parametro.
+
+## 20221210
+
+Trovata una nuova implementazione che utilizza una connessione seriale proprietaria Daikin;
+
+* https://github.com/Arnold-n/P1P2Serial (o https://github.com/budulinek/Daikin-P1P2---UDP-Gateway, README.md più chiaro)
+
+La connessione al bus P1P2 elettricamente non è banale (Arnold-n suggerisce l'uso di optoisolatori) e per questa ragione immediatamente scartata.
+
+## 20221211
+
+Andrea ha in casa un convertitore seriale/OBD basato sull'ELM327: è un "FORD modified ELM327". Ottimo, sarà oggetto di una verifica di fattibilità quanto prima.
+
+## 20221212
+
+[Studio delle specifiche dell'ELM327]
+
+## 20221213
+
+I comandi di inizializzazione dell'ELM327 secondo i sorgenti di Spanni26 (più recenti rispetto a quelli di zanac, ma di fatto quasi identici) risultano essere i seguenti:
+
+    ATE0        (ignora il valore di ritorno)
+    AT PP 2F ON (15 tentativi a distanza di 1 secondo)
+    AT D        (commentato, 1 unico tentativo)
+    AT SP C     (15 tentativi a distanza di 1 secondo)
+
+I comandi inviati per l'interrogazione del parametro "water_pressure" sono invece:
+
+    ATSH190              (resetta l'interfaccia in caso d'errore)
+    31 00 1C 00 00 00 00
+
+Le sequenze `190` e `31 00 1C 00 00 00 00` cambiano da parametro a parametro e sono ricavate da un file JSON che è evidentemente frutto di un reverse-engineering (cfr. file [commands_hpsu.json](https://github.com/Spanni26/pyHPSU/blob/master/etc/pyHPSU/commands_hpsu.json)).
+
+Il codice verifica che il primo carattere della risposta all'ultimo comando corrisponda al primo del comando (`3`, in questo caso); se no la risposta diventa `KO`. Se il controllo è soddisfatto, la risposta è la stringa ricevuta dall'ELM327.
+
+Qual'è la semantica dei comandi?
+
+    ATE0                 Echo off
+    AT PP 2F ON          Enable Prog Parameter "2F" -- Protocol C (USER2) CAN baud rate divisor
+    AT D                 Set all to defaults
+    AT SP C              Set protocol to "C" -- User2 CAN (11* bit ID, 50* kbaud)
+
+    ATSH190              Set Header to "190"
+    31 00 1C 00 00 00 00 Daikin command
+
+## 20221214
+
+Collegamenti elettrici connettore J13/pres OBD:
+
+    CAN-H ...... pin 6
+    CAN-L ...... pin 14
+    CAN-GND .... pin 5
+    CAN-VCC .... <non necessario>
+
+L'interruttore HS-CAN/MS-CAN sul convertitore OBD/USB "Ford modified ELM327" va impostato su "HS-CAN".
+
+HS-CAN è la linea CAN ad alta velocità (detta anche "high-speed CAN" o "CAN C"), quella che insiste sui pin 6/14 della presa OBD; la linea MS-CAN ("mid-speed CAN" o "CAN B") è invece presente sui pin 3/11.
+
+FORD modified ELM327: occorre verificare che non necessiti della tensione veicolo di 12V per funzionare; sarebbe interessante in questo senso conoscere la tensione al pin CAN VCC del connettore J13 della scheda della pompa di calore.
+
+La speranza ora è che la versione dell'integrato montato nell'adattatore supporti il comando PP (alcuni utenti hanno acquistato delle versioni dell'adattatore che non consentono di modificare l'impostazione del protocollo, in particolare non permettono la selezione del protocollo C - "User2 CAN").
+
+## 20221218
+
+Prima prova di comunicazione con l'adattatore da PC con putty a 500Kpbs (Andrea si ricorda che l'ultima volta che lo aveva utilizzato per analizzare la Focus aveva impostato questa velocità):
+
+    AT PPS
+    >C:81 N 2D:04 N 2E:80 F 2F:0A F
+
+L'adattatore risponde; come reagisce alla sequenza di inizializzazione per la CAN Daikin?
+
+    ATE0
+    AT PP 2F ON
+    AT SP C
+
+Tutti i comandi hanno risposto OK! Passando a Termite, che conosco meglio, dopo averlo opportunamente configurato si legge:
+
+    >ATE0
+    OK
+    
+    >ATPPS
+    00:FF F 01:FF F 02:FF F 03:32 F
+    04:01 F 05:FF F 06:F1 F 07:09 F
+    08:FF F 09:00 F 0A:0A F 0B:FF F
+    0C:08 N 0D:0D F 0E:9A F 0F:FF F
+    10:0D F 11:00 F 12:FF F 13:32 F
+    14:FF F 15:0A F 16:FF F 17:92 F
+    18:00 F 19:28 F 1A:FF F 1B:FF F
+    1C:FF F 1D:FF F 1E:FF F 1F:FF F
+    20:FF F 21:FF F 22:FF F 23:FF F
+    24:00 F 25:00 F 26:00 F 27:FF F
+    28:FF F 29:FF F 2A:38 N 2B:02 F
+    2C:81 N 2D:04 N 2E:80 F 2F:0A N
+    >ATE0
+    OK
+    
+    >AT PP 2F ON
+    OK
+    
+    >AT SP C
+    OK
+
+E' ora di cablare il lato OBD:
+
+    cavo blu:          CAN-H ...... pin 6
+    cavo marrone:      CAN-L ...... pin 14
+    cavo giallo/verde: CAN-GND .... pin 5
+
+Cosa accade se si invia la richiesta di lettura del parametro "water_pressure"?
+
+    >ATSH190
+    OK
+    
+    >31 00 1C 00 00 00 00
+    CAN ERROR
+
+Forse va inviata la sequenza binaria anziché quella esadecimale? Qualcosa in questo caso arriva (la sequenza è stata inviata attraverso il comando "Send File" dopo aver preparato un file con il contenuto binario equivalente), ma non è leggibile -- non è una stringa ASCCI, e la cosa tutto sommato è anche comprensibile; in ogni caso non è `CAN ERROR`, e questo fa ben sperare.
+
+## 20221219
+
+Linux assegna il dispositivo /dev/ttyUSB0 al primo dispositivo USB che viene connesso al PC; poiché ora ci saranno due dispositivi USB collegati alla Raspberry (adattatore USB/RS485 e USB/OBD) potrebbe accadere che a volte i due adattatori verranno montati in un certo ordine, altre volte in ordine inverso; sarebbe opportuno assegnare ad ognuno dei due adattatori un nome fisso e univoco.
+
+Non è difficile farlo, è sufficiente ricavare `idVendor` e `idProduct` dei due adattatori e usare queste informazioni per fare in modo che il sistema operativo associ loro un nome simbolico univoco. I due attributi sono ricavabili attraverso il comando `lsusb` e/o `dmesg` e/o `udevadm` (da lanciare dopo aver collegato i due dispositivi), dopodiché si procede alla creazione del file `/etc/udev/rules.d/10-usb-serial.rules`:
+
+    sudo nano /etc/udev/rules.d/10-usb-serial.rules
+
+Il file contiene le istruzioni per creare un link simbolico per ognuno dei due dispositivi:
+
+    SUBSYSTEM=="tty", ATTRS{idProduct}=="....", ATTRS{idVendor}=="....", SYMLINK+="ttyUSB_MYDEV1"
+    SUBSYSTEM=="tty", ATTRS{idProduct}=="....", ATTRS{idVendor}=="....", SYMLINK+="ttyUSB_MYDEV2"
+
+Per rendere effettiva la nuova configurazione dare il comando:
+
+    sudo udevadm trigger
+
+Verificare che i link simbolici appaiono automaticamente quando si aggiunge un dispositivo, così come all'avvio, se i dispositivi sono già collegati prima dell'accensione della Raspberry Pi.
+
+Per distinguere due dispositivi con identici `idVendor` e `idProduct` è necessario individuare un terzo attributo discriminante e modificare conseguentemente il file `.rules`; fortunatamente non è questo il caso:
+
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyUSB_RS485"
+    SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", SYMLINK+="ttyUSB_HSCAN"
+
+L'effetto è quello desiderato:
+
+    pi@emonpi:/ $ ls -al /dev/ttyUSB*
+    crw-rw---- 1 root dialout 188, 0 Dec 20 21:54 /dev/ttyUSB0
+    crw-rw---- 1 root dialout 188, 1 Dec 20 21:53 /dev/ttyUSB1
+    lrwxrwxrwx 1 root root         7 Dec 20 21:53 /dev/ttyUSB_HSCAN -> ttyUSB1
+    lrwxrwxrwx 1 root root         7 Dec 20 21:53 /dev/ttyUSB_RS485 -> ttyUSB0
+
+## 20221221
+
+La comunicazione seriale PC/ELM327 è di tipo 8,N,1 con baudrate predefinito di 38400; l'integrato ELM327 supporta tuttavia 6 baudrate:
+
+* 19.2
+* 38.4
+* 57.6
+* 115.2
+* 230.4
+* 500
+
+La velocità viene selezionata scrivendo l'apposito divisore nel registro `C0` con il comando:
+
+    AT PP C0 SV xx
+
+Per rendere effettiva la nuova velocità è necessario attivarla, quindi resettare l'integrato:
+
+    AT PP C0 ON
+    AT Z
+
+La velocità del bus CAN per il protocollo `C` "User1 CAN" è regolata dal registro `2F`, che va impostato secondo le stesse modalità:
+
+    AT PP 2F SV xx
+    AT PP 2F ON
+    AT Z
+
+In questo caso il comando di reset può essere sostituito dal comando di "Warm start" che ha lo stesso effetto ma è più veloce (rispetto al reset completo il "Warm start" non effettua il test dei LED, che richiede circa 1 secondo per essere completato):
+
+    AT PP 2F SV xx
+    AT PP 2F ON
+    AT WS
+
+## 20221222
+
+L'adattatore seriale/OBD in questo momento è configurato per una CAN a 50Kbps; il parametro programmabile `2F`, che risulta attivo (cfr. `N` accanto al parametro), è infatti valorizzato a `0A`:
+
+    >ATPPS
+    00:FF F 01:FF F 02:FF F 03:32 F
+    04:01 F 05:FF F 06:F1 F 07:09 F
+    08:FF F 09:00 F 0A:0A F 0B:FF F
+    0C:08 N 0D:0D F 0E:9A F 0F:FF F
+    10:0D F 11:00 F 12:FF F 13:32 F
+    14:FF F 15:0A F 16:FF F 17:92 F
+    18:00 F 19:28 F 1A:FF F 1B:FF F
+    1C:FF F 1D:FF F 1E:FF F 1F:FF F
+    20:FF F 21:FF F 22:FF F 23:FF F
+    24:00 F 25:00 F 26:00 F 27:FF F
+    28:FF F 29:FF F 2A:38 N 2B:02 F
+    2C:81 N 2D:04 N 2E:80 F 2F:0A N
+
+Nè i sorgenti di zanac né quelli di Spanni26 si preoccupano di impostare questo parametro, forse perché fatto una volta per tutte all'inizio (tutti i parametri programmabili sono persistenti e il loro valore non viene perso nemmeno dopo uno spegnimento). Forse la ragione per cui le sequenze esadecimali non sono state riconosciute durante il primo test dipende dall'errata impostazione della velocità del bus e non dal fatto che l'ELM327 si aspetta delle sequenze binarie pure.
+
+## 20221224
+
+Di seguito l'esito di una sessione di monitoraggio con le impostazioni attuali:
+
+    >AT H1
+    OK
+
+    >AT D1
+    OK
+
+    >AT MA
+    000 0 RTR <RX ERROR
+    000 0 RTR
+    078 0 RTR <RX ERROR
+    078 0 RTR
+    078 0 RTR <RX ERROR
+    STOPPED
+
+Effettivamente c'è qualcosa che non va. Portando la velocità del bus CAN a 20Kbps la situazione cambia:
+
+    >AT PP 2F SV 19
+    OK
+
+    >AT PP 2F ON
+    OK
+
+    >AT WS
+    >LM327 v1.4
+
+    >AT PPS
+    ... 2F:19 N
+
+    >AT MA
+    31 00 FA 06 95 00 00
+    22 0A FA 06 95 00 00
+    61 00 FA 01 1A 00 00
+    22 0A FA 01 1A 00 00
+    61 00 FA 13 58 00 00
+    22 0A FA 13 58 00 00
+    STOPPED.
+    
+Funziona! E le interrogazioni? Che risposta si ottiene alla richiesta della temperatura esterna?
+
+    >ATSH310
+    OK
+
+    >61 00 FA 0A 0C 00 00
+    22 0A FA 01 1A 00 00
+    22 0A FA 13 58 00 00
+    22 0A FA 01 EC 00 00
+    22 0A FA 01 1E 00 00
+    22 0A FA 13 53 00 00
+    22 0A FA 0A 0C 00 74 -> 11.6°
+
+    >61 00 FA 0A 0C 00 00
+    NO DATA
+
+    >61 00 FA 0A 0C 00 00
+    NO DATA
+
+Mhm, strano. Cosa succede se si richiede il valore di pressione dell'acqua?
+
+    >ATSH190
+    OK
+
+    >31 00 1C 00 00 00 00
+    NO DATA
+
+    >31 00 1C 00 00 00 00
+    22 0A 0C 00 6F 00 00 -> 111
+
+    >31 00 1C 00 00 00 00
+    22 0A 0C 00 6F 00 00 -> 111
+
+    >31 00 1C 00 00 00 00
+    22 0A 0C 00 70 00 00 -> 112
+
+    >31 00 1C 00 00 00 00
+    NO DATA
+
+`NO DATA` è la risposta dell'ELM327 quando scade il timeout di lettura, che di default è pari a 205ms.
+
+Il timeout è controllato dal parametro programmabile `03` a passi di 4.096ms; per esempio, per impostare il timeout a 400ms è sufficiente impostare il parametro a `64` (100 decimale). Anche innalzandolo al massimo (`FF`, corrispondente a poco più di 1 secondo), e disattivando il controllo adattativo dei timeout la situazione non migliora, nella maggior parte dei casi la risposta che si ottiene è `NO DATA` oppure dei pacchetti non correlati al parametro richiesto.
+
+I `NO DATA` non dovrebbero dipendere da problemi relativi agli identificativi dei parametri: per quando zanac e Spanni26 utilizzino un modello diverso di pompa di calore, i pacchetti acquisiti per la Altherma differiscono da quelli riportati nelle analisi di zanac solamente per i valori assunti dai parametri, ma gli identificativi corrispondono perfettamente, anche quelli dei nodi della rete.
+
+Come controprova, il codice di Spanni26 soffre dello stesso problema con questa pompa di calore:
+
+    pi@emonpi:~/pyHPSU $ python3 pyHPSU.py -d ELM327 -p /dev/ttyUSB1 -c t_hs
+    warning - sending cmd 31 00 FA 01 D6 00 00 (rc:NO DATA)
+    warning - retry 1 command t_hs
+    warning - sending cmd 31 00 FA 01 D6 00 00 (rc:NO DATA)
+    warning - retry 2 command t_hs
+    warning - sending cmd 31 00 FA 01 D6 00 00 (rc:NO DATA)
+
+Nemmeno la velocità di comunucazione del canale seriale ha effetto sui `NO DATA`.
+
+Che sia una questione di priorità? Nel datasheet dell'ELM327 si legge:
+
+> You may find that some requests, being of a low
+> priority, may not be answered immediately, possibly
+> causing a 'NO DATA' result. In these cases, you may
+> want to adjust the timeout value, perhaps first trying
+> the maximum (ie use AT ST FF). Many vehicles will
+> simply not support these extra addressing modes.
+
+## 20221226
+
+Sto cominciando a pensare che il problema potrebbe essere imputabile all'ELM327. Quello a disposizione ha versione 1.4, sufficiente per consentire il cambio di protocollo, ma nel forum cercaenergia si consiglia la versione 2.0 o superiore. Un collega ne ha un paio da potermi prestare, nel frattempo mi chiedo se uno "sniffing" passivo possa fornire tutti i dati che interessano ad Andrea. Del resto per il momento non c'è interesse a modificare i parametri di funzionamento della pompa.
+
+Statistiche raccolte dopo un paio d'ore di monitoraggio del bus CAN:
+
+* eventi registrati: 1163
+* errori: 210 -- quasi sicuramente imputabili al codice
+* pacchetti `t_ext`: 717
+* pacchetti `sw_vers_01`: 34
+* pacchetti `mode_01`: 34
+* pacchetti `water_pressure`: 34
+* pacchetti `t_hc_set`: 34
+* pacchetti `t_hs`: 33
+* pacchetti `t_dhw`: 33
+
+La temperatura esterna (`t_ext`) transita ogni 10s; gli altri parametri si presentano con un pattern regolare quanto inaspettato: due letture a distanza di un minuto intervallate da un intervallo di silenzio di sei minuti. Questi sono i primi rilievi registrati:
+
+    15:12:01
+    15:13:10
+    15:19:02
+    15:20:10
+    15:26:02
+    15:27:10
+    15:33:01
+    15:34:10
+    15:40:02
+    15:41:14
+    ...
+
+----
+
+Grazie al comando `PB` risulta più comodo utilizzare il protocollo `B` rispetto al `C`; la configurazione, per quanto non persistente, è infatti più immediata:
+
+    AT PB 80 19
+    AT SP B
+
+Il cambio di protocollo non produce effetti collaterali sullo sniffing, al momento viene promosso a soluzione preferita.
+
+----
+
+Il comando `ATBD` mostra il contenuto del buffer di trasmissione/ricezione. Invocando questo comando subito dopo la ricezione di un pacchetto, nel buffer sembra ci siano sempre 11 byte:
+
+    >ATMA
+    180 7 22 0A 0C 00 6C 00 00
+    STOPPED
+    >ATBD
+    0B 00 00 01 80 22 0A 0C 00 6C 00 00 00
+
+Lo stesso comando lanciato dopo aver ricevuto un `NO DATA` in risposta ad una interrogazione, ne riporta 12:
+
+    >ATSH190
+    OK
+    >31 00 1C 00 00 00 00
+    NO DATA
+    >ATBD
+    0C 00 00 01 90 31 00 1C 00 00 00 00 00
+
+Una discrepanza inattesa, per simmetria me ne sarei aspettati 11.
+
+# 20221228
+
+Approntato una versione dello sniffer con un thread di polling che pubblica i valori dei parametri raccolti.
+
+# 20221229
+
+Rifattorizzato il codice suddividendolo nelle componenti elm327.py, daikin_altherma.py e daikin_altherma_sniffer.py.
