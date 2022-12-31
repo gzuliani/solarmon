@@ -5,33 +5,29 @@ import threading
 from elm327 import ELM327
 
 
-class Connection:
+class SerialConnection:
 
     def __init__(self, port, baudrate):
         self._name = port
         self._baudrate = baudrate
-        self._connected = False
+        # do not open the serial port now!
+        self.serial = serial.Serial(port=None, baudrate=baudrate, timeout=1)
+        self.serial.port = port
 
     def connect(self):
-        if not self._connected:
+        if not self.serial.is_open:
             logging.info('Connecting to {}...'.format(self._name))
             try:
-                self._port = serial.Serial(self._name, self._baudrate, timeout=1)
-                error = ''
-            except Exception as e:
-                error = str(e)
-            if error:
-                logging.info('Could not connect, reason: {}'.format(error))
-            else:
-                self._connected = True
+                self.serial.open()
                 logging.info('Connection established!')
+            except Exception as e:
+                logging.info('Could not connect, reason: {}'.format(e))
 
     def disconnect(self):
-        if self._connected:
+        if self.serial.is_open:
             try:
                 logging.info('Disconnecting from {}...'.format(self._name))
-                self._port.close()
-                self._connected = False
+                self.serial.close()
                 logging.info('Connection closed!'.format())
             except Exception as e:
                 logging.info('Could not disconnect, reason: {}...'.format(e))
@@ -39,12 +35,6 @@ class Connection:
     def reconnect(self):
         self.disconnect()
         self.connect()
-
-    def read_until(self, sentinel):
-        return self._port.read_until(sentinel)
-
-    def write(self, data):
-        return self._port.write(data)
 
 
 class Register:
@@ -101,7 +91,7 @@ class ObdSniffer(threading.Thread):
         threading.Thread.__init__(self)
         self.name = name
         self.connection = connection
-        self._elm327 = ELM327(self.connection)
+        self._elm327 = ELM327(self.connection.serial)
         self._elm327.warm_start()
         self._elm327.echo_off()
         self._elm327.linefeeds_off()
