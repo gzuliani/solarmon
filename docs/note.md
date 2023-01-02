@@ -604,7 +604,7 @@ Sembra assodato che il protocollo CAN non sia documentato, non c'è nulla di uff
 
 ## 20221209
 
-Un collaboratore di zanac spiega nel dettaglio come hanno proceduto. Hanno optato per una daugther board CAN/Ethernet (PiCAN2):
+Un collaboratore di Zanac spiega nel dettaglio come hanno proceduto. Hanno optato per una daugther board CAN/Ethernet (PiCAN2):
 
 * https://lamiacasaelettrica.com/daikin-hpsu-compact-hack-prima-parte/
 * https://lamiacasaelettrica.com/daikin-hpsu-compact-hack-seconda-parte/
@@ -614,7 +614,7 @@ I tre articoli sono l'estratto del thread:
 
 * https://cercaenergia.forumcommunity.net/?t=58409485
 
-Le prime due implementazioni (zanac e Spanni26) sfruttano l'interfaccia CAN (connettore J13) nella doppia modalità Ethernet/CAN (con la daughter board) e seriale/OBD con un adattatore basato sull'integrato ELM327. Il terzo (raomin) sfrutta invece una connessione seriale (connettore X10A) che, a detta di Spanni26, è particolarmente inefficiente rispetto al CAN, richiedendo centinaia di millisecondi per la lettura di un singolo parametro.
+Le prime due implementazioni (Zanac e Spanni26) sfruttano l'interfaccia CAN (connettore J13) nella doppia modalità Ethernet/CAN (con la daughter board) e seriale/OBD con un adattatore basato sull'integrato ELM327. Il terzo (raomin) sfrutta invece una connessione seriale (connettore X10A) che, a detta di Spanni26, è particolarmente inefficiente rispetto al CAN, richiedendo centinaia di millisecondi per la lettura di un singolo parametro.
 
 ## 20221210
 
@@ -634,7 +634,7 @@ Andrea ha in casa un convertitore seriale/OBD basato sull'ELM327: è un "FORD mo
 
 ## 20221213
 
-I comandi di inizializzazione dell'ELM327 secondo i sorgenti di Spanni26 (più recenti rispetto a quelli di zanac, ma di fatto quasi identici) risultano essere i seguenti:
+I comandi di inizializzazione dell'ELM327 secondo i sorgenti di Spanni26 (più recenti rispetto a quelli di Zanac, ma di fatto quasi identici) risultano essere i seguenti:
 
     ATE0        (ignora il valore di ritorno)
     AT PP 2F ON (15 tentativi a distanza di 1 secondo)
@@ -815,7 +815,7 @@ L'adattatore seriale/OBD in questo momento è configurato per una CAN a 50Kbps; 
     28:FF F 29:FF F 2A:38 N 2B:02 F
     2C:81 N 2D:04 N 2E:80 F 2F:0A N
 
-Nè i sorgenti di zanac né quelli di Spanni26 si preoccupano di impostare questo parametro, forse perché fatto una volta per tutte all'inizio (tutti i parametri programmabili sono persistenti e il loro valore non viene perso nemmeno dopo uno spegnimento). Forse la ragione per cui le sequenze esadecimali non sono state riconosciute durante il primo test dipende dall'errata impostazione della velocità del bus e non dal fatto che l'ELM327 si aspetta delle sequenze binarie pure.
+Nè i sorgenti di Zanac né quelli di Spanni26 si preoccupano di impostare questo parametro, forse perché fatto una volta per tutte all'inizio (tutti i parametri programmabili sono persistenti e il loro valore non viene perso nemmeno dopo uno spegnimento). Forse la ragione per cui le sequenze esadecimali non sono state riconosciute durante il primo test dipende dall'errata impostazione della velocità del bus e non dal fatto che l'ELM327 si aspetta delle sequenze binarie pure.
 
 ## 20221224
 
@@ -901,7 +901,7 @@ Mhm, strano. Cosa succede se si richiede il valore di pressione dell'acqua?
 
 Il timeout è controllato dal parametro programmabile `03` a passi di 4.096ms; per esempio, per impostare il timeout a 400ms è sufficiente impostare il parametro a `64` (100 decimale). Anche innalzandolo al massimo (`FF`, corrispondente a poco più di 1 secondo), e disattivando il controllo adattativo dei timeout la situazione non migliora, nella maggior parte dei casi la risposta che si ottiene è `NO DATA` oppure dei pacchetti non correlati al parametro richiesto.
 
-I `NO DATA` non dovrebbero dipendere da problemi relativi agli identificativi dei parametri: per quando zanac e Spanni26 utilizzino un modello diverso di pompa di calore, i pacchetti acquisiti per la Altherma differiscono da quelli riportati nelle analisi di zanac solamente per i valori assunti dai parametri, ma gli identificativi corrispondono perfettamente, anche quelli dei nodi della rete.
+I `NO DATA` non dovrebbero dipendere da problemi relativi agli identificativi dei parametri: per quando Zanac e Spanni26 utilizzino un modello diverso di pompa di calore, i pacchetti acquisiti per la Altherma differiscono da quelli riportati nelle analisi di Zanac solamente per i valori assunti dai parametri, ma gli identificativi corrispondono perfettamente, anche quelli dei nodi della rete.
 
 Come controprova, il codice di Spanni26 soffre dello stesso problema con questa pompa di calore:
 
@@ -960,7 +960,7 @@ Grazie al comando `PB` risulta più comodo utilizzare il protocollo `B` rispetto
     AT PB 80 19
     AT SP B
 
-Il cambio di protocollo non produce effetti collaterali sullo sniffing, al momento viene promosso a soluzione preferita.
+Il cambio di protocollo non produce effetti collaterali sullo sniffing, al momento viene promosso a soluzione preferita (il valore `80` è stato scelto perché è il default per il protocollo `C`, cfr. parametro programmabile `2E`).
 
 ----
 
@@ -983,10 +983,127 @@ Lo stesso comando lanciato dopo aver ricevuto un `NO DATA` in risposta ad una in
 
 Una discrepanza inattesa, per simmetria me ne sarei aspettati 11.
 
-# 20221228
+I comandi `ATAL` "Allow long messages" (con lunghezza superiore a 7 bytes) che `ATNL` -- "Normal length messages", `ATMA` mostra sempre un `DLC` di 7 byte; le interrogazioni ritornano `NO DATA` indipendentemente dall'impostazione `AL`/`NL` attiva.
+
+## 20221228
 
 Approntato una versione dello sniffer con un thread di polling che pubblica i valori dei parametri raccolti.
 
-# 20221229
+## 20221229
 
 Rifattorizzato il codice suddividendolo nelle componenti elm327.py, daikin_altherma.py e daikin_altherma_sniffer.py.
+
+## 20221231
+
+Esistono alternative all'interrogazione via seriale dell'ELM327?
+
+* https://python-obd.readthedocs.io/en/latest/ - no, supporta solo protocolli automotive:
+
+        [https://github.com/brendan-w/python-OBD/blob/master/obd/elm327.py]
+        ...
+        _SUPPORTED_PROTOCOLS = {
+            # "0" : None,
+            # Automatic Mode. This isn't an actual protocol. If the
+            # ELM reports this, then we don't have enough
+            # information. see auto_protocol()
+            "1": SAE_J1850_PWM,
+            "2": SAE_J1850_VPW,
+            "3": ISO_9141_2,
+            "4": ISO_14230_4_5baud,
+            "5": ISO_14230_4_fast,
+            "6": ISO_15765_4_11bit_500k,
+            "7": ISO_15765_4_29bit_500k,
+            "8": ISO_15765_4_11bit_250k,
+            "9": ISO_15765_4_29bit_250k,
+            "A": SAE_J1939,
+            # "B" : None, # user defined 1
+            # "C" : None, # user defined 2
+        }
+        ...
+
+    [Qui](https://stackoveQui](rflow.com/questions/57134822/python-obd-most-commands-not-supported) si vede che la libreria usa i soliti comandi `AT`.
+
+* https://python-can.readthedocs.io/en/stable/ - questa è una libreria generica, ma non è chiaro se supporta l'ELM327.
+
+## 20230101
+
+Reperito in rete ulteriori informazioni sul protocollo Daikin:
+
+* https://github.com/crycode-de/ioBroker.canbus/blob/master/well-known-messages/configs/rotex-hpsu.md
+* https://forum.iobroker.net/topic/52171/rotex-hpsu-daikin-altherma-w%C3%A4rmepumpe-%C3%BCber-iobroker-canbus (in tedesco)
+
+* https://github.com/ahermann86/fhemHPSU
+
+Quest'ultima, realizzata in Perl, invia un comando aggiuntivo durante l'inizializzazione, un `ATV1` -- "Variable data lengths off or on". Questo comando disabilita lo *stuffing* e di fatto permette finalmente di ricevere le risposte alle richieste inviate:
+
+    >ATSH190
+    OK
+    >31 00 1C 00 00 00 00
+    32 10 1C 04 DA 00 00
+    >
+    32 10 1C 04 DA 00 00
+    >
+    32 10 1C 04 DA 00 00
+
+    >ATSH310
+    OK
+    >61 00 FA 0A 0C 00 00
+    22 0A 0C 00 64 00 00
+    62 10 FA 0A 0C 00 64
+    >
+    62 10 FA 0A 0C 00 64
+    >
+    62 10 FA 0A 0C 00 64
+
+Dopo alcune prove sembra assodato che il problema fosse proprio riconducibile allo *stuffing* effettuato dall'ELM327. Le soluzioni possibili sono 2: inviare il comando `ATV1` in fase di inizializzazione oppure porre a 1 il bit 6 della maschera di configurazione del protocollo `B` con il comando `ATPBE019`. Questo bit controlla la lunghezza del pacchetto immesso nel bus CAN da parte dell'ELM327: se posto a 0 l'integrato aggiunge tanti byte nulli quanti servono a raggiungere gli 8 byte, se posto a 1 invia esattamente il numero di byte specificati.
+
+Approntato in fretta e furia uno script che interroga la pompa di calore chiamando in causa parametri che lo sniffing non ha mai rilevato:
+
+    pi@emonpi:~/daikin python3 daikin_altherma_monitor.py
+    date,t_dhw,water_pressure,mode_01,t_hs,t_ext,t_return,flow_rate,t_hc,duration
+    2023-01-01 23:16:02.817596,48.0,1.252,3,31.4,10.8,29.0,0,40.8,0:00:01.887648
+    2023-01-01 23:16:13.983256,48.0,1.253,3,31.3,10.8,29.0,0,40.4,0:00:01.159685
+    2023-01-01 23:16:25.117180,48.0,1.254,3,31.3,10.8,29.0,0,40.1,0:00:01.123707
+    2023-01-01 23:16:36.122904,48.0,1.254,3,31.3,10.8,29.0,0,40.6,0:00:00.997076
+    2023-01-01 23:16:47.080784,48.0,1.254,3,31.3,10.8,29.0,0,40.7,0:00:00.947647
+    2023-01-01 23:16:58.054747,48.0,1.254,3,31.3,10.8,29.0,0,40.4,0:00:00.963630
+    2023-01-01 23:17:09.028629,48.0,1.254,3,31.3,10.8,29.0,0,40.6,0:00:00.963777
+    2023-01-01 23:17:20.002484,48.0,1.252,3,31.3,10.8,29.0,0,40.6,0:00:00.963557
+    2023-01-01 23:17:30.960356,48.0,1.252,3,31.3,10.8,29.0,0,40.6,0:00:00.947596
+    2023-01-01 23:17:41.934268,48.0,1.254,3,31.3,10.8,29.0,0,40.4,0:00:00.965767
+    ...
+
+Lo script impiega circa 1 secondo per leggerli; aumentando il numero di parametri a 20, il tempo richiesto sale a poco meno di 4 secondi.
+
+Idea: per ridurre il traffico seriale verso l'ELM327 conviene raggruppare i parametri per identificativo del nodo di destinazione in modo da minimizzare il numero di comandi `ATSH` necessari.
+
+## 20220102
+
+Seguono un paio di considerazioni di Zanac circa la frequenza di campionamento:
+
+> p.s. ho già fatto esperimenti di bombing, le richieste prioritarie non intasano il bus, e l'hpsu continuava a lavorare e mandare dati sul display! Con 37 richieste ogni 2 minuti siamo centinaia di volte sotto il bombing che ho testato.
+
+Fonte: https://cercaenergia.forumcommunity.net/?t=58409485&st=165#entry421712957
+
+> 20000 baud / 108 bit per messaggio di richiesta = 185 richieste AL SECONDO...
+> Dimezziamole per includere anche le risposte, più di 90 richieste / risposte AL SECONDO!!!!
+
+Fonte: https://cercaenergia.forumcommunity.net/?t=58409485&st=165#entry421713021
+
+Del resto nello stesso forum si legge anche, sempre da Zanac:
+
+>Se la scatola che contiene l'elm327 ha la scritta "v1.5a" evitatela... cercate di comprare una con "v 2.1". I cloni con versione 2.1 a quanto sembra implementano tutte le specifiche elm327!
+
+Fonte: https://cercaenergia.forumcommunity.net/?t=58409485&st=75#entry421644594
+
+In questo caso con una 1.4 noi ce l'abbiamo fatta!
+
+----
+
+Prima prova di campionamento di 40 parametri con periodo di 30 secondi su un arco temporale di poco più di due ore (cfr. file **docs/data/daikin_altherma_20230102160045.csv**)
+
+* campionamenti effettuati: 203
+* campionamenti parziali: 7 (~3%)
+* tempo impiegato per raccogliere un campione: 9.5s (min 2.7s, max 10.8s)
+
+Tutti i campionamenti parziali sono falliti a causa di un errore "invalid frame size (got 7, expected 14)".

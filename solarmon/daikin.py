@@ -37,15 +37,34 @@ class SerialConnection:
         self.connect()
 
 
+class Packet:
+
+    FRAME_SIZE = 14
+
+    def __init__(self, frame):
+        if len(frame) != self.FRAME_SIZE:
+            raise RuntimeError(
+                'invalid frame size (got {}, expected {})'.format(
+                len(frame), self.FRAME_SIZE))
+        self.is_response = (frame[0] == 0x32) # '2'
+        self.id = frame[4:6]
+        if self.id == b'FA':
+            self.id = frame[6:10]
+            self.value = frame[10:14]
+        else:
+            self.value = frame[6:10]
+
+
 class Register:
 
-    def __init__(self, name, type, unit, divisor, header, payload):
+    def __init__(self, name, type, unit, divisor, header, request):
         self.name = name
-        self. type = type
+        self.type = type
         self.unit = unit
         self.divisor = divisor
         self.header = header
-        self.payload = payload
+        self.request = request
+        self.id = Packet(request).id
 
     def decode(self, data):
         assert len(data) == 4
@@ -67,28 +86,9 @@ class Register:
             return 65536 - value
 
 
-class Packet:
-
-    FRAME_SIZE = 14
-
-    def __init__(self, frame):
-        if len(frame) != self.FRAME_SIZE:
-            raise RuntimeError(
-                'invalid frame size (got {}, expected {})'.format(
-                len(frame), FRAME_SIZE))
-        self.is_response = (frame[0] == 0x32) # '2'
-        self.id = frame[4:6]
-        if self.id == b'FA':
-            self.id = frame[6:10]
-            self.value = frame[10:14]
-        else:
-            self.value = frame[6:10]
-
-
-class ObdSniffer(threading.Thread):
+class Device:
 
     def __init__(self, name, connection):
-        threading.Thread.__init__(self)
         self.name = name
         self.connection = connection
         self._elm327 = ELM327(self.connection.serial)
@@ -97,18 +97,105 @@ class ObdSniffer(threading.Thread):
         self._elm327.linefeeds_off()
         self._elm327.spaces_off()
         self._elm327.headers_off()
-        self._elm327.set_protocol_b_parameters('E0', '19') # 20kbps
-        self._elm327.set_protocol('b')
+        # C0:
+        #  b7 = 1 -> transmit 11 bit ID
+        #  b6 = 1 -> variable DLC
+        #  b5 = 0 -> receive 11 bit ID
+        #  b4 = 0 -> baud rate multiplier "x1"
+        #  b3 = 0 -> (reserved)
+        #  b2 = 0
+        #  b1 = 0 -> data format "none"
+        #  b0 = 0
+        # 19: 20Kbps
+        self._elm327.set_protocol_b_parameters(b'C0', b'19')
+        self._elm327.set_protocol(b'b')
+
+
+class Altherma(Device):
+
+    def __init__(self, name, connection):
+        Device.__init__(self, name, connection)
+        self._registers = [
+            Register('t_hs',              'float',     'deg',   10, b'190', b'3100FA01D60000'),
+            Register('t_hs_set',          'float',     'deg',   10, b'190', b'31000200000000'),
+            Register('water_pressure',    'float',     'bar', 1000, b'190', b'31001C00000000'),
+            Register('t_dhw',             'float',     'deg',   10, b'190', b'31000E00000000'),
+            Register('t_dhw_set',         'float',     'deg',   10, b'190', b'31000300000000'),
+            Register('t_return',          'float',     'deg',   10, b'190', b'31001600000000'),
+            Register('flow_rate',       'longint',      'lh',    1, b'190', b'3100FA01DA0000'),
+            Register('status_pump',     'longint',        '',    1, b'190', b'3100FA0A8C0000'),
+            Register('runtime_comp',    'longint',    'hour',    1, b'190', b'3100FA06A50000'),
+            Register('runtime_pump',    'longint',        '',    1, b'190', b'3100FA06A40000'),
+            Register('posmix',          'longint', 'percent',    1, b'190', b'3100FA069B0000'),
+            Register('qboh',            'longint',     'kwh',    1, b'190', b'3100FA091C0000'),
+            Register('qchhp',           'longint',     'kwh',    1, b'190', b'3100FA09200000'),
+            Register('qsc',             'longint',     'kwh',    1, b'190', b'3100FA06A60000'),
+            Register('qch',             'longint',        '',    1, b'190', b'3100FA06A70000'),
+            Register('qwp',             'longint',     'kwh',    1, b'190', b'3100FA09300000'),
+            Register('qdhw',            'longint',     'kwh',    1, b'190', b'3100FA092C0000'),
+            Register('tvbh2',             'float',     'deg',   10, b'190', b'3100FAC1020000'),
+            Register('tliq2',             'float',     'deg',   10, b'190', b'3100FAC1030000'),
+            Register('tr2',               'float',     'deg',   10, b'190', b'3100FAC1040000'),
+            Register('ta2',               'float',     'deg',   10, b'190', b'3100FAC1050000'),
+            Register('tdhw2',             'float',     'deg',   10, b'190', b'3100FAC1060000'),
+            Register('mode',            'longint',        '',    1, b'190', b'3100FAC0F60000'),
+            Register('pump',            'longint', 'percent',    1, b'190', b'3100FAC0F70000'),
+            Register('ehs',             'longint',     'kwh',    1, b'190', b'3100FAC0F90000'),
+            Register('bpv',             'longint', 'percent',    1, b'190', b'3100FAC0FB0000'),
+            Register('t_v1',              'float',     'deg',   10, b'190', b'3100FAC0FC0000'),
+            Register('t_dhw1',            'float',     'deg',   10, b'190', b'3100FAC0FD0000'),
+            Register('t_vbh',             'float',     'deg',   10, b'190', b'3100FAC0FE0000'),
+            Register('t_outdoor_ot1',     'float',     'deg',   10, b'190', b'3100FAC0FF0000'),
+            Register('t_r1',              'float',     'deg',   10, b'190', b'3100FAC1000000'),
+            Register('v1',              'longint',      'lh',    1, b'190', b'3100FAC1010000'),
+            Register('heat_slope',        'float',        '',  100, b'190', b'3100FA010E0000'),
+            Register('t_dhw_setpoint1',   'float',     'deg',   10, b'190', b'31001300000000'),
+            Register('t_dhw_setpoint2',   'float',     'deg',   10, b'190', b'3100FA0A060000'),
+            Register('t_dhw_setpoint3',   'float',     'deg',   10, b'190', b'3100FA013E0000'),
+            Register('hyst_hp',           'float',     'deg',   10, b'190', b'3100FA06910000'),
+            Register('t_ext',             'float',     'deg',   10, b'310', b'6100FA0A0C0000'),
+            Register('t_hc_set',          'float',     'deg',   10, b'310', b'61000400000000'),
+            Register('t_hc',              'float',     'deg',   10, b'610', b'C1000F00000000'),
+        ]
+        self._last_header = None
+
+    def registers(self):
+        return self._registers
+
+    def peek(self):
+        return [self._read(r) for r in self._registers]
+
+    def _read(self, register):
+        try:
+            if register.header != self._last_header:
+                self._last_header = register.header
+                self._elm327.set_header(self._last_header)
+            response = self._elm327.send_request(register.request)
+            for frame in response:
+                packet = Packet(frame)
+                if packet.id == register.id:
+                    return register.decode(packet.value)
+        except Exception as e:
+            logging.warning('Error "{}" while reading parameter "{}"...'.format(
+                e, register.name))
+        return None
+
+
+class CanBusMonitor(threading.Thread, Device):
+
+    def __init__(self, name, connection):
+        threading.Thread.__init__(self)
+        Device.__init__(self, name, connection)
         self._stop_guard = threading.Event()
         self._lock = threading.Lock()
         self._registers = []
-        self._pos_from_id = []
+        self._pos_from_id = {}
         self._readings = []
 
     def set_registers(self, registers):
         self._registers = registers
         self._pos_from_id = dict([
-            (Packet(x.payload).id, i)
+            (Packet(x.request).id, i)
                 for i, x in enumerate(self._registers)])
         self._readings = [None] * len(self._registers)
 
