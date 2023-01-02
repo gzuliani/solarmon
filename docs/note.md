@@ -630,7 +630,7 @@ Andrea ha in casa un convertitore seriale/OBD basato sull'ELM327: è un "FORD mo
 
 ## 20221212
 
-[Studio delle specifiche dell'ELM327]
+Giornata dedicata allo studio delle specifiche dell'ELM327.
 
 ## 20221213
 
