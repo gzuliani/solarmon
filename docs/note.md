@@ -526,7 +526,7 @@ Contemporaneamente l'applicativo segnala l'assenza di collegamento:
 
     2022-09-04T17:51:12 ERROR Could not read inverter, reason: Modbus Error: [Input/Output] Modbus Error: [Invalid Message] No response received, expected at least 8 bytes (0 received)
     2022-09-04T17:51:12 INFO Reconnecting after a bad TCP response...
-    
+
 Negli stessi istanti si nota l'assenza dei dati dell'inverter nel file CSV:
 
     2022-09-04T17:51:14.596105,,,,,,,,,,,,,,,,,,0.002,0.001,0.029,11.12375
@@ -694,7 +694,7 @@ Tutti i comandi hanno risposto OK! Passando a Termite, che conosco meglio, dopo 
 
     >ATE0
     OK
-    
+
     >ATPPS
     00:FF F 01:FF F 02:FF F 03:32 F
     04:01 F 05:FF F 06:F1 F 07:09 F
@@ -710,10 +710,10 @@ Tutti i comandi hanno risposto OK! Passando a Termite, che conosco meglio, dopo 
     2C:81 N 2D:04 N 2E:80 F 2F:0A N
     >ATE0
     OK
-    
+
     >AT PP 2F ON
     OK
-    
+
     >AT SP C
     OK
 
@@ -727,7 +727,7 @@ Cosa accade se si invia la richiesta di lettura del parametro "water_pressure"?
 
     >ATSH190
     OK
-    
+
     >31 00 1C 00 00 00 00
     CAN ERROR
 
@@ -857,7 +857,7 @@ Effettivamente c'è qualcosa che non va. Portando la velocità del bus CAN a 20K
     61 00 FA 13 58 00 00
     22 0A FA 13 58 00 00
     STOPPED.
-    
+
 Funziona! E le interrogazioni? Che risposta si ottiene alla richiesta della temperatura esterna?
 
     >ATSH310
@@ -1107,3 +1107,61 @@ Prima prova di campionamento di 40 parametri con periodo di 30 secondi su un arc
 * tempo impiegato per raccogliere un campione: 9.5s (min 2.7s, max 10.8s)
 
 Tutti i campionamenti parziali sono falliti a causa di un errore "invalid frame size (got 7, expected 14)".
+
+----
+
+Ridotto il numero di parametri campionati perché alcuni evidentemente cloni, altri momentaneamente mantenuti in attesa di approfondimenti.
+
+Parametri eliminati:
+
+* qchhp
+* qsc
+* ta2
+* heat_slope
+* t_dhw_setpoint1
+* t_dhw_setpoint2
+* t_dhw_setpoint3
+* hyst_hp
+
+Cloni:
+
+* t_hs, t_v1: tenuto il primo
+* t_ext, t_outdoor_ot1: tenuto il primo
+* t_dhw, tdhw2, t_dhw1: tenuto il primo
+* t_return, tr2, t_r1: tenuti tutti e tre
+* t_hc, tvbh2, t_vbh: tenuti tutti e tre
+
+Parametri non in elenco
+
+Un parametro ritenuto interessante è "Energia elettrica totale" per il quale il display in questo istante mostra l'indicazione "3004 kWh". Sicuramente non c'è alcun parametro, tra i 40 acquisiti in questo momento, che assuma quel valore. Nell'elenco di Zanac o di Spanni26 che corrisponda a quell'etichetta. Considerando che 3004d corrisponde a 0BBCh, ricorriamo al monitor dell'ELM327:
+
+    ...
+    >ATPBC019
+    OK
+    >ATSPB
+    OK
+    >ATH1
+    OK
+    >ATD1
+    OK
+    >ATMA
+    10A 7 31 00 FA 06 95 00 00
+    180 7 22 0A FA 06 95 00 00
+    10A 7 61 00 FA 01 1A 00 00
+    300 7 22 0A FA 01 1A 00 00
+    10A 7 61 00 FA 13 58 00 00
+    300 7 22 0A FA 13 58 00 00
+    ...
+    10A 7 31 00 FA C2 FA 00 00
+    180 7 22 0A FA C2 FA 0B BC
+
+Trovato! Il parametro è identificato dal codice `C2FA` ed effettivamente non compare nell'elenco delle implementazioni di riferimento. Conviene verificare che l'interrogazione funziona anche da terminale:
+
+    >ATSH190
+    OK
+    >31 00 FA C2 FA 00 00
+    180 7 22 0A FA 06 7E 00 50
+    180 7 32 10 FA C2 FA 0B BC
+    >
+
+Il primo pacchetto della risposta non c'entra nulla, si tratta verosimilmente di uno di quelli che transitano di tanto in tanto nel bus. Il secondo pacchetto è la risposta attesa. Bene!
