@@ -1165,3 +1165,24 @@ Trovato! Il parametro è identificato dal codice `C2FA` ed effettivamente non co
     >
 
 Il primo pacchetto della risposta non c'entra nulla, si tratta verosimilmente di uno di quelli che transitano di tanto in tanto nel bus. Il secondo pacchetto è la risposta attesa. Bene!
+
+## 20220103
+
+Effetto del ritardo sul numero di campioni persi/parziali:
+
+* nessun ritardo (cfr. file **docs/data/daikin_altherma_20230102160045.csv**): 7 su 203 (3.4%)
+* ritardo di 100ms tra un comando e il successivo (cfr. file **docs/data/daikin_altherma_20230102210718.csv**): 3 su 118 (2.5%)
+* ritardo di 50ms tra invio del comando e attesa della risposta (cfr. file **docs/data/daikin_altherma_20230103010406.csv**): 5 su 238 (2.1%)
+
+Una ripetizione senza ritardi extra (cfr. file **docs/data/20230103092947.csv**), sempre estesa su due ore, ha fornito esattamente gli stessi risultati dell'ultima prova, 5 campioni parziali su un totale di 238. Evidentemente il ritardo introdotto è coperto dal timeout della connessione seriale.
+
+La natura degli errori che impediscono la corretta lettura dei parametri è sempre la stessa:
+
+    2023-01-03T10:38:02 WARNING Error "wrong size for frame [b'NO DATA'] (got 7, expected 14)" while reading parameter "qch"...
+    2023-01-03T10:38:02 WARNING Error "wrong size for frame [b'NO DATA'] (got 7, expected 14)" while reading parameter "qwp"...
+    2023-01-03T10:38:02 WARNING Error "wrong size for frame [b'NO DATA'] (got 7, expected 14)" while reading parameter "qdhw"...
+    2023-01-03T10:38:02 WARNING Error "wrong size for frame [b'NO DATA'] (got 7, expected 14)" while reading parameter "tvbh2"...
+    2023-01-03T10:38:02 WARNING Error "wrong size for frame [b'NO DATA'] (got 7, expected 14)" while reading parameter "tliq2"...
+    ...
+
+In un certo senso è confortante, la procedura di lettura non perde pezzi per strada.

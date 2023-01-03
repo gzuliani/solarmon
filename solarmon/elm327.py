@@ -95,7 +95,7 @@ class ELM327:
         # yy
         #
         #     baud rate (in kbps) = 500 ÷ yy
-        return self._exec(b'ATPB' + xx + yy))
+        return self._exec(b'ATPB' + xx + yy)
 
     def set_protocol(self, id):
         return self._exec(b'ATSP' + id)
@@ -111,6 +111,7 @@ class ELM327:
         return self._recv()
 
     def _send(self, data):
+        logging.debug(b'sending:' + data)
         self._port.write(data)
 
     def _recv(self, sentinel=b'>'):
@@ -120,5 +121,7 @@ class ELM327:
         # >by the ELM327.
         #
         # (see note on page 9 of the ELM327 datasheet)
-        data = incoming.replace(b'\x00', b'')[:-1] # remove sentinel
+        data = incoming.replace(b'\x00', b'')
+        logging.debug(b'received:' + data)
+        data = data[:-1] # remove the sentinel
         return [x for x in data.split(b'\r') if x]

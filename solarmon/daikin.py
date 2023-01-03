@@ -44,8 +44,8 @@ class Packet:
     def __init__(self, frame):
         if len(frame) != self.FRAME_SIZE:
             raise RuntimeError(
-                'invalid frame size (got {}, expected {})'.format(
-                len(frame), self.FRAME_SIZE))
+                'wrong size for frame {} (got {}, expected {})'.format(
+                frame, len(frame), self.FRAME_SIZE))
         self.is_response = (frame[0] == 0x32) # '2'
         self.id = frame[4:6]
         if self.id == b'FA':
@@ -224,4 +224,4 @@ class CanBusMonitor(threading.Thread, Device):
                 with self._lock:
                     self._readings[i] = self._registers[i].decode(packet.value)
             except Exception as e:
-                logging.warning('Packet "{}" refused, reason: {}', packet, str(e))
+                logging.warning('Packet "{}" refused, reason: {}', frame, str(e))

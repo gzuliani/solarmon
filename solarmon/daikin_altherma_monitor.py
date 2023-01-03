@@ -11,13 +11,16 @@ if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option("-f", "--file", dest="filename",
                       help="write data to FILE", metavar="FILE")
-    parser.add_option("-i", "--interval",
-                      dest="interval", type="int", default=30,
-                      help="interval between samples")
+    parser.add_option("-p", "--period",
+                      dest="period", type="int", default=30,
+                      help="period between samples, in seconds (default 30)")
+    parser.add_option("-d", "--duration",
+                      dest="duration", type="int", default=3600,
+                      help="monitoring duration, in seconds (default 3600)")
     (options, args) = parser.parse_args()
 
     logging.basicConfig(
-            filename='./daikin_altherma_sniffer.log',
+            filename='./daikin_altherma_monitor.log',
             level=logging.INFO,
             format='%(asctime)s %(levelname)s %(message)s',
             datefmt='%Y-%m-%dT%H:%M:%S')
@@ -35,12 +38,14 @@ if __name__ == '__main__':
     output.write(','.join(heading) + '\n')
 
     try:
-        timer = Timer(options.interval)
-        while True:
-            start = datetime.datetime.now()
+        start = datetime.datetime.now()
+        duration = datetime.timedelta(seconds=options.duration)
+        timer = Timer(options.period)
+        while datetime.datetime.now() < start + duration:
+            peek_start = datetime.datetime.now()
             data = device.peek()
-            end = datetime.datetime.now()
-            data = [datetime.datetime.now()] + data + [end - start]
+            peek_duration = datetime.datetime.now() - peek_start
+            data = [datetime.datetime.now()] + data + [peek_duration]
             output.write(','.join([str(x) for x in data]) + '\n')
             output.flush()
             timer.wait_next_tick()
