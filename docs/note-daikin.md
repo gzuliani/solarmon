@@ -510,7 +510,7 @@ In questo caso con una 1.4 noi ce l'abbiamo fatta!
 
 ----
 
-Prima prova di campionamento di 40 parametri con periodo di 30 secondi su un arco temporale di poco più di due ore (cfr. file **docs/data/daikin_altherma_20230102160045.csv**)
+Prima prova di campionamento di 40 parametri con periodo di 30 secondi su un arco temporale di poco più di due ore (cfr. file **docs/data/daikin/altherma_20230102160045.csv**)
 
 * campionamenti effettuati: 203
 * campionamenti parziali: 7 (~3%)
@@ -580,11 +580,11 @@ Il primo pacchetto della risposta non c'entra nulla, si tratta verosimilmente di
 
 Effetto del ritardo sul numero di campioni persi/parziali:
 
-* nessun ritardo (cfr. file **docs/data/daikin_altherma_20230102160045.csv**): 7 su 203 (3.4%)
-* ritardo di 100ms tra un comando e il successivo (cfr. file **docs/data/daikin_altherma_20230102210718.csv**): 3 su 118 (2.5%)
-* ritardo di 50ms tra invio del comando e attesa della risposta (cfr. file **docs/data/daikin_altherma_20230103010406.csv**): 5 su 238 (2.1%)
+* nessun ritardo (cfr. file **docs/data/daikin/altherma_20230102160045.csv**): 7 su 203 (3.4%)
+* ritardo di 100ms tra un comando e il successivo (cfr. file **docs/data/daikin/altherma_20230102210718.csv**): 3 su 118 (2.5%)
+* ritardo di 50ms tra invio del comando e attesa della risposta (cfr. file **docs/data/daikin/altherma_20230103010406.csv**): 5 su 238 (2.1%)
 
-Una ripetizione senza ritardi extra (cfr. file **docs/data/20230103092947.csv**), sempre estesa su due ore, ha fornito esattamente gli stessi risultati dell'ultima prova, 5 campioni parziali su un totale di 238. Evidentemente il ritardo introdotto è coperto dal timeout della connessione seriale.
+Una ripetizione senza ritardi extra (cfr. file **docs/data/daikin/altherma_20230103092947.csv**), sempre estesa su due ore, ha fornito esattamente gli stessi risultati dell'ultima prova, 5 campioni parziali su un totale di 238. Evidentemente il ritardo introdotto è coperto dal timeout della connessione seriale.
 
 La natura degli errori che impediscono la corretta lettura dei parametri è sempre la stessa:
 
@@ -630,7 +630,7 @@ Ad ogni modo non emerge nessuno schema specifico nei campioni parziali; il primo
     t_hc_set         310        42
     t_hc             610        21.2
 
-Lo schema sottostante riporta i parametri mancanti nei 5 campioni parziali raccolti nell'acquisizione **docs/data/daikin_altherma_20230103092947.csv**:
+Lo schema sottostante riporta i parametri mancanti nei 5 campioni parziali raccolti nell'acquisizione **docs/data/daikin/altherma_20230103092947.csv**:
 
     +++++++++++----------------++
     -----++++++++++++++++++++++++
@@ -640,3 +640,216 @@ Lo schema sottostante riporta i parametri mancanti nei 5 campioni parziali racco
     
     +: dato presente
     -: NO DATA
+
+## 20230104
+
+Effettuata un'acquisizione di 8 ore senza pause extra, che ha confermato il tasso di campioni incompleti: 23 su 951, pari al 2.4% (cfr. file **docs/data/daikin/altherma_20230103114302.csv**).
+
+----
+
+Per determinare, tra i potenziali parametri "clone", quali sono visualizzati sul display della pompa di calore, sono state effettuate 5 catture, una per ogni pagina dell'interfaccia utente.
+
+**ATTENZIONE**: una cattura potrebbe aver avuto inizio prima della visualizzazione della pagina relativa, potrebbe quindi contenere richieste legate ancora alla pagina precedente.
+
+### Valori visualizzati
+
+Pagina 1:
+
+    3 Gen 2023
+    20:11
+    47.7°C (icona: doccia)
+    28.0°C (icona: radiatore)
+    1.3bar (icona: boiler)
+    10.2°C (icona: tempo variabile)
+    Altre icone:
+        Ext,
+        ??? (onde verticali),
+        Unità esterna ON,
+        Defrost ON
+
+Pagina 2:
+
+    T-AU: 9.4°C
+    t-liq: 7.0°C
+    P: 1.34bar
+    t-R: 35.0°
+    t-V: 33.4°C
+    V: 1134l/h
+    t-V,BH: 33.4°C
+    t-DHW: 47.7°C
+
+Pagina 3:
+
+    B1: 12%
+    DHW: 0%
+
+Pagina 4:
+
+    Temperatura mandata attuale: 30.6°C
+    Temperatura mandata nom.: 42.0°C
+    Temperatura esterna media: 10.2°C
+    Temperatura ACS attuale: 47.7°C
+    Temperatura ACS nom.: 48.0°C
+    Temperatura ritorno: 35.5°C
+
+Pagina 5:
+
+    Temperatura mandata CR attuale: 36.2°C
+    Temperatura mandata CR nom.: 42.0°C
+    Temperatura di mandata PHX: 36.1°C
+    Temperatura di mandata BUH: 36.2°C
+    Temperatura esterna (opzione): N.A.
+    Temperatura refrigerante: 29.5°C
+
+### Analisi degli ultimi 100 pacchetti delle singole catture
+
+Va tenuto presente che nel bus viaggiano "autonomamente" i seguenti parametri:
+
+* t_dhw (0E)
+* water_pressure (1C)
+* mode_01 (0112)
+* t_hs (01D6)
+* t_ext (0A0C)
+
+Nei prospetti sottostanti, REQ indica il codice del parametro richiesto dal display (header 10A), RESP quello del pacchetto di risposta, VALUES l'elenco dei valori (espressi in decimale) assunti dal parametro, SPANNI26 il nome assegnato al parametro dall'implementazione di Spanni26.
+
+La REQ "----" indica che a quella risposta non corrisponde nessuna richiesta: potrebbe trattarsi di una risposta ad una richiesta che per qualche ragione non fa parte della cattura o più verosimilmente che si tratta di un pacchetto pubblicato spontaneamente da un nodo.
+
+Pagina 1:
+
+    REQ  RESP VALUES                    SPANNI26
+    ==================================================
+    1358 1358 0 0 0 0 0                 -
+    ---- 0822 310 295                   -
+      0C   0C 96 96 95 95 94            -
+    1353 1353 0 0 0 0 0                 -
+    C0B4 C0B4 34                        sw_vers_02
+    0A0C 0A0C 102 102 102 102 102       t_ext
+    0695 0695 0 0 0 0 0                 air_purge
+    C0C4 C0C4 0 0 0 0 0                 -
+    011A 011A 0 0 0 0 0                 screed
+    01EC 01EC 0 0 0 0 0                 -
+    ----   0D 310 295                   -
+    011E 011E 0 0 0 0 0                 -
+    ---- 01D6 278                       t_hs
+
+Pagina 2:
+
+    REQ  RESP VALUES                    SPANNI26
+    ==================================================
+    C0FC C0FC 356 358 359 360           t_v1
+    C0FB C0FB 12 12 12 12               bpv
+    C0FE C0FE 355 357 358 359           t_vbh
+    069B 069B 0 0 0 0                   posmix
+    FDAC FDAC 256 256 256 256           -
+    C176 C176 94 94 94                  -
+      61   61 0 0 0 0                   -
+      1C   1C 1337 1336 1337 1338       water_pressure
+    C0F9 C0F9 0 0 0 0                   ehs
+    C104 C104 360 360 361 365           tr2
+    C106 C106 477 477 477 477           tdhw2
+    C101 C101 1134 1122 1140 1122       v1
+    C103 C103 80 85 85 85               tliq2
+
+Pagina 3:
+
+    REQ  RESP VALUES                    SPANNI26
+    ==================================================
+    C0FC C0FC 356 356 355 355           t_v1
+    C0FB C0FB 27 37 42 47               bpv
+    C101 C101 0 0 366 1608              v1
+    C0FE C0FE 357 356 356 356           t_vbh
+    069B 069B 0 0 0 0                   posmix
+    FDAC FDAC 0 0 0 256                 -
+    C176 C176 93 93 93                  -
+      61   61 256 256 256 256           -
+      1C   1C 1348 1351 1330 1324       water_pressure
+    ---- C15B 1                         -
+    C104 C104 360 360 360 360           tr2
+    C106 C106 477 477 477 477           tdhw2
+    C0F9 C0F9 0 0 0 0                   ehs
+    C103 C103 95 95 95 95               tliq2
+
+Pagina 4:
+
+    REQ  RESP VALUES                    SPANNI26
+    ==================================================
+    C0FC C0FC 412 394 376 365           t_v1
+      02   02 420 420 420               t_hs_set
+      04   04 420 420 420 420           t_hc_set
+    C0FE C0FE 406 390 374 365           t_vbh
+      03   03 480 480 480               t_dhw_set
+    ---- 0822 379                       -
+      16   16 350 350 350               t_return
+    0A0C 0A0C 102 102 102               t_ext
+    01DA 01DA 1926 1890 1902 1902       flow_rate
+      1C   1C 1309 1312 1310 1311       water_pressure
+      0F   0F 389 373 365               t_hc
+      0D   0D 390 379 373 365           -
+      0E   0E 477 477 477               t_dhw
+    C105 C105 65136 65136 65136 65136   ta2
+    ---- 01D6 385 370                   t_hs
+    C103 C103 105 151 185 215           tliq2
+
+Pagina 5:
+
+    REQ  RESP VALUES                    SPANNI26
+    ==================================================
+    C0FC C0FC 393 395 396 396           t_v1
+      02   02 420 420 420               t_hs_set
+    C0B4 C0B4 34                        sw_vers_02
+      04   04 420 420 420 420           t_hc_set
+    C0FE C0FE 391 394 395 395           t_vbh
+      03   03 480 480 480               t_dhw_set
+    ---- 0822 394                       -
+      16   16 340 340 340               t_return
+    0A0C 0A0C 102 102 102               t_ext
+    01DA 01DA 786 810 786 792           flow_rate
+      1C   1C 1344 1344 1342 1344       water_pressure
+      0F   0F 394 395 396               t_hc
+      0D   0D 394 394 395 395           -
+      0E   0E 477 477 477               t_dhw
+    C105 C105 65136 65136 65136 65136   ta2
+    C103 C103 350 355 355 360           tliq2
+
+Una possibile, per quanto incompleta, associazione potrebbe essere:
+
+    DISPLAY READING                           ID   SPANNI26       NOTE
+    ==========================================================================
+    3 Gen 2023................................????
+    20:11.....................................????
+    47.7°C (icona: doccia)....................  0E t_dhw          da sniffing?
+    28.0°C (icona: radiatore).................01D6 t_hs           da sniffing?
+    1.3bar (icona: boiler)....................  1C water_pressure da sniffing?
+    10.2°C (icona: tempo variabile)...........0A0C t_ext          da sniffing?
+    Altre icone:
+        Ext...................................????
+        ??? (onde verticali)..................????
+        Unità esterna ON......................????
+        Defrost ON............................????
+
+    T-AU: 9.4°C...............................C176 <ASSENTE>
+    t-liq: 7.0°C..............................C103 tliq2
+    P: 1.34bar................................  1C water_pressure
+    t-R: 35.0°................................C104 tr2
+    t-V: 33.4°C...............................C0FC t_v1
+    V: 1134l/h................................C101 v1
+    t-V,BH: 33.4°C............................C0FE t_vbh
+    t-DHW: 47.7°C.............................C106 tdhw2
+
+    B1: 12%...................................C0FB bpv
+    DHW: 0%...................................069B posmix
+
+    Temperatura mandata attuale: 30.6°C.......01D6 t_hs           da sniffing?
+    Temperatura mandata nom.: 42.0°C..........  02 t_hs_set
+    Temperatura esterna media: 10.2°C.........0A0C t_ext
+    Temperatura ACS attuale: 47.7°C...........  0E t_dhw
+    Temperatura ACS nom.: 48.0°C..............  03 t_dhw_set
+    Temperatura ritorno: 35.5°C...............  16 t_return
+
+    Temperatura mandata CR attuale: 36.2°C....  0F t_hc
+    Temperatura mandata CR nom.: 42.0°C.......  04 t_hc_set
+    Temperatura di mandata PHX: 36.1°C........????
+    Temperatura di mandata BUH: 36.2°C........????
+    Temperatura esterna (opzione): N.A. ......C105 ta2            65136 ~ -400
+    Temperatura refrigerante: 29.5°C..........C103 tliq2          0D? 0822?
