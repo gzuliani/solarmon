@@ -853,3 +853,26 @@ Una possibile, per quanto incompleta, associazione potrebbe essere:
     Temperatura di mandata BUH: 36.2°C........????
     Temperatura esterna (opzione): N.A. ......C105 ta2            65136 ~ -400
     Temperatura refrigerante: 29.5°C..........C103 tliq2          0D? 0822?
+
+## 20230106
+
+Dall'analisi del codice di Spanni26 la modifica di un parametro avviene con un messaggio con ID `680` e comando uguale a quello di lettura tranne per il nibble meno significativo del primo byte che vale `0` anziché `1`. Per sicurezza si procede prima ad una modifica da display mentre è attivo il monitor del CAN bus. La modifica del parametro "Temperatura di mandata" da 42.0°C a 43.°C produce, tra gli altri, i seguenti messaggi:
+
+    10A 7 61 00 FA 01 29 00 00
+    300 7 22 0A FA 01 29 01 A4
+    10A 7 60 00 FA 01 29 01 AE
+    10A 7 61 00 FA 01 29 00 00
+    300 7 22 0A FA 01 29 01 AE
+
+Il primo messaggio, emesso dal display, è una richiesta del valore del parametro `0129` al modulo di controllo. Questo parametro non compare tra quelli catalogati da Zanac prima e Spanni26 poi, ad ogni modo il valore attuale risulta essere `01A4` (420 in decimale, cioé 42.0°C). Il terzo messaggio si differenzia da quello di lettura per il primo byte passa da `61` a `60` e per gli ultimi due byte che rappresentano il valore `01AE` che corrisponde a 430, cioé 43.0°C, il nuovo valore impostato. Gli ultimi due messaggi sono simili ai primi due: il display richiede nuovamente il valore del parametro al modulo di controllo, probabilmente per mostrarne l'effettivo valore.
+
+È ora di provare a modificare il valore del parametro da terminale:
+
+    >AT SH 680
+    OK
+
+    >62 00 FA 01 29 01 A4
+    NO DATA
+
+Il valore del parametro sul display passa da 43.0°C a 42.0°C a dimostrazione del fatto che il comando è stato recepito, ma a terminale giunge un `NO DATA`. I sorgenti di Spanni26 suggeriscono che la risposta avrebbe dovuto essere un `OK`. Forse l'ELM327 non è configurato correttamente per questo tipo di comando?
+
