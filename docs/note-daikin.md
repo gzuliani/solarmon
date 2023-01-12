@@ -72,14 +72,14 @@ Qual'è la semantica dei comandi?
 
 ## 20221214
 
-Collegamenti elettrici connettore J13/pres OBD:
+Collegamenti elettrici connettore J13/presa OBD:
 
     CAN-H ...... pin 6
     CAN-L ...... pin 14
     CAN-GND .... pin 5
     CAN-VCC .... <non necessario>
 
-L'interruttore HS-CAN/MS-CAN sul convertitore OBD/USB "Ford modified ELM327" va impostato su "HS-CAN".
+L'interruttore HS-CAN/MS-CAN sul convertitore USB/OBD "Ford modified ELM327" va impostato su "HS-CAN".
 
 HS-CAN è la linea CAN ad alta velocità (detta anche "high-speed CAN" o "CAN C"), quella che insiste sui pin 6/14 della presa OBD; la linea MS-CAN ("mid-speed CAN" o "CAN B") è invece presente sui pin 3/11.
 
@@ -876,3 +876,16 @@ Il primo messaggio, emesso dal display, è una richiesta del valore del parametr
 
 Il valore del parametro sul display passa da 43.0°C a 42.0°C a dimostrazione del fatto che il comando è stato recepito, ma a terminale giunge un `NO DATA`. I sorgenti di Spanni26 suggeriscono che la risposta avrebbe dovuto essere un `OK`. Forse l'ELM327 non è configurato correttamente per questo tipo di comando?
 
+## 20230112
+
+Sostituito l'adattatore USB/OBD con uno appena acquistato che utilizza un integrato CH340 come convertitore seriale/UDB anziché il solito FTDI; non è stato necessario installare alcun driver, il convertitore si presenta sul bus USB come "HL-340 USB-Serial adapter":
+
+    pi@emonpi:~ $ lsusb
+    Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+    Bus 001 Device 005: ID 10c4:ea60 Cygnal Integrated Products, Inc. CP2102/CP2109 UART Bridge Controller [CP210x family]
+    Bus 001 Device 016: ID 1a86:7523 QinHeng Electronics HL-340 USB-Serial adapter
+    Bus 001 Device 003: ID 148f:7601 Ralink Technology, Corp. MT7601U Wireless Adapter
+    Bus 001 Device 002: ID 2109:3431 VIA Labs, Inc. Hub
+    Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+Il convertitore risponde correttamente a tutti i comandi utilizzati dal programma **daikin_altherma_monitor.py**; una sessione di due ore di monitoraggio del bus CAN ha raccolto 235 campioni, di cui 4 parziali (1.7%, cfr. file **docs/data/daikin/altherma_20230112192245.csv**).
