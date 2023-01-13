@@ -889,3 +889,7 @@ Sostituito l'adattatore USB/OBD con uno appena acquistato che utilizza un integr
     Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 
 Il convertitore risponde correttamente a tutti i comandi utilizzati dal programma **daikin_altherma_monitor.py**; una sessione di due ore di monitoraggio del bus CAN ha raccolto 235 campioni, di cui 4 parziali (1.7%, cfr. file **docs/data/daikin/altherma_20230112192245.csv**).
+
+## 20230113
+
+Scoperto che l'Input API di EmonCMS non gradisce ricevere parametri con valore vuoto o *null*. Modificato il dispositivo d'uscita `EmonCMS` in modo da eliminare i parametri privi di valore dal JSON inviato all'API.
