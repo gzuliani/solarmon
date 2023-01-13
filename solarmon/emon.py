@@ -16,11 +16,12 @@ class EmonCMS:
             if not device.name in self._register_names:
                 self._register_names[device.name] = [
                         x.name for x in device.registers()]
+            sample = zip(self._register_names[device.name], values)
+            purged_sample = [(n, v) for n, v in sample if v not in ['', None]]
             response = requests.post(self._base_uri, data={
                 'node': device.name,
                 'apikey': self._api_key,
-                'json': json.dumps(dict(zip(
-                        self._register_names[device.name], values)))})
+                'json': json.dumps(dict(purged_sample))})
             if response.reason != 'OK':
                 logging.warning('Unexpected EmonCMS response: {} - {}'.format(
                     response.status_code, response.reason))

@@ -7,6 +7,7 @@ import signal
 import time
 
 import clock
+import daikin
 import emon
 import huawei_sun2000
 import meters
@@ -20,6 +21,7 @@ inverter_name = 'inverter'
 heat_pump_meter_name = 'heat-pump'
 old_pv_meter_name = 'old-pv'
 house_meter_name = 'house'
+heat_pump_name = 'daikin'
 
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
@@ -65,15 +67,18 @@ if __name__ == '__main__':
 
     huawei_wifi = huawei_sun2000.HuaweiWifi('192.168.200.1', '6607')
     rs485_bus = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
+    can_bus = daikin.SerialConnection('/dev/ttyUSB_HSCAN', 38400)
 
     huawei_wifi.connect()
     rs485_bus.connect()
+    can_bus.connect()
 
     input_devices = [
         huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout=5),
         meters.JSY_MK_323(heat_pump_meter_name, rs485_bus, 22),
         meters.DDS238_1_ZN(old_pv_meter_name, rs485_bus, 21),
         meters.DDS238_1_ZN(house_meter_name, rs485_bus, 23),
+        daikin.Altherma(heat_pump_name, can_bus),
     ]
 
     qualified_register_names = ['{}.{}'.format(d.name, r.name)
@@ -102,4 +107,5 @@ if __name__ == '__main__':
     logging.info('Shutting down...')
     huawei_wifi.disconnect()
     rs485_bus.disconnect()
+    can_bus.disconnect()
     logging.info('Exiting...')
