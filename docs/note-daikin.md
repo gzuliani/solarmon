@@ -637,7 +637,7 @@ Lo schema sottostante riporta i parametri mancanti nei 5 campioni parziali racco
     ++++++++++++----------------+
     -++++++++++++++++++++++++++++
     +++++++++++++++++++----------
-    
+
     +: dato presente
     -: NO DATA
 
@@ -889,3 +889,66 @@ Sostituito l'adattatore USB/OBD con uno appena acquistato che utilizza un integr
     Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 
 Il convertitore risponde correttamente a tutti i comandi utilizzati dal programma **daikin_altherma_monitor.py**; una sessione di due ore di monitoraggio del bus CAN ha raccolto 235 campioni, di cui 4 parziali (1.7%, cfr. file **docs/data/daikin/altherma_20230112192245.csv**).
+
+## 20230114
+
+Aggiunto un nuovo parametro, "PWM Pompa" che appare sul display della pompa ma che non sembra aver corrispondenza nel catalogo Zanac/Spanni26. Attivata perciò una sessione di sniffing. Sul display il parametro appariva con valore "5%" mentre negli stessi istanti sul bus scorrevano i seguenti messaggi:
+
+    >ATMA
+    10A 7 31 00 FA 01 99 00 00
+    180 7 22 0A FA 01 99 01 A9
+    10A 7 A1 00 FA 06 D0 00 00
+    500 7 22 0A FA 06 D0 00 00
+    10A 7 31 00 FA C0 F6 00 00
+    180 7 22 0A FA C0 F6 00 00
+    10A 7 31 00 FA C0 F8 00 00
+    180 7 22 0A FA C0 F8 00 00
+    10A 7 31 00 FA C0 FA 00 00
+    180 7 22 0A FA C0 FA 00 02
+    10A 7 31 00 FA 06 96 00 00
+    180 7 22 0A FA 06 96 00 00
+    10A 7 31 00 FA C1 79 00 00
+    180 7 22 0A FA C1 79 00 00
+    10A 7 A1 00 FA FD AC 00 00
+    500 7 22 0A FA FD AC 00 00
+    10A 7 A1 00 FA C1 0C 00 00
+    500 7 22 0A FA C1 0C 00 05
+    10A 7 31 00 FA C0 F9 00 00
+    180 7 22 0A FA C0 F9 00 00
+    10A 7 31 00 FA C0 FB 00 00
+    180 7 22 0A FA C0 FB 00 64
+    10A 7 31 00 FA 06 9B 00 00
+    180 7 22 0A FA 06 9B 00 00
+    10A 7 31 00 FA 01 48 00 00
+    180 7 22 0A FA 01 48 FF BF
+    69E 7 51 00 FA 10 0A 00 00
+    10A 7 31 00 FA 01 99 00 00
+    180 7 22 0A FA 01 99 01 A9
+    10A 7 A1 00 FA 06 D0 00 00
+    500 7 22 0A FA 06 D0 00 00
+    10A 7 31 00 FA C0 F6 00 00
+    180 7 22 0A FA C0 F6 00 00
+    10A 7 31 00 FA C0 F8 00 00
+    180 7 22 0A FA C0 F8 00 00
+    10A 7 31 00 FA C0 FA 00 00
+    180 7 22 0A FA C0 FA 00 02
+    10A 7 31 00 FA 06 96 00 00
+    180 7 22 0A FA 06 96 00 00
+    10A 7 31 00 FA C1 79 00 00
+    180 7 22 0A FA C1 79 00 00
+    10A 7 A1 00 FA FD AC 00 00
+    500 7 22 0A FA FD AC 00 00
+    10A 7 A1 00 FA C1 0C 00 00
+    500 7 22 0A FA C1 0C 00 05
+    10A 7 31 00 FA C0 F9 00 00
+    180 7 22 0A FA C0 F9 00 00
+    10A 7 31 00 FA C0 FB 00 00
+    180 7 22 0A FA C0 FB 00 64
+    10A 7 31 00 FA 06 9B 00 00
+    180 7 22 0A FA 06 9B 00 00
+    10A 7 31 00 FA 01 48 00 00
+
+L'unico parametro che assume un valore facilmente riconducibile a 5 è il `C10C`:
+
+    10A 7 A1 00 FA C1 0C 00 00
+    500 7 22 0A FA C1 0C 00 05

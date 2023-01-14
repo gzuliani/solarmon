@@ -151,6 +151,7 @@ class Altherma(Device):
             Register('t_au',              'float',     'deg',   10, b'190', b'3100FAC1760000'),
             Register('t_ext',             'float',     'deg',   10, b'310', b'6100FA0A0C0000'),
             Register('t_hc_set',          'float',     'deg',   10, b'310', b'61000400000000'),
+            Register('pwm_pompa',       'longint', 'percent',    1, b'510', b'A100FAC10C0000'),
             Register('t_hc',              'float',     'deg',   10, b'610', b'C1000F00000000'),
         ]
         self._last_header = None
