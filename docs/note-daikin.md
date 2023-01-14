@@ -890,6 +890,10 @@ Sostituito l'adattatore USB/OBD con uno appena acquistato che utilizza un integr
 
 Il convertitore risponde correttamente a tutti i comandi utilizzati dal programma **daikin_altherma_monitor.py**; una sessione di due ore di monitoraggio del bus CAN ha raccolto 235 campioni, di cui 4 parziali (1.7%, cfr. file **docs/data/daikin/altherma_20230112192245.csv**).
 
+## 20230113
+
+Scoperto che l'Input API di EmonCMS non gradisce ricevere parametri con valore vuoto o *null*. Modificato il dispositivo d'uscita `EmonCMS` in modo da eliminare i parametri privi di valore dal JSON inviato all'API.
+
 ## 20230114
 
 Aggiunto un nuovo parametro, "PWM Pompa" che appare sul display della pompa ma che non sembra aver corrispondenza nel catalogo Zanac/Spanni26. Attivata perciò una sessione di sniffing. Sul display il parametro appariva con valore "5%" mentre negli stessi istanti sul bus scorrevano i seguenti messaggi:
