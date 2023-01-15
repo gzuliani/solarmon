@@ -13,15 +13,20 @@ class EmonCMS:
 
     def write(self, data):
         for device, values in data:
+            if not values:
+                continue
             if not device.name in self._register_names:
                 self._register_names[device.name] = [
                         x.name for x in device.registers()]
-            sample = zip(self._register_names[device.name], values)
-            purged_sample = [(n, v) for n, v in sample if v not in ['', None]]
+            sample_as_json = json.dumps(dict(zip(
+                        self._register_names[device.name], values)))
+            logging.debug('Sending "%s" to EmonCMS...', sample_as_json)
             response = requests.post(self._base_uri, data={
                 'node': device.name,
                 'apikey': self._api_key,
-                'json': json.dumps(dict(purged_sample))})
+                'json': sample_as_json})
+            logging.debug('EmonCMS responded %s - %s',
+                response.status_code, response.reason)
             if response.reason != 'OK':
-                logging.warning('Unexpected EmonCMS response: {} - {}'.format(
-                    response.status_code, response.reason))
+                logging.warning('Unexpected EmonCMS response: %s - %s',
+                    response.status_code, response.reason)

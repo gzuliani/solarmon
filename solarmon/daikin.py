@@ -16,21 +16,21 @@ class SerialConnection:
 
     def connect(self):
         if not self.serial.is_open:
-            logging.info('Connecting to {}...'.format(self._name))
+            logging.info('Connecting to "%s"...', self._name)
             try:
                 self.serial.open()
                 logging.info('Connection established!')
             except Exception as e:
-                logging.info('Could not connect, reason: {}'.format(e))
+                logging.info('Could not connect, reason: %s', e)
 
     def disconnect(self):
         if self.serial.is_open:
             try:
-                logging.info('Disconnecting from {}...'.format(self._name))
+                logging.info('Disconnecting from "%s"...', self._name)
                 self.serial.close()
                 logging.info('Connection closed!'.format())
             except Exception as e:
-                logging.info('Could not disconnect, reason: {}...'.format(e))
+                logging.info('Could not disconnect, reason: %s...', e)
 
     def reconnect(self):
         self.disconnect()
@@ -116,43 +116,44 @@ class Altherma(Device):
     def __init__(self, name, connection):
         Device.__init__(self, name, connection)
         self._registers = [
-            Register('t_hs',              'float',     'deg',   10, b'190', b'3100FA01D60000'),
-            Register('t_hs_set',          'float',     'deg',   10, b'190', b'31000200000000'),
-            Register('water_pressure',    'float',     'bar', 1000, b'190', b'31001C00000000'),
-            Register('t_dhw',             'float',     'deg',   10, b'190', b'31000E00000000'),
-            Register('t_dhw_set',         'float',     'deg',   10, b'190', b'31000300000000'),
-            Register('t_return',          'float',     'deg',   10, b'190', b'31001600000000'),
-            Register('flow_rate',       'longint',      'lh',    1, b'190', b'3100FA01DA0000'),
-            Register('status_pump',     'longint',        '',    1, b'190', b'3100FA0A8C0000'),
-            Register('runtime_comp',    'longint',    'hour',    1, b'190', b'3100FA06A50000'),
-            Register('runtime_pump',    'longint',        '',    1, b'190', b'3100FA06A40000'),
-            Register('posmix',          'longint', 'percent',    1, b'190', b'3100FA069B0000'),
-            Register('qboh',            'longint',     'kwh',    1, b'190', b'3100FA091C0000'),
-            Register('qch',             'longint',        '',    1, b'190', b'3100FA06A70000'),
-            Register('qwp',             'longint',     'kwh',    1, b'190', b'3100FA09300000'),
-            Register('qdhw',            'longint',     'kwh',    1, b'190', b'3100FA092C0000'),
-            Register('tvbh2',             'float',     'deg',   10, b'190', b'3100FAC1020000'),
-            Register('tliq2',             'float',     'deg',   10, b'190', b'3100FAC1030000'),
-            Register('tr2',               'float',     'deg',   10, b'190', b'3100FAC1040000'),
-            Register('tdhw2',             'float',      'deg',  10, b'190', b'3100FAC1060000'),
-            Register('mode',            'longint',        '',    1, b'190', b'3100FAC0F60000'),
-            Register('pump',            'longint', 'percent',    1, b'190', b'3100FAC0F70000'),
-            Register('ehs',             'longint',     'kwh',    1, b'190', b'3100FAC0F90000'),
-            Register('bpv',             'longint', 'percent',    1, b'190', b'3100FAC0FB0000'),
-            Register('t_v1',              'float',     'deg',   10, b'190', b'3100FAC0FC0000'),
-            Register('t_dhw1',            'float',     'deg',   10, b'190', b'3100FAC0FD0000'),
-            Register('t_vbh',             'float',     'deg',   10, b'190', b'3100FAC0FE0000'),
-            Register('t_outdoor_ot1',     'float',     'deg',   10, b'190', b'3100FAC0FF0000'),
-            Register('t_r1',              'float',     'deg',   10, b'190', b'3100FAC1000000'),
-            Register('v1',              'longint',      'lh',    1, b'190', b'3100FAC1010000'),
+            Register('T-mandata',              'float',     'deg',   10, b'190', b'3100FA01D60000'),
+            Register('T-mandata-SET',          'float',     'deg',   10, b'190', b'31000200000000'),
+            Register('Pressione',              'float',     'bar', 1000, b'190', b'31001C00000000'),
+            Register('T-ACS',                  'float',     'deg',   10, b'190', b'31000E00000000'),
+            Register('T-ACS-SET',              'float',     'deg',   10, b'190', b'31000300000000'),
+            Register('T-ritorno',              'float',     'deg',   10, b'190', b'31001600000000'),
+            Register('Pompa-flusso',         'longint',      'lh',    1, b'190', b'3100FA01DA0000'),
+         #  Register('status_pump',          'longint',        '',    1, b'190', b'3100FA0A8C0000'),
+            Register('Tempo-compr',          'longint',    'hour',    1, b'190', b'3100FA06A50000'),
+            Register('Tempo-pompa',          'longint',    'hour',    1, b'190', b'3100FA06A40000'),
+            Register('Valvola-DHW',          'longint', 'percent',    1, b'190', b'3100FA069B0000'),
+            Register('E-ACS-BUH',            'longint',     'kwh',    1, b'190', b'3100FA091C0000'),
+            Register('E-risc',               'longint',     'kwh',    1, b'190', b'3100FA06A70000'),
+            Register('E-totale',             'longint',     'kwh',    1, b'190', b'3100FA09300000'),
+            Register('E-ACS',                'longint',     'kwh',    1, b'190', b'3100FA092C0000'),
+         #  Register('tvbh2',                  'float',     'deg',   10, b'190', b'3100FAC1020000'),
+            Register('T-refrigerante',         'float',     'deg',   10, b'190', b'3100FAC1030000'),
+         #  Register('tr2',                    'float',     'deg',   10, b'190', b'3100FAC1040000'),
+         #  Register('tdhw2',                  'float',     'deg',   10, b'190', b'3100FAC1060000'),
+            Register('Modo-operativo',       'longint',        '',    1, b'190', b'3100FAC0F60000'),
+         #  Register('pump',                 'longint', 'percent',    1, b'190', b'3100FAC0F70000'),
+            Register('P-BUH',                'longint',      'kw',    1, b'190', b'3100FAC0F90000'),
+            Register('Valvola-B1',           'longint', 'percent',    1, b'190', b'3100FAC0FB0000'),
+         #  Register('t_v1',                   'float',     'deg',   10, b'190', b'3100FAC0FC0000'),
+         #  Register('t_dhw1',                 'float',     'deg',   10, b'190', b'3100FAC0FD0000'),
+         #  Register('t_vbh',                  'float',     'deg',   10, b'190', b'3100FAC0FE0000'),
+         #  Register('t_outdoor_ot1',          'float',     'deg',   10, b'190', b'3100FAC0FF0000'),
+         #  Register('t_r1',                   'float',     'deg',   10, b'190', b'3100FAC1000000'),
+         #  Register('v1',                   'longint',      'lh',    1, b'190', b'3100FAC1010000'),
             # parameter not found in zanac/Spanni26 code
-            Register('total_energy',    'longint',     'kWh',    1, b'190', b'3100FAC2FA0000'),
+            Register('E-totale-elettrica',   'longint',     'kWh',    1, b'190', b'3100FAC2FA0000'),
             # parameter not found in zanac/Spanni26 code
-            Register('t_au',              'float',     'deg',   10, b'190', b'3100FAC1760000'),
-            Register('t_ext',             'float',     'deg',   10, b'310', b'6100FA0A0C0000'),
-            Register('t_hc_set',          'float',     'deg',   10, b'310', b'61000400000000'),
-            Register('pwm_pompa',       'longint', 'percent',    1, b'510', b'A100FAC10C0000'),
-            Register('t_hc',              'float',     'deg',   10, b'610', b'C1000F00000000'),
+            Register('T-AU',                   'float',     'deg',   10, b'190', b'3100FAC1760000'),
+            Register('T-est',                  'float',     'deg',   10, b'310', b'6100FA0A0C0000'),
+            Register('T-mandata-CR-SET',       'float',     'deg',   10, b'310', b'61000400000000'),
+            # parameter not found in zanac/Spanni26 code
+            Register('Pompa-percentuale',    'longint', 'percent',    1, b'510', b'A100FAC10C0000'),
+            Register('T-mandata-CR',           'float',     'deg',   10, b'610', b'C1000F00000000'),
         ]
         self._last_header = None
 
@@ -173,8 +174,8 @@ class Altherma(Device):
                 if packet.id == register.id:
                     return register.decode(packet.value)
         except Exception as e:
-            logging.warning('Error "{}" while reading parameter "{}"...'.format(
-                e, register.name))
+            logging.warning('Error "%s" while reading parameter "%s"...',
+                e, register.name)
         return None
 
 
@@ -231,4 +232,4 @@ class CanBusMonitor(threading.Thread, Device):
                 with self._lock:
                     self._readings[i] = self._registers[i].decode(packet.value)
             except Exception as e:
-                logging.warning('Packet "{}" refused, reason: {}', frame, str(e))
+                logging.warning('Packet "%s" refused, reason: %s', frame, e)

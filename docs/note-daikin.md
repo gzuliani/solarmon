@@ -956,3 +956,7 @@ L'unico parametro che assume un valore facilmente riconducibile a 5 è il `C10C`
 
     10A 7 A1 00 FA C1 0C 00 00
     500 7 22 0A FA C1 0C 00 05
+
+## 20230115
+
+Verificato sperimentalmente che l'Input API di EmonCMS duplica alcuni Input quando riceve valori non validi (accadeva quando il codice sviluppato inviava `None` anziché `null` in corrispondenza di valori non disponibili). Non gradisce nemmeno ricevere un insieme vuoto di parametri, anche se non è chiaro se anche in questo caso si possa assistere alla duplicazione di un Input.

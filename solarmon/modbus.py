@@ -17,7 +17,7 @@ class Connection:
 
     def connect(self):
         if not self._connected:
-            logging.info('Connecting to {}...'.format(self._name))
+            logging.info('Connecting to "%s"...', self._name)
             try:
                 if self._client.connect():
                     error = ''
@@ -26,7 +26,7 @@ class Connection:
             except Exception as e:
                 error = str(e)
             if error:
-                logging.info('Could not connect, reason: {}'.format(error))
+                logging.info('Could not connect, reason: %s', error)
             else:
                 self._connected = True
                 logging.info('Connection established!')
@@ -34,12 +34,12 @@ class Connection:
     def disconnect(self):
         if self._connected:
             try:
-                logging.info('Disconnecting from {}...'.format(self._name))
+                logging.info('Disconnecting from "%s"...', self._name)
                 self._client.close()
                 self._connected = False
-                logging.info('Connection closed!'.format())
+                logging.info('Connection closed!')
             except Exception as e:
-                logging.info('Could not disconnect, reason: {}...'.format(e))
+                logging.info('Could not disconnect, reason: %s...', e)
 
     def reconnect(self):
         self.disconnect()

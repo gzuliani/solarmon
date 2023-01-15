@@ -47,10 +47,10 @@ class ShutdownRequest:
 
 def read_from(device):
     try:
-        data = device.peek()
+        data = ['null' if x in ['', None] else x for x in device.peek()]
     except Exception as e:
         data = [''] * len(device.registers())
-        logging.error('Could not read {}, reason: {}'.format(device.name, e))
+        logging.error('Could not read from "%s", reason: %s', device.name, e)
         logging.info('Reconnecting after a bad response...')
         device.connection.reconnect()
     return data
@@ -101,8 +101,8 @@ if __name__ == '__main__':
             try:
                 device.write(data)
             except Exception as e:
-                logging.error('Could not write to {}, reason: {}'.format(
-                        device.name, e))
+                logging.error('Could not write to "%s", reason: %s',
+                        device.name, e)
 
     logging.info('Shutting down...')
     huawei_wifi.disconnect()

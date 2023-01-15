@@ -12,7 +12,7 @@ import meters
 import modbus
 import persistence
 
-sampling_period = 30 # seconds
+sampling_period = 30  # seconds
 
 # device codes -- should be unique
 meter_1_name = 'house'
@@ -24,9 +24,11 @@ api_base_uri = 'http://127.0.0.1'
 api_key = '****'
 
 # csv
+
+
 def csv_file_path():
     return 'solarmon_{}.csv'.format(
-            datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+        datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
 
 
 class ShutdownRequest:
@@ -46,7 +48,7 @@ def read_from(device):
         data = device.peek()
     except Exception as e:
         data = [''] * len(device.registers())
-        logging.error('Could not read {}, reason: {}'.format(device.name, e))
+        logging.error('Could not read from "%s", reason: %s', device.name, e)
         logging.info('Reconnecting after a bad response...')
         device.connection.reconnect()
     return data
@@ -55,10 +57,10 @@ def read_from(device):
 if __name__ == '__main__':
 
     logging.basicConfig(
-            filename='/var/log/solarmon.log',
-            level=logging.INFO,
-            format='%(asctime)s %(levelname)s %(message)s',
-            datefmt='%Y-%m-%dT%H:%M:%S')
+        filename='/var/log/solarmon.log',
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+        datefmt='%Y-%m-%dT%H:%M:%S')
     logging.info('Booting...')
 
     rs485_bus = modbus.UsbRtuAdapter('/dev/ttyUSB0', delay_between_reads=3)
@@ -76,7 +78,7 @@ if __name__ == '__main__':
 
     output_devices = [
         emon.EmonCMS(api_base_uri, api_key),
-#        persistence.CsvFile('CSV', csv_file_path(), qualified_register_names),
+        #        persistence.CsvFile('CSV', csv_file_path(), qualified_register_names),
     ]
 
     exit_guard = ShutdownRequest()
@@ -91,8 +93,8 @@ if __name__ == '__main__':
             try:
                 device.write(data)
             except Exception as e:
-                logging.error('Could not write to {}, reason: {}'.format(
-                        device.name, e))
+                logging.error('Could not write to "%s", reason: %s',
+                              device.name, e)
 
     logging.info('Shutting down...')
     rs485_bus.disconnect()
