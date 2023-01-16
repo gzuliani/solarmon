@@ -960,3 +960,14 @@ L'unico parametro che assume un valore facilmente riconducibile a 5 è il `C10C`
 ## 20230115
 
 Verificato sperimentalmente che l'Input API di EmonCMS duplica alcuni Input quando riceve valori non validi (accadeva quando il codice sviluppato inviava `None` anziché `null` in corrispondenza di valori non disponibili). Non gradisce nemmeno ricevere un insieme vuoto di parametri, anche se non è chiaro se anche in questo caso si possa assistere alla duplicazione di un Input.
+
+## 20230116
+
+Relativamente ai messaggi d'errore in **/var/log/emoncms/emoncms.log**:
+
+    2023-01-16 21:16:51.093|ERROR|input_controller.php|{"success": false, "message": "Format error, json value is not numeric"} for
+ User: 1
+
+Queste segnalazioni sono associate a parametri valorizzati a `null`. Probabilmente ciò è dovuto al fatto che Solarmon utilizza il formato `json` dell'Input API di EmonCMS che in realtà è un simil-JSON. Il formato che supporta il JSON standard è il `fulljson`. Cambiare da `json` a `fulljson` richiederebbe molto probabilmente la ridefinizione di tutti i *feed*, per questa ragione si decide di lasciare tutto così com'è.
+
+
