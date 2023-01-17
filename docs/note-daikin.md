@@ -195,7 +195,7 @@ Per rendere effettiva la nuova velocità è necessario attivarla, quindi resetta
     AT PP C0 ON
     AT Z
 
-La velocità del bus CAN per il protocollo `C` "User1 CAN" è regolata dal registro `2F`, che va impostato secondo le stesse modalità:
+La velocità del bus CAN per il protocollo C "User1 CAN" è regolata dal registro `2F`, che va impostato secondo le stesse modalità:
 
     AT PP 2F SV xx
     AT PP 2F ON
@@ -365,12 +365,12 @@ La temperatura esterna (`t_ext`) transita ogni 10s; gli altri parametri si prese
 
 ----
 
-Grazie al comando `PB` risulta più comodo utilizzare il protocollo `B` rispetto al `C`; la configurazione, per quanto non persistente, è infatti più immediata:
+Grazie al comando `PB` risulta più comodo utilizzare il protocollo B rispetto al C; la configurazione, per quanto non persistente, è infatti più immediata:
 
     AT PB 80 19
     AT SP B
 
-Il cambio di protocollo non produce effetti collaterali sullo sniffing, al momento viene promosso a soluzione preferita (il valore `80` è stato scelto perché è il default per il protocollo `C`, cfr. parametro programmabile `2E`).
+Il cambio di protocollo non produce effetti collaterali sullo sniffing, al momento viene promosso a soluzione preferita (il valore `80` è stato scelto perché è il default per il protocollo C, cfr. parametro programmabile `2E`).
 
 ----
 
@@ -965,9 +965,6 @@ Verificato sperimentalmente che l'Input API di EmonCMS duplica alcuni Input quan
 
 Relativamente ai messaggi d'errore in **/var/log/emoncms/emoncms.log**:
 
-    2023-01-16 21:16:51.093|ERROR|input_controller.php|{"success": false, "message": "Format error, json value is not numeric"} for
- User: 1
+    2023-01-16 21:16:51.093|ERROR|input_controller.php|{"success": false, "message": "Format error, json value is not numeric"} for User: 1
 
 Queste segnalazioni sono associate a parametri valorizzati a `null`. Probabilmente ciò è dovuto al fatto che Solarmon utilizza il formato `json` dell'Input API di EmonCMS che in realtà è un simil-JSON. Il formato che supporta il JSON standard è il `fulljson`. Cambiare da `json` a `fulljson` richiederebbe molto probabilmente la ridefinizione di tutti i *feed*, per questa ragione si decide di lasciare tutto così com'è.
-
-
