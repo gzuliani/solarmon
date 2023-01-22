@@ -46,7 +46,7 @@ class Packet:
             raise RuntimeError(
                 'wrong size for frame {} (got {}, expected {})'.format(
                 frame, len(frame), self.FRAME_SIZE))
-        self.is_response = (frame[0] == 0x32) # '2'
+        self.is_response = (frame[1] == 0x32) # '2'
         self.id = frame[4:6]
         if self.id == b'FA':
             self.id = frame[6:10]
@@ -172,6 +172,8 @@ class Altherma(Device):
             response = self._elm327.send_request(register.request)
             for frame in response:
                 packet = Packet(frame)
+                if not packet.is_response:
+                    continue
                 if packet.id == register.id:
                     return register.decode(packet.value)
         except Exception as e:
