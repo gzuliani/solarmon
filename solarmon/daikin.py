@@ -128,6 +128,7 @@ class Altherma(Device):
             Register('Tempo-pompa',          'longint',    'hour',    1, b'190', b'3100FA06A40000'),
             Register('Valvola-DHW',          'longint', 'percent',    1, b'190', b'3100FA069B0000'),
             Register('E-ACS-BUH',            'longint',     'kwh',    1, b'190', b'3100FA091C0000'),
+            Register('E-risc-BUH',           'longint',     'kwh',    1, b'190', b'3100FA09200000'),
             Register('E-risc',               'longint',     'kwh',    1, b'190', b'3100FA06A70000'),
             Register('E-totale',             'longint',     'kwh',    1, b'190', b'3100FA09300000'),
             Register('E-ACS',                'longint',     'kwh',    1, b'190', b'3100FA092C0000'),
