@@ -24,7 +24,7 @@ class EmonCMS:
             response = requests.post(self._base_uri, data={
                 'node': device.name,
                 'apikey': self._api_key,
-                'fulljson': sample_as_json})
+                'json': sample_as_json})
             logging.debug('EmonCMS responded %s - %s',
                 response.status_code, response.reason)
             if response.reason != 'OK':

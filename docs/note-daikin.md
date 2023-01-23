@@ -968,3 +968,8 @@ Relativamente ai messaggi d'errore in **/var/log/emoncms/emoncms.log**:
     2023-01-16 21:16:51.093|ERROR|input_controller.php|{"success": false, "message": "Format error, json value is not numeric"} for User: 1
 
 Queste segnalazioni sono associate a parametri valorizzati a `null`. Probabilmente ciò è dovuto al fatto che Solarmon utilizza il formato `json` dell'Input API di EmonCMS che in realtà è un simil-JSON. Il formato che supporta il JSON standard è il `fulljson`. Cambiare da `json` a `fulljson` richiederebbe molto probabilmente la ridefinizione di tutti i *feed*, per questa ragione si decide di lasciare tutto così com'è.
+
+## 20230116
+
+Una veloce verifica ha evidenziato che la versione di EmonCMS attualmente installata sulle due Raspberry (v. 11.2.3) non implementa correttamente la gestione dei `null` nel formato `fulljson`: essi vengono infatti trasformati in `0`, cosa del tutto inaccettabile.
+Il problema sembrerebbe rientrato con la [versione 11.3.0](https://community.openenergymonitor.org/t/emoncms-stable-release-v11-3-0/22537).
