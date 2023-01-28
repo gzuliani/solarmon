@@ -83,7 +83,7 @@ class Register:
         if value < 32768:
             return value
         else:
-            return 65536 - value
+            return value - 65536
 
 
 class Device:
