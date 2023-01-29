@@ -5,10 +5,11 @@ import requests
 
 class EmonCMS:
 
-    def __init__(self, api_base_uri, api_key):
+    def __init__(self, api_base_uri, api_key, json_variant='json'):
         self.name = 'EmonCMS'
         self._base_uri = api_base_uri + '/input/post.json'
         self._api_key = api_key
+        self._json_variant = json_variant
         self._register_names = {}
 
     def write(self, data):
@@ -24,7 +25,7 @@ class EmonCMS:
             response = requests.post(self._base_uri, data={
                 'node': device.name,
                 'apikey': self._api_key,
-                'json': sample_as_json})
+                self._json_variant: sample_as_json})
             logging.debug('EmonCMS responded %s - %s',
                 response.status_code, response.reason)
             if response.reason != 'OK':
