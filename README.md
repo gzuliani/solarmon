@@ -10,7 +10,7 @@ Some notes about how to talk to a Daikin Altherma heat pump [are available here]
 
 ### Input devices
 
-Input `Device`s represent a source of data such as a SUN2000 Huawei inverter, a Daikin heat pump or a generic power meter. Input devices have a `name` attribute, a reference to a `Connection` object, a set of `Register`s and a `peek` method that can be used to sample the data contained in the registers of the device.
+Input `Device`s represent a source of data such as a SUN2000 Huawei inverter, a Daikin heat pump or a generic power meter. Input devices have a `name` attribute, a set of `Register`s and a `peek` method that can be used to sample the data contained in the registers of the device. The `reconfigure` method can be used to reset the device in case of errors.
 
 A `Connection` object represents a channel that can be used to communicate with a real device such a serial port or a WiFi or Ethernet connection. Device objects may use some sort of `Adapter`s to implement the communication protocol of the real device. See for example the `eml327.ELM327` OBD/Serial adapter object or the `modbus.UsbRtuAdapter` RS485/Serial adapter object.
 

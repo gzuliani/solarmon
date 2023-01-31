@@ -51,8 +51,8 @@ def read_from(device):
     except Exception as e:
         data = [None] * len(device.registers())
         logging.error('Could not read from "%s", reason: %s', device.name, e)
-        logging.info('Reconnecting after a bad response...')
-        device.connection.reconnect()
+        logging.info('Reconfiguring device after a bad response...')
+        device.reconfigure()
     return data
 
 

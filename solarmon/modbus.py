@@ -129,7 +129,7 @@ class Device:
     def __init__(self, name, connection, addr, timeout):
         self.name = name
         self.addr = addr
-        self.connection = connection
+        self._connection = connection
         self._timeout = timeout
         self._register_arrays = []
         self._sparse_registers = []
@@ -145,6 +145,9 @@ class Device:
             data.extend(self._read_register_array(array))
         data.extend(self._read_sparse_registers(self._sparse_registers))
         return data
+
+    def reconfigure(self):
+        self._connection.reconnect()
 
     def _add_register_array(self, registers):
         self._register_arrays.append(registers)
@@ -185,7 +188,7 @@ class InputRegisters(Device):
         Device.__init__(self, name, connection, addr, timeout)
 
     def _read_registers(self, addr, size, timeout, unit):
-        return self.connection.read_input_registers(addr, size, timeout, unit)
+        return self._connection.read_input_registers(addr, size, timeout, unit)
 
 
 class HoldingRegisters(Device):
@@ -194,4 +197,4 @@ class HoldingRegisters(Device):
         Device.__init__(self, name, connection, addr, timeout)
 
     def _read_registers(self, addr, size, timeout, unit):
-        return self.connection.read_holding_registers(addr, size, timeout, unit)
+        return self._connection.read_holding_registers(addr, size, timeout, unit)

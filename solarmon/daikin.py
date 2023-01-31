@@ -90,8 +90,15 @@ class Device:
 
     def __init__(self, name, connection):
         self.name = name
-        self.connection = connection
-        self._elm327 = ELM327(self.connection.serial)
+        self._connection = connection
+        self._init_elm327_adapter()
+
+    def reconfigure(self):
+        self._connection.reconnect()
+        self._init_elm327()
+
+    def _init_elm327_adapter(self):
+        self._elm327 = ELM327(self._connection.serial)
         self._elm327.warm_start()
         self._elm327.echo_off()
         self._elm327.linefeeds_off()
@@ -127,6 +134,7 @@ class Altherma(Device):
             Register('Tempo-compr',          'longint',    'hour',    1, b'190', b'3100FA06A50000'),
             Register('Tempo-pompa',          'longint',    'hour',    1, b'190', b'3100FA06A40000'),
             Register('Valvola-DHW',          'longint', 'percent',    1, b'190', b'3100FA069B0000'),
+            Register('Termostato',           'longint',        '',    1, b'190', b'3100FA071B0000'),
             Register('E-ACS-BUH',            'longint',     'kwh',    1, b'190', b'3100FA091C0000'),
             Register('E-risc-BUH',           'longint',     'kwh',    1, b'190', b'3100FA09200000'),
             Register('E-risc',               'longint',     'kwh',    1, b'190', b'3100FA06A70000'),
