@@ -1,5 +1,4 @@
 import logging
-import struct
 from pymodbus.client.sync import ModbusSerialClient, ModbusTcpClient
 from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadDecoder

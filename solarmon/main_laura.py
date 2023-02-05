@@ -4,7 +4,6 @@
 import datetime
 import logging
 import signal
-import time
 
 import clock
 import daikin

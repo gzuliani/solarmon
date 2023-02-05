@@ -91,32 +91,35 @@ class Device:
     def __init__(self, name, connection):
         self.name = name
         self._connection = connection
-        self._init_elm327_adapter()
+        self._init_obd_adapter()
 
     def reconfigure(self):
         self._connection.reconnect()
-        self._init_elm327()
+        self._init_obd_adapter()
 
-    def _init_elm327_adapter(self):
-        self._elm327 = ELM327(self._connection.serial)
-        self._elm327.warm_start()
-        self._elm327.echo_off()
-        self._elm327.linefeeds_off()
-        self._elm327.spaces_off()
-        self._elm327.headers_off()
-        # C0:
-        #  b7 = 1 -> transmit 11 bit ID
-        #  b6 = 1 -> variable DLC
-        #  b5 = 0 -> receive 11 bit ID
-        #  b4 = 0 -> baud rate multiplier "x1"
-        #  b3 = 0 -> (reserved)
-        #  b2 = 0
-        #  b1 = 0 -> data format "none"
-        #  b0 = 0
-        # 19: 20Kbps
-        self._elm327.set_protocol_b_parameters(b'C0', b'19')
-        self._elm327.set_protocol(b'b')
-
+    def _init_obd_adapter(self):
+        try:
+            self._obd_adapter = ELM327(self._connection.serial)
+            self._obd_adapter.warm_start()
+            self._obd_adapter.echo_off()
+            self._obd_adapter.linefeeds_off()
+            self._obd_adapter.spaces_off()
+            self._obd_adapter.headers_off()
+            # C0:
+            #  b7 = 1 -> transmit 11 bit ID
+            #  b6 = 1 -> variable DLC
+            #  b5 = 0 -> receive 11 bit ID
+            #  b4 = 0 -> baud rate multiplier "x1"
+            #  b3 = 0 -> (reserved)
+            #  b2 = 0
+            #  b1 = 0 -> data format "none"
+            #  b0 = 0
+            # 19: 20Kbps
+            self._obd_adapter.set_protocol_b_parameters(b'C0', b'19')
+            self._obd_adapter.set_protocol(b'b')
+        except Exception as e:
+            self._obd_adapter = None
+            logging.warning('Error "%s" while initializing OBD adapter...', e)
 
 class Altherma(Device):
 
@@ -174,10 +177,12 @@ class Altherma(Device):
 
     def _read(self, register):
         try:
+            if not self._obd_adapter:
+                raise RuntimeError('OBD adapter not available')
             if register.header != self._last_header:
                 self._last_header = register.header
-                self._elm327.set_header(self._last_header)
-            response = self._elm327.send_request(register.request)
+                self._obd_adapter.set_header(self._last_header)
+            response = self._obd_adapter.send_request(register.request)
             for frame in response:
                 packet = Packet(frame)
                 if not packet.is_response:
@@ -209,13 +214,16 @@ class CanBusMonitor(threading.Thread, Device):
         self._readings = [None] * len(self._registers)
 
     def run(self):
+        if not self._obd_adapter:
+            logging.error('OBD adapter not available')
+            return
         logging.info('Starting monitor...')
-        self._elm327.start_monitor()
+        self._obd_adapter.start_monitor()
         logging.info('Monitor started')
         while not self._stop_guard.is_set():
-            self._update_readings(self._elm327.consume())
+            self._update_readings(self._obd_adapter.consume())
         logging.info('Stopping monitor...')
-        self._elm327.stop_monitor()
+        self._obd_adapter.stop_monitor()
         logging.info('Monitor stopped')
 
     def terminate_and_wait(self):
