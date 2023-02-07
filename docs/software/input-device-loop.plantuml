@@ -1,0 +1,102 @@
+@startuml
+skinparam handwritten true
+hide footbox
+
+participant main
+participant Device
+participant Connection
+participant ModbusXXXClient
+participant ObdAdapter
+participant Packet
+participant Register
+
+note right of ModbusXXXClient
+One of:
+* ModbusTcpClient
+* ModbusSerialClient
+end note
+
+activate main
+
+== RS485 Device ==
+
+main -> Device: peek
+activate Device
+
+Device -> Device: _read_register_array
+activate Device
+Device -> Device: _read_register_span
+activate Device
+Device -> Device: _read_registers
+activate Device
+alt Device isa InputRegisters
+Device -> Connection: read_input_registers
+activate Connection
+Connection -> ModbusXXXClient: read_input_registers
+activate ModbusXXXClient
+return <<raw_data>>
+return
+else Device isa HoldingRegisters
+Device -> Connection: read_holding_registers
+activate Connection
+Connection -> ModbusXXXClient: read_holding_registers
+activate ModbusXXXClient
+return <<raw_data>>
+return
+end
+Device -> Register: decode <<raw_data>>
+activate Register
+return <<value>>
+deactivate Device
+deactivate Device
+deactivate Device
+
+Device -> Device: _read_sparse_registers
+activate Device
+Device -> Device: _read_register
+activate Device
+Device -> Device: _read_register_span
+activate Device
+note right: Same as above.
+deactivate Device
+deactivate Device
+deactivate Device
+return <<values>>
+
+...
+
+== Daikin Device ==
+
+main -> Device: peek
+activate Device
+Device -> Device: _read
+activate Device
+Device -> ObdAdapter: set_header
+activate ObdAdapter
+ObdAdapter -> Connection: send
+activate Connection
+return
+ObdAdapter -> Connection: recv
+activate Connection
+return OK
+return
+Device -> ObdAdapter: send_request
+activate ObdAdapter
+ObdAdapter -> Connection: send
+activate Connection
+return
+ObdAdapter -> Connection: recv
+activate Connection
+return <<raw_data>>|"NO DATA"
+return <<raw_data>>|None
+Device -> Packet: create
+activate Packet
+return
+Device -> Register: decode <<packet>>
+activate Register
+return <<value>>
+return <<values>>
+return <<values>>
+
+deactivate main
+@enduml
