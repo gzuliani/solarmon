@@ -42,6 +42,8 @@ class Packet:
     FRAME_SIZE = 14
 
     def __init__(self, frame):
+        self.id = None
+        self.is_response = False
         if len(frame) != self.FRAME_SIZE:
             raise RuntimeError(
                 'wrong size for frame {} (got {}, expected {})'.format(
@@ -176,13 +178,13 @@ class Altherma(Device):
         return [self._read(r) for r in self._registers]
 
     def _read(self, register):
+        if not self._obd_adapter:
+            raise RuntimeError('OBD adapter not available')
+        if register.header != self._last_header:
+            self._last_header = register.header
+            self._obd_adapter.set_header(self._last_header)
+        response = self._obd_adapter.send_request(register.request)
         try:
-            if not self._obd_adapter:
-                raise RuntimeError('OBD adapter not available')
-            if register.header != self._last_header:
-                self._last_header = register.header
-                self._obd_adapter.set_header(self._last_header)
-            response = self._obd_adapter.send_request(register.request)
             for frame in response:
                 packet = Packet(frame)
                 if not packet.is_response:

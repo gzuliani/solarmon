@@ -94,7 +94,7 @@ class ELM327:
         #
         # yy
         #
-        #     baud rate (in kbps) = 500 � yy
+        #     baud rate (in kbps) = 500 / yy
         return self._exec(b'ATPB' + xx + yy)
 
     def set_protocol(self, id):
