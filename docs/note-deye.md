@@ -2,8 +2,110 @@
 
 Note sul monitoraggio di un inverter Deye via RS485.
 
-## 20220207
+## 20230207
 
 Una libreria Python è già disponibile:
 
-* https://github.com/kellerza/sunsynk
+* [sunsynk](https://github.com/kellerza/sunsynk)
+
+Un thread che potrebbe tornare utile:
+
+* [SunSynk - Inverter Monitoring](https://powerforum.co.za/topic/8451-sunsynk-inverter-monitoring)
+
+## 20230212
+
+Nel manuale si legge:
+
+> | function code | Function code type   | explain           | remark                                                     |
+> |---------------|----------------------|-------------------|------------------------------------------------------------|
+> |          0x03 | Public function code | Read the register | Contains reads to a single register and multiple registers |
+
+Da ciò si deduce che si tratta di *Holding registers*.
+
+Per la prima volta si ha a che fare con un registro che oltre a un *gain* ha pure un offset:
+
+> | Addr | Register meaning    | R/W | data range | unit  | note                                          |
+> |------|---------------------|-----|------------|-------|-----------------------------------------------|
+> | 182  | battery temperature | R   | [0, 30000] | 0.1°C | Real value of offset + 1000 - 1200 is 20.0 °C |
+
+C'è un altro aspetto nuovo introdotto da questo dispositivo: la definizione di alcuni registri dipende dalla tipologia dell'inverter e/o dell'installazione:
+
+> this protocol is for Microinverter,string inverter and storage inverter
+
+Verosimilmente l'indicatore `MI` che si trova nelle specifiche sta ad indicare parametri relativi alla variante "Microinverter".
+  
+| Addr | Byte | Description                                     | R/W | data range     | gain  | unit   | note                                          |
+|------|------|-------------------------------------------------|-----|----------------|-------|--------|-----------------------------------------|
+|  000 |      | Device type                                     | R   |                |       |        | 0X0200, 0X0300, 0X0400, 0X0500 (MI) |
+|  001 |      | Modbus address                                  | R   | [1,247]        |       |        | (MI) |
+|  002 |      | Communication protocol version                  | R   |                |       |        | The version of this protocol that the firmware conforms to, such as 0x0102 represents version 1.2 (MI) |
+|  003 |      | Serial number                                   | R   |                |       |        | Ten ASCII characters (MI) |
+|  008 |    H | Rated power                                     | R   |                |       |        | 2:single-phase inverter, 3:three-phase inverter, 8:Single-phase storage inverter |
+|  008 |    L | Micro-inverter system flag                      | R   |                |       |        | Bit 0: 1 enables the number of mppt channels in register 18, 0 is enabled, the number of channels is determined by the rated power |
+|  009 |      | Chip type                                       | R   |                |       |        | Low 4 bits 1:AT32F403A_DEVICE, 2:SXX32F103_DEVICE, 3:GD32F103_DEVICE, 4:GD32F303_DEVICE |
+|  010 |      | Communication Board Firmware Version            | R   |                |       |        | |
+|  011 |      | Dashboard helper version                        | R   |                |       |        | |
+|  012 |      | Control Board Firmware Version                  | R   |                |       |        | |
+|  013 |      | Control Board Firmware Version                  | R   |                |       |        | (MI) |
+|  014 |      | Communication Board Firmware Version            | R   |                |       |        | |
+|  015 |      | Safety type                                     | R   |                |       |        | <3:48 Batteries, =3:24V battery (MI) |
+|  016 |      | Rated power low word                            | R   |                | 0.1   |      W | (MI) |
+|  017 |      | Rated power high word                           | R   |                | 0.1   |      W | (MI) |
+|  018 |      | MPPT number and phases                          | R   | [1,8]/[1,3]    |       |        | 0x0503: five-mppts three-phase (MI) |
+|  019 |      | Rated Grid Voltage                              | R/W | [0-3]          |       |        | 0: 127/220V, 1:220/380V |
+|  020 |      | Remote Lock                                     | R/W |                |       |        | 0x0002:off, 0x0000:on |
+|  021 |      | self-check time                                 | R/W | [0-1000]       |       |      s | (MI) |
+|  022 |      | System time                                     | R/W | [0-255]/[1-12] |       |        | Year/Month Based on the year 2000 (MI) |
+|  023 |      | System time                                     | R/W | [1-31]/[0-23]  |       |        | Day/Hour (MI) |
+|  024 |      | System time                                     | R/W | [0-59]/[0-59]  |       |        | Minute/Second (MI) |
+|  025 |    H | Minimum insulation impedance                    | R/W | [100,20000]    | 0.1   |   KOhm |
+|  025 |    L | External CT flag                                | R/W |                |       |        | Bit0: power calculation flag bit of the control board. The new software after 2020/10/21 can be based on liquid Crystal flag bit judgment, fixed write 1. The previous soft piece is 0. Bit2: The LCD panel calculates the power method and returns it to the controller Board flag. 1: Indicates that the LCD calculates by itself; 0: Indicates that the direct read register does not count. |
+|  026 |      | Dc voltage upper limit                          | R/W | [2000,10000]   | 0.1   |      V | |
+|  027 |      | Grid voltage upper limit                        | R/W | [1600,5500]    | 0.1   |      V | (MI) |
+|  028 |      | Grid voltage lower limit                        | R/W | [1600,5500]    | 0.1   |      V | (MI) |
+|  029 |      | Grid frequency upper limit                      | R/W | [4500,6500]    | 0.01  |     Hz | (MI) |
+|  030 |      | Grid frequency lower limit                      | R/W | [4500,6500]    | 0.01  |     Hz | (MI) |
+|  031 |    H | Grid current upper limit                        | R/W | [10,20000]     | 0.1   |      A | |
+|  031 |    L |                                                 | R/W |                |       |        | |
+|  032 |      | Starting voltage upper limit                    | R/W | [7000,9000]    | 0.1   |      V | |
+|  033 |      | Starting voltage lower limit                    | R/W | [4500,9000]    | 0.1   |      V | |
+|  034 |      | Starting point of over-frequency load reduction | R/W | [4500,6500]    | 0.01  |     Hz | (MI) |
+|  035 |      | Over frequency load reduction percentage        | R/W | [0,100]        |       |        | |
+|  036 |      | Internal temperature upper limit                | R/W | [500,3000]     | 0.1   |     °C | |
+|  037 |      | Communication address                           | R   | 0x0000         |       |        | |
+|  038 |      | Communication baud rate / MI:Zigbee or PLC      | R   |                |       |        | 0:zigbee 1:plc (MI) |
+|  039 |      | Power factor regulation                         | R/W | [0,2000]       | 0.001 |        | The value after the true value is offset by +1000 For example: -0.852 is 148 |
+|  040 |      | Active power regulation                         | R/W | [0,1200]       | 0.1%  |        | 1% for MI |
+|  041 |      | Reactive power regulation                       | R/W | [0,1200]       | 0.1%  |        | |
+|  042 |      | Apparent power regulation                       | R/W | [0,1200]       | 0.1%  |        | |
+|  043 |      | Switch on and off enable                        | R/W | [0,1]          |       |        | 0: shutdown, 1: power on - MI 2: power off |
+|  044 |      | Factory reset enable                            | R/W | [0,1]          |       |        | 0: disable 1: enable |
+|  045 |      | Self-checking time                              | R/W | [0,1]          |       |        | 0-360 seconds |
+|  046 |      | Island protection enable                        | R/W | [0,1]          |       |        | 0: disable 1: enable (MI) |
+|  047 |    H | MPPT number                                     | R/W |                |       |        | |
+|  047 |    L | Slow start enable                               | R/W | [0,1]          |       |        | 0: disable 1: enable (MI) |
+|  048 |    H | GFDI enable                                     | R/W | [0,1]          |       |        | 0: disable 1: enable (MI) |
+|  048 |    L | Meter enable                                    | R/W | [0,1]          |       |        | 0: disable 1: enable (MI) |
+|  049 |    H | RCD enable                                      | R/W | [0,1]          |       |        | 0: disable 1: enable |
+|  049 |    L | Overfrequency load shedding enable              | R/W | [0,1]          |       |        | 0: disable 1: enable (MI) |
+|  050 |      | RISO enable                                     | R/W | [0,1]          |       |        | 0: disable 1: enable |
+|  051 |      | Grid standard                                   | R/W | [0,20]         |       |        | 1:INMETRO, 2:EN50549 3:EN50438, 4:IEC61727, 5:CUSTOM, 6:VDE_AR_N_4105, 7:UTE_C15_712_1, 8:RD_1699, 9:CEI_0_21, 10:G98_G99 |
+|  052 |    H | PV curve enable                                 | R/W | [0,1]          |       |        | 0: disable 1: enable |
+|  052 |    L | CT ratio                                        | R/W | [0,5000]       |       |        | [5000 in un byte?!?] |
+|  053 |    H | Max solar power                                 | W   |                |       |        | |
+|  053 |    L | Hardware matching                               | R/W | [0,65535]      |       |        | The liquid crystal has a single interface to operate the register Bit0-1: Single-phase string---0: 500V system 1: 550V system 2,3: Reserved Bit2-3: Single-phase string---0: PV-10A 1 : PV-12.5A 2,3: Reserved Bit4-5 Single-phase string----0: VAC sensor 1: Tamura 2: West Magnetic 3: reserved Bit5-15 Reserved |
+|  054 |      | EEPROM initial enabled                          | R/W | [0,2]          |       |        | 0: normal operation 1: initialize the control board EEPROM 2: initialize the communication board EEPROM |
+|  055 |      | [[Factory only]]                                | R/W | [0,3]          |       |        | Bit0 open test enable (enable only after this effect) Bit1 Turn on all fans of the inverter Bit2 flashes all LEDs of the display board, honey device, backlight, display red, yellow and blue Bit3 Open lithium battery interface test Bit4 Turn on the Gen signal relay Bit5 restart LCD program |
+|  056 |      | Limter function enable                          | R/W | 0x0000         |       |        | |
+|  057 |      | Power generation correction factor              | R/W |                | 0.01  |        | 100 mean 1 111 mean 1.11 |
+|  058 |    H | RSD enable                                      | R/W |                |       |        | 0x001 |
+|  058 |    L | General settings                                | R/W |                |       |        | Bit0 Bit1: 01 display 16 string string current 00 does not display the current of 16 strings Bit2 Bit3: 01 displays the third-order setting of protection parameters Others do not display the third-order setting of protection parameters Bit4: Bit5: 058 general settings R/W 0x0001 Bit6: |
+|  059 |      | Run state                                       | R   | [0,5]          |       |        | 0: standby, 1: self-test, 2: normal, 3: alarm, 4: fault |
+
+Il lavoro di redazione della tabella dei registri si sta rivelando improbo, l'esportazione della tabella PDF non è riconducibile ad una forma realmente tabulare. Spesso e volentieri è pure necessario ricorrere a Google Translate.
+
+Possibili altre sorgenti, incomplete ma più facilmente interpretabili:
+
+* [definitions.py](https://github.com/kellerza/sunsynk/blob/main/sunsynk/definitions.py) in **sunsynk**;
+* [fields.rs](https://github.com/bmerry/sunsniff/blob/main/src/fields.rs) in **sunsniff**;
+* [flow.json](https://github.com/jacauc/SunSynk-NodeRed/blob/master/flow.json) in **SunSynk-NodeRed** (filtrare per `address`).
