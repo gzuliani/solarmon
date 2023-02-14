@@ -109,3 +109,33 @@ Possibili altre sorgenti, incomplete ma più facilmente interpretabili:
 * [definitions.py](https://github.com/kellerza/sunsynk/blob/main/sunsynk/definitions.py) in **sunsynk**;
 * [fields.rs](https://github.com/bmerry/sunsniff/blob/main/src/fields.rs) in **sunsniff**;
 * [flow.json](https://github.com/jacauc/SunSynk-NodeRed/blob/master/flow.json) in **SunSynk-NodeRed** (filtrare per `address`).
+
+#20230214
+
+L'inverter Deye in uso è di tipo ibrido.
+
+| Addr | Byte | Description                                     | R/W | data range     | gain  | unit   | note                                          |
+|------|------|-------------------------------------------------|-----|----------------|-------|--------|-----------------------------------------|
+|  060 |      | Day active power                                | R   | [-32768,32767] | 0.1   | kWh    | (MI) |
+|  061 |      | Day reactive power                              | R   | [-32768,32767] | 0.1   | kvarh  | (MI) |
+|  062 |      | Day generator output                            | R   | [0,65536]      | 0.1   | kvarh  | (MI) |
+|  063 |      | Total active power - low word                   | R   | [0,65536]      | 0.1   | kWh    | (MI) |
+|  064 |      | Total active power - high word                  | R   | [0,65536]      | 0.1   | kWh    | (MI) |
+
+Alcune grandezze sono memorizzate su 64 bit, utilizzando coppie di registri (quasi sempre) adiacenti, in cui la parola meno significativa è quella di indirizzo inferiore:
+
+* Rated power: 016/017
+* Total_Active_PowerWh: 063/064
+* Year_PV_PowerWh: 068/069
+* tatol_Batt_charge_PowerWh: 072/073
+* tatol_Batt_Discharge_PowerWh: 074/075
+* Total_GridBuy_PowerWh: 078/080
+* Total_GridSell_PowerWh: 081/082
+* Total_Load_PowerWh: 085/086
+* Year_Load_PowerWh: 087/088
+* historyPV PowerWh: 096/097
+* Year_GridSell_PowerWh: 098/099
+
+Si tratta di valori cumulativi che fortunatamente per ora si possono ignorare (gli integrali sono a carico di EmonCMS). Supportarli richiederebbe verosimilmente introdurre un nuovo concetto, es. *Reading* che astrae il concetto di registro: un reading è un valore acquisito dal dispositivo che può essere originato da uno o più registri.
+
+Vale anche il viceversa: alcuni registri (cfr. 008, 025, 031, ...) contengono due o più valori distinti.
