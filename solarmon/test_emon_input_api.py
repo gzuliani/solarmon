@@ -10,7 +10,7 @@ from clock import Timer
 from emon import EmonCMS
 
 
-class Register:
+class Parameter:
 
     def __init__(self, name, fn):
         self.name = name
@@ -25,18 +25,18 @@ class VirtualDevice:
     def __init__(self):
         self.name = 'test-node'
         self._t0 = time.time()
-        self._registers = [
-            Register('k', lambda _: -2.4),
-            Register('sin', lambda x: 5 + 5 * math.sin(x / 300 * math.pi)),
-            Register('rnd', lambda _: 6 + 2 * random.random()),
+        self._params = [
+            Parameter('k', lambda _: -2.4),
+            Parameter('sin', lambda x: 5 + 5 * math.sin(x / 300 * math.pi)),
+            Parameter('rnd', lambda _: 6 + 2 * random.random()),
         ]
 
-    def registers(self):
-        return self._registers
+    def params(self):
+        return self._params
 
-    def peek(self):
+    def read(self):
         elapsed = time.time() - self._t0
-        return [x.read(elapsed) for x in self._registers]
+        return [x.read(elapsed) for x in self._params]
 
 
 if __name__ == '__main__':
@@ -86,7 +86,7 @@ if __name__ == '__main__':
         duration = datetime.timedelta(seconds=options.duration)
         timer = Timer(options.period)
         while datetime.datetime.now() < start + duration:
-            sample = device.peek()
+            sample = device.read()
             if random.random() <= null_threshold:
                 sample = [None] * len(sample)
             logging.info('Emitting sample %s...', sample)

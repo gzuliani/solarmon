@@ -7,6 +7,7 @@ import signal
 
 import clock
 import daikin
+import deye
 import emon
 import meters
 import modbus
@@ -19,6 +20,7 @@ meter_1_name = 'house'
 meter_2_name = 'heat-pump'
 meter_3_name = 'pv'
 heat_pump_name = 'daikin'
+inverter_name = 'inverter'
 
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
@@ -44,9 +46,9 @@ class ShutdownRequest:
 
 def read_from(device):
     try:
-        data = [None if x == '' else x for x in device.peek()]
+        data = [None if x == '' else x for x in device.read()]
     except Exception as e:
-        data = [None] * len(device.registers())
+        data = [None] * len(device.params())
         logging.error('Could not read from "%s", reason: %s', device.name, e)
         logging.info('Reconfiguring device after a bad response...')
         device.reconfigure()
@@ -70,18 +72,20 @@ if __name__ == '__main__':
         can_bus.connect()
 
         input_devices = [
+            deye.Inverter(inverter_name, rs485_bus,  7),
             meters.SDM120M(meter_1_name, rs485_bus, 31),
             meters.SDM120M(meter_2_name, rs485_bus, 32),
             meters.SDM120M(meter_3_name, rs485_bus, 33),
             daikin.Altherma(heat_pump_name, can_bus),
         ]
 
-        qualified_register_names = ['{}.{}'.format(d.name, r.name)
-                                    for d in input_devices for r in d.registers()]
+        qualified_param_names = [
+            '{}.{}'.format(d.name, r.name)
+                for d in input_devices for r in d.params()]
 
         output_devices = [
             emon.EmonCMS(api_base_uri, api_key),
-#            persistence.CsvFile('CSV', csv_file_path(), qualified_register_names),
+#            persistence.CsvFile('CSV', csv_file_path(), qualified_param_names),
         ]
 
         exit_guard = ShutdownRequest()

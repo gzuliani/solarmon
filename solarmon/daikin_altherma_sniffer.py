@@ -4,7 +4,7 @@ import optparse
 import sys
 
 from clock import Timer
-from daikin import SerialConnection, CanBusMonitor, Register
+from daikin import SerialConnection, CanBusMonitor, Parameter
 
 
 if __name__ == '__main__':
@@ -28,12 +28,12 @@ if __name__ == '__main__':
     connection = SerialConnection('/dev/ttyUSB_HSCAN', 38400)
     connection.connect()
     monitor = CanBusMonitor('altherma', connection)
-    monitor.set_registers([
-        Register('t_dhw',            'float', 'deg',   10, b'190', b'31000E00000000'),
-        Register('water_pressure',   'float', 'bar', 1000, b'190', b'31001C00000000'),
-        Register('mode_01',            'int',    '',    1, b'190', b'3100FA01120000'),
-        Register('t_hs',             'float', 'deg',   10, b'190', b'3100FA01D60000'),
-        Register('t_ext',            'float', 'deg',   10, b'310', b'6100FA0A0C0000'),
+    monitor.set_params([
+        Parameter('t_dhw',            'float', 'deg',   10, b'190', b'31000E00000000'),
+        Parameter('water_pressure',   'float', 'bar', 1000, b'190', b'31001C00000000'),
+        Parameter('mode_01',            'int',    '',    1, b'190', b'3100FA01120000'),
+        Parameter('t_hs',             'float', 'deg',   10, b'190', b'3100FA01D60000'),
+        Parameter('t_ext',            'float', 'deg',   10, b'310', b'6100FA0A0C0000'),
     ])
 
     if options.filename:
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     else:
         output = sys.stdout
 
-    heading = ['date'] + [x.name for x in monitor.registers()]
+    heading = ['date'] + [x.name for x in monitor.params()]
     output.write(','.join(heading) + '\n')
 
     monitor.start()
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         duration = datetime.timedelta(seconds=options.duration)
         timer = Timer(options.period)
         while datetime.datetime.now() < start + duration:
-            data = [datetime.datetime.now()] + monitor.peek()
+            data = [datetime.datetime.now()] + monitor.read()
             output.write(','.join([str(x) for x in data]) + '\n')
             output.flush()
             timer.wait_next_tick()

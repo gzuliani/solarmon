@@ -1,5 +1,4 @@
 import logging
-import threading
 import time
 
 
@@ -78,7 +77,7 @@ class ELM327:
             return None
         return self._recv(b'\r')
 
-    def set_protocol_b_parameters(self, xx, yy):
+    def set_protocol_b_params(self, xx, yy):
         #
         # xx
         #

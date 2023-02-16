@@ -10,11 +10,11 @@ Some notes about how to talk to a Daikin Altherma heat pump [are available here]
 
 ### Input devices
 
-Input `Device`s represent a source of data such as a SUN2000 Huawei inverter, a Daikin heat pump or a generic power meter. Input devices have a `name` attribute, a set of `Register`s and a `peek` method that can be used to sample the data contained in the registers of the device. The `reconfigure` method can be used to reset the device in case of errors.
+Input `Device`s represent a source of data such as a SUN2000 Huawei inverter, a Daikin heat pump or a generic power meter. Input devices have a `name` attribute, a set of `Parameter`s and a `read` method that can be used to capture their values. The `reconfigure` method can be used to reset the device in case of errors.
 
 A `Connection` object represents a channel that can be used to communicate with a real device such a serial port or a WiFi or Ethernet connection. Device objects may use some sort of `Adapter`s to implement the communication protocol of the real device. See for example the `eml327.ELM327` OBD/Serial adapter object or the `modbus.UsbRtuAdapter` RS485/Serial adapter object.
 
-A `Register` is a device-dependent object that represents a parameter that can be read. A register has a `name` attribute and some other data that a `Device` object can use to acquire and decode a parameter value from the real device.
+A `Parameter` is a device-dependent object that represents a physical dimension that can be measured. A register has a `name` attribute and some other data that a `Device` object can use to acquire and decode a parameter value from the real device.
 
 ### Output devices
 
@@ -26,7 +26,7 @@ When started the program initializes a number of `Connection`s, then defines the
 
 The program then enters the main loop:
 
-* loop through the list of input devices invoking the `peek` method;
+* loop through the list of input devices invoking the `read` method;
 * if the acquistion fails for a given device, the communication channel used by that devices is reinitialized by means of the `reconnect` method of the associated `Communication` object;
 * a list of (`Device`, `readings`) tuples is then build;
 * the acquired data is forwared to the output device, one by one.

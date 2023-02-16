@@ -8,7 +8,7 @@ participant Connection
 participant ModbusXXXClient
 participant ObdAdapter
 participant Packet
-participant Register
+participant Parameter
 
 note right of ModbusXXXClient
 One of:
@@ -20,10 +20,10 @@ activate main
 
 == RS485 Device ==
 
-main -> Device: peek
+main -> Device: read
 activate Device
 
-Device -> Device: _read_register_array
+Device -> Device: _read_param_array
 activate Device
 Device -> Device: _read_register_span
 activate Device
@@ -44,16 +44,16 @@ activate ModbusXXXClient
 return <<raw_data>>
 return
 end
-Device -> Register: decode <<raw_data>>
-activate Register
+Device -> Parameter: decode <<raw_data>>
+activate Parameter
 return <<value>>
 deactivate Device
 deactivate Device
 deactivate Device
 
-Device -> Device: _read_sparse_registers
+Device -> Device: _read_sparse_params
 activate Device
-Device -> Device: _read_register
+Device -> Device: _read_param
 activate Device
 Device -> Device: _read_register_span
 activate Device
@@ -67,7 +67,7 @@ return <<values>>
 
 == Daikin Device ==
 
-main -> Device: peek
+main -> Device: read
 activate Device
 Device -> Device: _read
 activate Device
@@ -92,8 +92,8 @@ return <<raw_data>>|None
 Device -> Packet: create
 activate Packet
 return
-Device -> Register: decode <<packet>>
-activate Register
+Device -> Parameter: decode <<packet>>
+activate Parameter
 return <<value>>
 return <<values>>
 return <<values>>

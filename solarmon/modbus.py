@@ -70,13 +70,14 @@ class TcpLink(Connection):
                 ModbusTcpClient(host, port=port))
 
 
-class Register:
+class Parameter:
 
-    def __init__(self, name, type, unit, gain, addr, size):
+    def __init__(self, name, type, unit, gain, bias, addr, size):
         self.name = name
         self. type = type
         self.unit = unit
         self.gain = gain
+        self.bias = bias
         self.addr = addr
         self.size = size
 
@@ -94,7 +95,7 @@ class Register:
             result = self._to_float32(values)
         else:
             raise RuntimeError('unsupported type {}'.format(self.type))
-        return result / self.gain
+        return (result - self.bias) / self.gain
 
     def _to_uint32(self, values):
         assert len(values) == 2
@@ -130,46 +131,46 @@ class Device:
         self.addr = addr
         self._connection = connection
         self._timeout = timeout
-        self._register_arrays = []
-        self._sparse_registers = []
+        self._param_arrays = []
+        self._sparse_params = []
 
-    def registers(self):
+    def params(self):
         return [
-                x for array in self._register_arrays for x in array
-        ] + self._sparse_registers
+                x for array in self._param_arrays for x in array
+        ] + self._sparse_params
 
-    def peek(self):
+    def read(self):
         data = []
-        for array in self._register_arrays:
-            data.extend(self._read_register_array(array))
-        data.extend(self._read_sparse_registers(self._sparse_registers))
+        for array in self._param_arrays:
+            data.extend(self._read_param_array(array))
+        data.extend(self._read_sparse_params(self._sparse_params))
         return data
 
     def reconfigure(self):
         self._connection.reconnect()
 
-    def _add_register_array(self, registers):
-        self._register_arrays.append(registers)
+    def _add_param_array(self, params):
+        self._param_arrays.append(params)
 
-    def _add_sparse_registers(self, registers):
-        self._sparse_registers.extend(registers)
+    def _add_sparse_params(self, params):
+        self._sparse_params.extend(params)
 
-    def _read_register_array(self, registers):
-        base_addr = min(r.addr for r in registers)
-        past_last_addr = max(r.addr + r.size for r in registers)
+    def _read_param_array(self, params):
+        base_addr = min(r.addr for r in params)
+        past_last_addr = max(r.addr + r.size for r in params)
         size = past_last_addr - base_addr
         response = self._read_register_span(base_addr, size)
         data = []
-        for r in registers:
+        for r in params:
             pos = r.addr - base_addr
             data.append(r.decode(response[pos:pos + r.size]))
         return data
 
-    def _read_sparse_registers(self, registers):
-        return [r.decode(self._read_register(r)) for r in registers]
+    def _read_sparse_params(self, params):
+        return [r.decode(self._read_param(r)) for r in params]
 
-    def _read_register(self, register):
-        return self._read_register_span(register.addr, register.size)
+    def _read_param(self, param):
+        return self._read_register_span(param.addr, param.size)
 
     def _read_register_span(self, addr, size):
         response = self._read_registers(addr, size, self._timeout, self.addr)

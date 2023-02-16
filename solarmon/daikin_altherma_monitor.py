@@ -34,7 +34,7 @@ if __name__ == '__main__':
     else:
         output = sys.stdout
 
-    heading = ['date'] + [x.name for x in device.registers()] + ['duration']
+    heading = ['date'] + [x.name for x in device.params()] + ['duration']
     output.write(','.join(heading) + '\n')
 
     try:
@@ -42,10 +42,10 @@ if __name__ == '__main__':
         duration = datetime.timedelta(seconds=options.duration)
         timer = Timer(options.period)
         while datetime.datetime.now() < start + duration:
-            peek_start = datetime.datetime.now()
-            data = device.peek()
-            peek_duration = datetime.datetime.now() - peek_start
-            data = [datetime.datetime.now()] + data + [peek_duration]
+            read_start = datetime.datetime.now()
+            data = device.read()
+            read_duration = datetime.datetime.now() - read_start
+            data = [datetime.datetime.now()] + data + [read_duration]
             output.write(','.join([str(x) for x in data]) + '\n')
             output.flush()
             timer.wait_next_tick()
