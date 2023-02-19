@@ -139,3 +139,36 @@ Alcune grandezze sono memorizzate su 64 bit, utilizzando coppie di registri (qua
 Si tratta di valori cumulativi che fortunatamente per ora si possono ignorare (gli integrali sono a carico di EmonCMS). Supportarli richiederebbe verosimilmente introdurre un nuovo concetto, es. *Reading* che astrae il concetto di registro: un reading è un valore acquisito dal dispositivo che può essere originato da uno o più registri.
 
 Vale anche il viceversa: alcuni registri (cfr. 008, 025, 031, ...) contengono due o più valori distinti.
+
+## 20230219
+
+Il codice già supporta la lettura dei doppi registri, è sufficiente impostare `size` a 2; il valore composto viene poi interpretato in modalità *big-endian*:
+
+    class Parameter:
+        ...
+        def _to_uint32(self, values):
+            assert len(values) == 2
+            return values[0] * 65536 + values[1]
+
+**Attenzione**: l'inverter Deye memorizza i dati in modalità *little-endian*:
+
+|  063 |      | Total active power - low word                   | R   | [0,65536]      | 0.1   | kWh    | (MI) |
+|  064 |      | Total active power - high word                  | R   | [0,65536]      | 0.1   | kWh    | (MI) |
+
+----
+
+Il registro `000` contiene il codice che identifica il tipo di inverter; nel caso specifico il valore letto è `3`. Il manuale così descrive il contenuto del registro:
+
+> 0X0200 string machine
+> 0X0300 Single Phase Energy Storage Machine
+> 0X0400 Microinverter MI
+> 0X0500 Three-phase energy storage machine
+
+Ciò farebbe pensare che anche all'interno del singolo registro il valore è memorizzato in modalità little-endian; in realtà i valori di tensione e frequenza letti finora ipotizzando che il primo byte sia quello significativo producono valori verosimili:
+
+* **grid_frequency**: 50Hz
+* **grid_v_l1_n**: 240.9V
+* **inverter_v_l1_n**: 240.8V
+* **battery_temp**: 21.4°C
+
+
