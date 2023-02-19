@@ -6,7 +6,6 @@ class Inverter(HoldingRegisters):
         HoldingRegisters.__init__(self, name, connection, addr, timeout)
         self._add_param_array([
             Parameter('run_state',           'U16',     '',    1,    0,  59, 1),
-            Parameter('year_pv_power',       'I32',  'kWh',   10,    0,  68, 2),
             Parameter('grid_frequency',      'U16',   'Hz',  100,    0,  79, 1),
             Parameter('heat_sink_temp',      'U16',   '°C',   10, 1000,  90, 1),
             Parameter('igbt_module_temp',    'U16',   '°C',   10, 1000,  91, 1),
