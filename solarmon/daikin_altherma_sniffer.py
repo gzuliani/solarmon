@@ -4,7 +4,7 @@ import optparse
 import sys
 
 from clock import Timer
-from daikin import SerialConnection, CanBusMonitor, Parameter
+from daikin import SerialConnection, CanBusMonitor, MSB, INT, FLT
 
 
 if __name__ == '__main__':
@@ -29,11 +29,11 @@ if __name__ == '__main__':
     connection.connect()
     monitor = CanBusMonitor('altherma', connection)
     monitor.set_params([
-        Parameter('t_dhw',            'float', 'deg',   10, b'190', b'31000E00000000'),
-        Parameter('water_pressure',   'float', 'bar', 1000, b'190', b'31001C00000000'),
-        Parameter('mode_01',            'int',    '',    1, b'190', b'3100FA01120000'),
-        Parameter('t_hs',             'float', 'deg',   10, b'190', b'3100FA01D60000'),
-        Parameter('t_ext',            'float', 'deg',   10, b'310', b'6100FA0A0C0000'),
+        FLT('t_dhw',          'deg',   10, b'190', b'31000E00000000'),
+        FLT('water_pressure', 'bar', 1000, b'190', b'31001C00000000'),
+        MSB('mode_01',           '',       b'190', b'3100FA01120000'),
+        FLT('t_hs',           'deg',   10, b'190', b'3100FA01D60000'),
+        FLT('t_ext',          'deg',   10, b'310', b'6100FA0A0C0000'),
     ])
 
     if options.filename:

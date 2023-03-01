@@ -66,28 +66,28 @@ if __name__ == '__main__':
 
     try:
         huawei_wifi = huawei_sun2000.HuaweiWifi('192.168.200.1', '6607')
-        rs485_bus = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
-        can_bus = daikin.SerialConnection('/dev/ttyUSB_HSCAN', 38400)
+        rs485 = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
+        can = daikin.UsbCanAdapter('/dev/ttyUSB_HSCAN', 38400)
 
         huawei_wifi.connect()
-        rs485_bus.connect()
-        can_bus.connect()
+        rs485.connect()
+        can.connect()
 
         input_devices = [
             huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0, timeout=5),
-            meters.JSY_MK_323(heat_pump_meter_name, rs485_bus, 22),
-            meters.DDS238_1_ZN(old_pv_meter_name, rs485_bus, 21),
-            meters.DDS238_1_ZN(house_meter_name, rs485_bus, 23),
-            daikin.Altherma(heat_pump_name, can_bus),
+            meters.JSY_MK_323(heat_pump_meter_name, rs485, 22),
+            meters.DDS238_1_ZN(old_pv_meter_name, rs485, 21),
+            meters.DDS238_1_ZN(house_meter_name, rs485, 23),
+            daikin.Altherma(heat_pump_name, can),
         ]
 
         qualified_param_names = [
             '{}.{}'.format(d.name, r.name)
-                for d in input_devices for r in d.params()]
+                    for d in input_devices for r in d.params()]
 
         output_devices = [
             emon.EmonCMS(api_base_uri, api_key),
-    #        persistence.CsvFile('CSV', csv_file_path(), qualified_param_names),
+            # persistence.CsvFile('CSV', csv_file_path(), qualified_param_names),
         ]
 
         exit_guard = ShutdownRequest()
@@ -107,8 +107,8 @@ if __name__ == '__main__':
 
         logging.info('Shutting down...')
         huawei_wifi.disconnect()
-        rs485_bus.disconnect()
-        can_bus.disconnect()
+        rs485.disconnect()
+        can.disconnect()
         logging.info('Exiting...')
     except:
         logging.exception('An unexpected fatal error occoured, exiting...')

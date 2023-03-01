@@ -1,56 +1,56 @@
-from modbus import HoldingRegisters, InputRegisters, Parameter
+from modbus import HoldingRegisters, InputRegisters, I16, U16, U32, F32
 
 
 class JSY_MK_323(HoldingRegisters):
 
     def __init__(self, name, connection, addr, timeout=1):
-        HoldingRegisters.__init__(self, name, connection, addr, timeout)
+        super().__init__(name, connection, addr, timeout)
         self._add_param_array([
-            Parameter('V-L1',                 'U16',   'V',  100, 0, 0x0048, 1), # Phase A voltage
+            U16('V-L1',                   'V',  100, 0, 0x0048), # Phase A voltage
             # the following register actually has unit 'W' and gain 1
-            Parameter('P-L1',                 'U16',  'kW', 1000, 0, 0x004A, 1), # A phase active power
-            Parameter('E-L1-forward-total',   'U32', 'kWh',  800, 0, 0x004B, 2), # A-phase active energy (forward)
-            Parameter('E-L1-reverse-total',   'U32', 'kWh',  800, 0, 0x004E, 2), # A-phase active energy (reverse)
+            U16('P-L1',                  'kW', 1000, 0, 0x004a), # A phase active power
+            U32('E-L1-forward-total',   'kWh',  800, 0, 0x004b), # A-phase active energy (forward)
+            U32('E-L1-reverse-total',   'kWh',  800, 0, 0x004e), # A-phase active energy (reverse)
             # the following register actually has unit 'W' and gain 1
-            Parameter('V-L2',                 'U16',   'V',  100, 0, 0x0051, 1), # Phase B voltage
-            Parameter('P-L2',                 'U16',  'kW', 1000, 0, 0x0053, 1), # B phase active power
-            Parameter('E-L2-forward-total',   'U32', 'kWh',  800, 0, 0x0054, 2), # B-phase active energy (forward)
-            Parameter('E-L2-reverse-total',   'U32', 'kWh',  800, 0, 0x0057, 2), # B-phase active energy (reverse)
-            Parameter('V-L3',                 'U16',   'V',  100, 0, 0x005A, 1), # Phase C voltage
+            U16('V-L2',                   'V',  100, 0, 0x0051), # Phase B voltage
+            U16('P-L2',                  'kW', 1000, 0, 0x0053), # B phase active power
+            U32('E-L2-forward-total',   'kWh',  800, 0, 0x0054), # B-phase active energy (forward)
+            U32('E-L2-reverse-total',   'kWh',  800, 0, 0x0057), # B-phase active energy (reverse)
+            U16('V-L3',                   'V',  100, 0, 0x005a), # Phase C voltage
             # the following register actually has unit 'W' and gain 1
-            Parameter('P-L3',                 'U16',  'kW', 1000, 0, 0x005C, 1), # C phase active power
-            Parameter('E-L3-forward-total',   'U32', 'kWh',  800, 0, 0x005D, 2), # C-phase active energy (forward)
-            Parameter('E-L3-reverse-total',   'U32', 'kWh',  800, 0, 0x0060, 2), # C-phase active energy (reverse)
-            Parameter('E-forward-total',      'U32', 'kWh',  800, 0, 0x0063, 2), # Three-phase active total electric energy (forward)
-            Parameter('E-reverse-total',      'U32', 'kWh',  800, 0, 0x0066, 2), # Three-phase active total electric energy (reverse)
+            U16('P-L3',                  'kW', 1000, 0, 0x005c), # C phase active power
+            U32('E-L3-forward-total',   'kWh',  800, 0, 0x005d), # C-phase active energy (forward)
+            U32('E-L3-reverse-total',   'kWh',  800, 0, 0x0060), # C-phase active energy (reverse)
+            U32('E-forward-total',      'kWh',  800, 0, 0x0063), # Three-phase active total electric energy (forward)
+            U32('E-reverse-total',      'kWh',  800, 0, 0x0066), # Three-phase active total electric energy (reverse)
         ])
 
 
 class DDS238_1_ZN(HoldingRegisters):
 
     def __init__(self, name, connection, addr, timeout=1):
-        HoldingRegisters.__init__(self, name, connection, addr, timeout)
+        super().__init__(name, connection, addr, timeout)
         self._add_param_array([
-            Parameter('E-reverse-total', 'U32', 'kWh',  100, 0, 0x0008, 2), # Curent import energy
-            Parameter('E-forward-total', 'U32', 'kWh',  100, 0, 0x000A, 2), # Curent import energy
-            Parameter('V',               'U16',   'V',   10, 0, 0x000C, 1), # Voltage
+            U32('E-reverse-total',      'kWh',  100, 0, 0x0008), # Curent import energy
+            U32('E-forward-total',      'kWh',  100, 0, 0x000a), # Curent import energy
+            U16('V',                      'V',   10, 0, 0x000c), # Voltage
             # the following register actually has unit 'W' and gain 1
-            Parameter('P',               'I16',  'kW', 1000, 0, 0x000E, 1), # Active power
+            I16('P',                     'kW', 1000, 0, 0x000e), # Active power
         ])
 
 
 class SDM120M(InputRegisters):
 
     def __init__(self, name, connection, addr, timeout=1):
-        InputRegisters.__init__(self, name, connection, addr, timeout)
+        super().__init__(name, connection, addr, timeout)
         self._add_param_array([
-            Parameter('voltage',                 'F32',   'V',     1, 0, 0x0000, 2), # Voltage
+            F32('voltage',                'V',    1, 0, 0x0000), # Voltage
             # the following register actually has unit 'W'
-            Parameter('active-power',            'F32',  'kW',  1000, 0, 0x000C, 2), # Active Power
-            Parameter('frequency',               'F32',  'Hz',     1, 0, 0x0046, 2), # Frequency
-            Parameter('import-active-energy',    'F32', 'kWh',     1, 0, 0x0048, 2), # Import Active Energy
-            Parameter('export-active-energy',    'F32', 'kWh',     1, 0, 0x004A, 2), # Export Active Energy
+            F32('active-power',          'kW', 1000, 0, 0x000c), # Active Power
+            F32('frequency',             'Hz',    1, 0, 0x0046), # Frequency
+            F32('import-active-energy', 'kWh',    1, 0, 0x0048), # Import Active Energy
+            F32('export-active-energy', 'kWh',    1, 0, 0x004a), # Export Active Energy
         ])
         self._add_sparse_params([
-            Parameter('total-active-energy',     'F32', 'kWh',     1, 0, 0x0156, 2), # Total Active Energy
+            F32('total-active-energy',  'kWh',    1, 0, 0x0156), # Total Active Energy
         ])

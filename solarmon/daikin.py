@@ -59,28 +59,36 @@ class Packet:
 
 class Parameter:
 
-    def __init__(self, name, type, unit, divisor, header, request):
+    def __init__(self, name, unit, header, request):
         self.name = name
-        self.type = type
         self.unit = unit
-        self.divisor = divisor
         self.header = header
         self.request = request
         self.id = Packet(request).id
 
     def decode(self, data):
         assert len(data) == 4
-        if self.type == 'float':
-            value = self._to_signed_int32(data) / self.divisor
-        elif self.type =='longint':
-            value = self._to_signed_int32(data) // self.divisor
-        elif self.type == 'int':
-            value = int(data[:2], 16) // self.divisor
-        else:
-            raise RuntimeError('unsupported data type "{}"'.format(self.type))
-        return value
+        return self._decode(data)
 
-    def _to_signed_int32(self, data):
+    def _decode(self, data):
+        raise NotImplementedError
+
+
+class MostSignificantByte(Parameter):
+
+    def __init__(self, name, unit, header, request):
+        super().__init__(name, unit, header, request)
+
+    def _decode(self, data):
+        return int(data[:2], 16)
+
+
+class Word(Parameter):
+
+    def __init__(self, name, unit, header, request):
+        super().__init__(name, unit, header, request)
+
+    def _to_signed_int(self, data):
         value = int(data, 16)
         if value < 32768:
             return value
@@ -88,25 +96,81 @@ class Parameter:
             return value - 65536
 
 
-class Device:
+class SignedInt(Word):
 
-    def __init__(self, name, connection):
-        self.name = name
-        self._connection = connection
-        self._init_obd_adapter()
+    def __init__(self, name, unit, divisor, header, request):
+        super().__init__(name, unit, header, request)
+        self.divisor = divisor
+
+    def _decode(self, data):
+        return self._to_signed_int(data) // self.divisor
+
+
+class Float(Word):
+
+    def __init__(self, name, unit, divisor, header, request):
+        super().__init__(name, unit, header, request)
+        self.divisor = divisor
+
+    def _decode(self, data):
+        return self._to_signed_int(data) / self.divisor
+
+
+# abbreviations
+MSB = MostSignificantByte
+INT = SignedInt
+FLT = Float
+
+
+class UsbCanAdapter:
+
+    def __init__(self, port, baudrate):
+        self._connection = SerialConnection(port, baudrate)
+        self._init()
+
+    def connect(self):
+        self._connection.connect()
+
+    def disconnect(self):
+        self._connection.connect()
 
     def reconfigure(self):
         self._connection.reconnect()
-        self._init_obd_adapter()
+        self._init()
 
-    def _init_obd_adapter(self):
+    def set_header(self, header):
+        if not self._elm327:
+            raise RuntimeError('OBD adapter not available')
+        return self._elm327.set_header(header)
+
+    def send_request(self, data):
+        if not self._elm327:
+            raise RuntimeError('OBD adapter not available')
+        return self._elm327.send_request(data)
+
+    def start_monitor(self):
+        if not self._elm327:
+            raise RuntimeError('OBD adapter not available')
+        return self._elm327.start_monitor()
+
+    def stop_monitor(self):
+        if not self._elm327:
+            raise RuntimeError('OBD adapter not available')
+        return self._elm327.stop_monitor()
+
+    def consume(self):
+        if not self._elm327:
+            raise RuntimeError('OBD adapter not available')
+        return self._elm327.consume()
+
+    def _init(self):
         try:
-            self._obd_adapter = ELM327(self._connection.serial)
-            self._obd_adapter.warm_start()
-            self._obd_adapter.echo_off()
-            self._obd_adapter.linefeeds_off()
-            self._obd_adapter.spaces_off()
-            self._obd_adapter.headers_off()
+            self._elm327 = ELM327(self._connection.serial)
+            self._elm327.warm_start()
+            self._elm327.echo_off()
+            self._elm327.linefeeds_off()
+            self._elm327.spaces_off()
+            self._elm327.headers_off()
             # C0:
             #  b7 = 1 -> transmit 11 bit ID
             #  b6 = 1 -> variable DLC
@@ -117,57 +181,68 @@ class Device:
             #  b1 = 0 -> data format "none"
             #  b0 = 0
             # 19: 20Kbps
-            self._obd_adapter.set_protocol_b_params(b'C0', b'19')
-            self._obd_adapter.set_protocol(b'b')
+            self._elm327.set_protocol_b_params(b'C0', b'19')
+            self._elm327.set_protocol(b'b')
         except Exception as e:
-            self._obd_adapter = None
+            self._elm327 = None
             logging.warning('Error "%s" while initializing OBD adapter...', e)
+
+
+class Device:
+
+    def __init__(self, name, obd_adapter):
+        self.name = name
+        self._obd_adapter = obd_adapter
+
+    def reconfigure(self):
+        self._obd_adapter.reconfigure()
+
 
 class Altherma(Device):
 
-    def __init__(self, name, connection):
-        Device.__init__(self, name, connection)
+    def __init__(self, name, obd_adapter):
+        super().__init__(name, obd_adapter)
         self._params = [
-            Parameter('T-mandata',              'float',     'deg',   10, b'190', b'3100FA01D60000'),
-            Parameter('T-mandata-SET',          'float',     'deg',   10, b'190', b'31000200000000'),
-            Parameter('Pressione',              'float',     'bar', 1000, b'190', b'31001C00000000'),
-            Parameter('T-ACS',                  'float',     'deg',   10, b'190', b'31000E00000000'),
-            Parameter('T-ACS-SET',              'float',     'deg',   10, b'190', b'31000300000000'),
-            Parameter('T-ritorno',              'float',     'deg',   10, b'190', b'31001600000000'),
-            Parameter('Pompa-flusso',         'longint',      'lh',    1, b'190', b'3100FA01DA0000'),
-         #  Parameter('status_pump',          'longint',        '',    1, b'190', b'3100FA0A8C0000'),
-            Parameter('Tempo-compr',          'longint',    'hour',    1, b'190', b'3100FA06A50000'),
-            Parameter('Tempo-pompa',          'longint',    'hour',    1, b'190', b'3100FA06A40000'),
-            Parameter('Valvola-DHW',          'longint', 'percent',    1, b'190', b'3100FA069B0000'),
-            Parameter('Termostato',           'longint',        '',    1, b'190', b'3100FA071B0000'),
-            Parameter('E-ACS-BUH',            'longint',     'kwh',    1, b'190', b'3100FA091C0000'),
-            Parameter('E-risc-BUH',           'longint',     'kwh',    1, b'190', b'3100FA09200000'),
-            Parameter('E-risc',               'longint',     'kwh',    1, b'190', b'3100FA06A70000'),
-            Parameter('E-totale',             'longint',     'kwh',    1, b'190', b'3100FA09300000'),
-            Parameter('E-ACS',                'longint',     'kwh',    1, b'190', b'3100FA092C0000'),
-         #  Parameter('tvbh2',                  'float',     'deg',   10, b'190', b'3100FAC1020000'),
-            Parameter('T-refrigerante',         'float',     'deg',   10, b'190', b'3100FAC1030000'),
-         #  Parameter('tr2',                    'float',     'deg',   10, b'190', b'3100FAC1040000'),
-         #  Parameter('tdhw2',                  'float',     'deg',   10, b'190', b'3100FAC1060000'),
-            Parameter('Modo-operativo',       'longint',        '',    1, b'190', b'3100FAC0F60000'),
-         #  Parameter('pump',                 'longint', 'percent',    1, b'190', b'3100FAC0F70000'),
-            Parameter('P-BUH',                'longint',      'kw',    1, b'190', b'3100FAC0F90000'),
-            Parameter('Valvola-B1',           'longint', 'percent',    1, b'190', b'3100FAC0FB0000'),
-         #  Parameter('t_v1',                   'float',     'deg',   10, b'190', b'3100FAC0FC0000'),
-         #  Parameter('t_dhw1',                 'float',     'deg',   10, b'190', b'3100FAC0FD0000'),
-         #  Parameter('t_vbh',                  'float',     'deg',   10, b'190', b'3100FAC0FE0000'),
-         #  Parameter('t_outdoor_ot1',          'float',     'deg',   10, b'190', b'3100FAC0FF0000'),
-         #  Parameter('t_r1',                   'float',     'deg',   10, b'190', b'3100FAC1000000'),
-         #  Parameter('v1',                   'longint',      'lh',    1, b'190', b'3100FAC1010000'),
+            FLT('T-mandata',                'deg',   10, b'190', b'3100FA01D60000'),
+            FLT('T-mandata-SET',            'deg',   10, b'190', b'31000200000000'),
+            FLT('Pressione',                'bar', 1000, b'190', b'31001C00000000'),
+            FLT('T-ACS',                    'deg',   10, b'190', b'31000E00000000'),
+            FLT('T-ACS-SET',                'deg',   10, b'190', b'31000300000000'),
+            FLT('T-ritorno',                'deg',   10, b'190', b'31001600000000'),
+            INT('Pompa-flusso',              'lh',    1, b'190', b'3100FA01DA0000'),
+         #  INT('status_pump',                 '',    1, b'190', b'3100FA0A8C0000'),
+            INT('Tempo-compr',             'hour',    1, b'190', b'3100FA06A50000'),
+            INT('Tempo-pompa',             'hour',    1, b'190', b'3100FA06A40000'),
+            INT('Valvola-DHW',          'percent',    1, b'190', b'3100FA069B0000'),
+            INT('Termostato',                  '',    1, b'190', b'3100FA071B0000'),
+            INT('E-ACS-BUH',                'kwh',    1, b'190', b'3100FA091C0000'),
+            INT('E-risc-BUH',               'kwh',    1, b'190', b'3100FA09200000'),
+            INT('E-risc',                   'kwh',    1, b'190', b'3100FA06A70000'),
+            INT('E-totale',                 'kwh',    1, b'190', b'3100FA09300000'),
+            INT('E-ACS',                    'kwh',    1, b'190', b'3100FA092C0000'),
+         #  FLT('tvbh2',                    'deg',   10, b'190', b'3100FAC1020000'),
+            FLT('T-refrigerante',           'deg',   10, b'190', b'3100FAC1030000'),
+         #  FLT('tr2',                      'deg',   10, b'190', b'3100FAC1040000'),
+         #  FLT('tdhw2',                    'deg',   10, b'190', b'3100FAC1060000'),
+            INT('Modo-operativo',              '',    1, b'190', b'3100FAC0F60000'),
+         #  INT('pump',                 'percent',    1, b'190', b'3100FAC0F70000'),
+            INT('P-BUH',                     'kw',    1, b'190', b'3100FAC0F90000'),
+            INT('Valvola-B1',           'percent',    1, b'190', b'3100FAC0FB0000'),
+         #  FLT('t_v1',                     'deg',   10, b'190', b'3100FAC0FC0000'),
+         #  FLT('t_dhw1',                   'deg',   10, b'190', b'3100FAC0FD0000'),
+         #  FLT('t_vbh',                    'deg',   10, b'190', b'3100FAC0FE0000'),
+         #  FLT('t_outdoor_ot1',            'deg',   10, b'190', b'3100FAC0FF0000'),
+         #  FLT('t_r1',                     'deg',   10, b'190', b'3100FAC1000000'),
+         #  INT('v1',                        'lh',    1, b'190', b'3100FAC1010000'),
             # parameter not found in zanac/Spanni26 code
-            Parameter('E-totale-elettrica',   'longint',     'kWh',    1, b'190', b'3100FAC2FA0000'),
+            INT('E-totale-elettrica',       'kWh',    1, b'190', b'3100FAC2FA0000'),
             # parameter not found in zanac/Spanni26 code
-            Parameter('T-AU',                   'float',     'deg',   10, b'190', b'3100FAC1760000'),
-            Parameter('T-est',                  'float',     'deg',   10, b'310', b'6100FA0A0C0000'),
-            Parameter('T-mandata-CR-SET',       'float',     'deg',   10, b'310', b'61000400000000'),
+            FLT('T-AU',                     'deg',   10, b'190', b'3100FAC1760000'),
+            FLT('T-est',                    'deg',   10, b'310', b'6100FA0A0C0000'),
+            FLT('T-mandata-CR-SET',         'deg',   10, b'310', b'61000400000000'),
             # parameter not found in zanac/Spanni26 code
-            Parameter('Pompa-percentuale',    'longint', 'percent',    1, b'510', b'A100FAC10C0000'),
-            Parameter('T-mandata-CR',           'float',     'deg',   10, b'610', b'C1000F00000000'),
+            INT('Pompa-percentuale',    'percent',    1, b'510', b'A100FAC10C0000'),
+            FLT('T-mandata-CR',             'deg',   10, b'610', b'C1000F00000000'),
         ]
         self._last_header = None
 
@@ -178,8 +253,6 @@ class Altherma(Device):
         return [self._read(r) for r in self._params]
 
     def _read(self, param):
-        if not self._obd_adapter:
-            raise RuntimeError('OBD adapter not available')
         if param.header != self._last_header:
             self._last_header = param.header
             self._obd_adapter.set_header(self._last_header)
@@ -199,9 +272,9 @@ class Altherma(Device):
 
 class CanBusMonitor(threading.Thread, Device):
 
-    def __init__(self, name, connection):
+    def __init__(self, name, obd_adapter):
         threading.Thread.__init__(self)
-        Device.__init__(self, name, connection)
+        Device.__init__(self, name, obd_adapter)
         self._stop_guard = threading.Event()
         self._lock = threading.Lock()
         self._params = []
@@ -216,9 +289,6 @@ class CanBusMonitor(threading.Thread, Device):
         self._readings = [None] * len(self._params)
 
     def run(self):
-        if not self._obd_adapter:
-            logging.error('OBD adapter not available')
-            return
         logging.info('Starting monitor...')
         self._obd_adapter.start_monitor()
         logging.info('Monitor started')

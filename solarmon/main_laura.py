@@ -65,18 +65,18 @@ if __name__ == '__main__':
     logging.info('Booting...')
 
     try:
-        rs485_bus = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
-        can_bus = daikin.SerialConnection('/dev/ttyUSB_HSCAN', 38400)
+        rs485 = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
+        can = daikin.UsbCanAdapter('/dev/ttyUSB_HSCAN', 38400)
 
-        rs485_bus.connect()
-        can_bus.connect()
+        rs485.connect()
+        can.connect()
 
         input_devices = [
-            deye.Inverter(inverter_name, rs485_bus,  7),
-            meters.SDM120M(meter_1_name, rs485_bus, 31),
-            meters.SDM120M(meter_2_name, rs485_bus, 32),
-            meters.SDM120M(meter_3_name, rs485_bus, 33),
-            daikin.Altherma(heat_pump_name, can_bus),
+            deye.Inverter(inverter_name, rs485,  7),
+            meters.SDM120M(meter_1_name, rs485, 31),
+            meters.SDM120M(meter_2_name, rs485, 32),
+            meters.SDM120M(meter_3_name, rs485, 33),
+            daikin.Altherma(heat_pump_name, can),
         ]
 
         qualified_param_names = [
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
         output_devices = [
             emon.EmonCMS(api_base_uri, api_key),
-#            persistence.CsvFile('CSV', csv_file_path(), qualified_param_names),
+            # persistence.CsvFile('CSV', csv_file_path(), qualified_param_names),
         ]
 
         exit_guard = ShutdownRequest()
@@ -104,8 +104,8 @@ if __name__ == '__main__':
                                   device.name, e)
 
         logging.info('Shutting down...')
-        rs485_bus.disconnect()
-        can_bus.disconnect()
+        rs485.disconnect()
+        can.disconnect()
         logging.info('Exiting...')
     except:
         logging.exception('An unexpected fatal error occoured, exiting...')

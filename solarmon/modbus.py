@@ -8,7 +8,7 @@ import clock
 
 class Connection:
 
-    def __init__(self, name, client, delay_between_reads = 0):
+    def __init__(self, name, client, delay_between_reads=0):
         self._name = name
         self._client = client
         self._connected = False
@@ -44,21 +44,21 @@ class Connection:
         self.disconnect()
         self.connect()
 
-    def read_holding_registers(self, addr, size, timeout, unit):
+    def read_holding_registers(self, addr, count, timeout, unit):
         self._read_timer.wait_next_tick()
         return self._client.read_holding_registers(
-                addr, size, timeout=timeout, unit=unit)
+                addr, count, timeout=timeout, unit=unit)
 
-    def read_input_registers(self, addr, size, timeout, unit):
+    def read_input_registers(self, addr, count, timeout, unit):
         self._read_timer.wait_next_tick()
         return self._client.read_input_registers(
-                addr, size, timeout=timeout, unit=unit)
+                addr, count, timeout=timeout, unit=unit)
 
 
 class UsbRtuAdapter(Connection):
 
-    def __init__(self, port, delay_between_reads = 0):
-        Connection.__init__(self, port,
+    def __init__(self, port, delay_between_reads=0):
+        super().__init__(port,
                 ModbusSerialClient(method='rtu', port=port, baudrate=9600),
                 delay_between_reads)
 
@@ -66,62 +66,126 @@ class UsbRtuAdapter(Connection):
 class TcpLink(Connection):
 
     def __init__(self, host, port):
-        Connection.__init__(self, '{}:{}'.format(host, port),
+        super().__init__('{}:{}'.format(host, port),
                 ModbusTcpClient(host, port=port))
 
 
 class Parameter:
 
-    def __init__(self, name, type, unit, gain, bias, addr, size):
+    def __init__(self, name, regs):
         self.name = name
-        self. type = type
+        self.regs = regs
+
+    def decode(self, values):
+        assert len(values) == len(self.regs)
+        return self._decode(values)
+
+    def _decode(self, values):
+        raise NotImplementedError
+
+
+class AsciiString:
+
+    def __init__(self, name, addr, count):
+        self.name = name
+        self.regs = [x for x in range(addr, addr + count)]
+
+    def decode(self, values):
+        assert len(values) == len(self.regs)
+        return ''.join([chr((x & 0xff00) >> 8) + chr(x & 0xff) for x in values])
+
+
+class Number(Parameter):
+
+    def __init__(self, name, unit, gain, bias, regs):
+        super().__init__(name, regs)
         self.unit = unit
         self.gain = gain
         self.bias = bias
-        self.addr = addr
-        self.size = size
 
-    def decode(self, values):
-        assert len(values) == self.size
-        if self.type == 'U32':
-            result = self._to_uint32(values)
-        elif self.type == 'I32':
-            result = self._to_int32(values)
-        elif self.type == 'U16':
-            result = self._to_uint16(values)
-        elif self.type == 'I16':
-            result = self._to_int16(values)
-        elif self.type == 'F32':
-            result = self._to_float32(values)
-        else:
-            raise RuntimeError('unsupported type {}'.format(self.type))
-        return (result - self.bias) / self.gain
+    def _decode(self, values):
+        assert len(values) == len(self.regs)
+        return (self._combine(values) - self.bias) / self.gain
 
-    def _to_uint32(self, values):
-        assert len(values) == 2
-        return values[0] * 65536 + values[1]
+    def _combine(self, values):
+        raise NotImplementedError
 
-    def _to_int32(self, values):
-        result = self._to_uint32(values)
-        if (result & 0x80000000) == 0x80000000:
-            result = -((result ^ 0xFFFFFFFF) + 1)
-        return result
 
-    def _to_uint16(self, values):
-        assert len(values) == 1
+class UnsignedShort(Number):
+
+    def __init__(self, name, unit, gain, bias, addr):
+        super().__init__(name, unit, gain, bias, [addr])
+
+    def _combine(self, values):
         return values[0]
 
-    def _to_int16(self, values):
-        result = self._to_uint16(values)
+
+class SignedShort(Number):
+
+    def __init__(self, name, unit, gain, bias, addr):
+        super().__init__(name, unit, gain, bias, [addr])
+
+    def _combine(self, values):
+        result = values[0]
         if (result & 0x8000) == 0x8000:
-            result = -((result ^ 0xFFFF) + 1)
+            result = -((result ^ 0xffff) + 1)
         return result
 
-    def _to_float32(self, values):
-        assert len(values) == 2
+
+class UnsignedLong(Number):
+
+    def __init__(self, name, unit, gain, bias, hi_addr, lo_addr):
+        super().__init__(name, unit, gain, bias, [hi_addr, lo_addr])
+
+    def _combine(self, values):
+        return values[0] * 65536 + values[1]
+
+
+class UnsignedLongBE(UnsignedLong):
+
+    def __init__(self, name, unit, gain, bias, addr):
+        super().__init__(name, unit, gain, bias, addr, addr + 1)
+
+
+class UnsignedLongLE(UnsignedLong):
+
+    def __init__(self, name, unit, gain, bias, addr):
+        super().__init__(name, unit, gain, bias, addr + 1, addr)
+
+
+class SignedLong(Number):
+
+    def __init__(self, name, unit, gain, bias, hi_addr, lo_addr):
+        super().__init__(name, unit, gain, bias, [hi_addr, lo_addr])
+
+    def _combine(self, values):
+        result = values[0] * 65536 + values[1]
+        if (result & 0x80000000) == 0x80000000:
+            result = -((result ^ 0xffffffff) + 1)
+        return result
+
+
+class SignedLongBE(SignedLong):
+
+    def __init__(self, name, unit, gain, bias, addr):
+        super().__init__(name, unit, gain, bias, addr, addr + 1)
+
+
+class SignedLongLE(SignedLong):
+
+    def __init__(self, name, unit, gain, bias, addr):
+        super().__init__(name, unit, gain, bias, addr + 1, addr)
+
+
+class Float(Number):
+
+    def __init__(self, name, unit, gain, bias, addr):
+        super().__init__(name, unit, gain, bias, [addr, addr + 1])
+
+    def _combine(self, values):
         return BinaryPayloadDecoder.fromRegisters(
-            values, byteorder=Endian.Big, wordorder=Endian.Big
-            ).decode_32bit_float()
+                values, byteorder=Endian.Big, wordorder=Endian.Big
+        ).decode_32bit_float()
 
 
 class Device:
@@ -136,13 +200,13 @@ class Device:
 
     def params(self):
         return [
-                x for array in self._param_arrays for x in array
+                x for array_ in self._param_arrays for x in array_
         ] + self._sparse_params
 
     def read(self):
         data = []
-        for array in self._param_arrays:
-            data.extend(self._read_param_array(array))
+        for array_ in self._param_arrays:
+            data.extend(self._read_param_array(array_))
         data.extend(self._read_sparse_params(self._sparse_params))
         return data
 
@@ -156,45 +220,78 @@ class Device:
         self._sparse_params.extend(params)
 
     def _read_param_array(self, params):
-        base_addr = min(r.addr for r in params)
-        past_last_addr = max(r.addr + r.size for r in params)
-        size = past_last_addr - base_addr
-        response = self._read_register_span(base_addr, size)
+        regs = [r for p in params for r in p.regs]
+        addr, count = self._to_range(regs)
+        response = self._read_register_span(addr, count)
         data = []
-        for r in params:
-            pos = r.addr - base_addr
-            data.append(r.decode(response[pos:pos + r.size]))
+        for p in params:
+            values = self._extract_values(response, addr, p.regs)
+            data.append(p.decode(values))
         return data
 
     def _read_sparse_params(self, params):
-        return [r.decode(self._read_param(r)) for r in params]
+        data = []
+        for p in params:
+            response = self._read_param(p)
+            values = self._extract_values(response, min(p.regs), p.regs)
+            data.append(p.decode(values))
+        return data
 
     def _read_param(self, param):
-        return self._read_register_span(param.addr, param.size)
+        addr, count = self._to_range(param.regs)
+        return self._read_register_span(addr, count)
 
-    def _read_register_span(self, addr, size):
-        response = self._read_registers(addr, size, self._timeout, self.addr)
+    def _read_register_span(self, addr, count):
+        response = self._read_registers(addr, count, self._timeout, self.addr)
         if response.isError():
             raise RuntimeError(response)
         return response.registers
 
-    def _read_registers(self, addr, size, timeout, unit):
+    def _read_registers(self, addr, count, timeout, unit):
         raise NotImplementedError
+
+    @staticmethod
+    def _to_range(regs):
+        '''
+        Given a list of register addresses
+        return the lower one and the total number of registers.
+        '''
+        first, last = min(regs), max(regs)  # should do this in one pass!
+        return first, last - first + 1
+
+    @staticmethod
+    def _extract_values(response, addr, regs):
+        '''
+        Given a list of register values and the address of the first one,
+        extract all the values of the registers which address is given.
+        '''
+        return [response[r - addr] for r in regs]
 
 
 class InputRegisters(Device):
 
     def __init__(self, name, connection, addr, timeout):
-        Device.__init__(self, name, connection, addr, timeout)
+        super().__init__(name, connection, addr, timeout)
 
-    def _read_registers(self, addr, size, timeout, unit):
-        return self._connection.read_input_registers(addr, size, timeout, unit)
+    def _read_registers(self, addr, count, timeout, unit):
+        return self._connection.read_input_registers(
+                addr, count, timeout, unit)
 
 
 class HoldingRegisters(Device):
 
     def __init__(self, name, connection, addr, timeout):
-        Device.__init__(self, name, connection, addr, timeout)
+        super().__init__(name, connection, addr, timeout)
 
-    def _read_registers(self, addr, size, timeout, unit):
-        return self._connection.read_holding_registers(addr, size, timeout, unit)
+    def _read_registers(self, addr, count, timeout, unit):
+        return self._connection.read_holding_registers(
+                addr, count, timeout, unit)
+
+
+# abbreviations
+ASC = AsciiString
+I16 = SignedShort
+U16 = UnsignedShort
+I32 = SignedLongBE
+U32 = UnsignedLongBE
+F32 = Float

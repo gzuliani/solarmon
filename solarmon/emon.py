@@ -20,14 +20,14 @@ class EmonCMS:
                 self._param_names[device.name] = [
                         x.name for x in device.params()]
             sample_as_json = json.dumps(dict(zip(
-                        self._param_names[device.name], values)))
+                    self._param_names[device.name], values)))
             logging.debug('Sending "%s" to EmonCMS...', sample_as_json)
             response = requests.post(self._base_uri, data={
                 'node': device.name,
                 'apikey': self._api_key,
                 self._json_variant: sample_as_json})
             logging.debug('EmonCMS responded %s - %s',
-                response.status_code, response.reason)
+                    response.status_code, response.reason)
             if response.reason != 'OK':
                 logging.warning('Unexpected EmonCMS response: %s - %s',
-                    response.status_code, response.reason)
+                        response.status_code, response.reason)

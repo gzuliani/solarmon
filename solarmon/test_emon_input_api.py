@@ -40,21 +40,26 @@ class VirtualDevice:
 
 
 if __name__ == '__main__':
+
     parser = optparse.OptionParser()
     parser.add_option('-k', '--api-key', dest='api_key',
-        help='EmonCMS Input API Write Key', metavar='APIKEY')
+            help='EmonCMS Input API Write Key', metavar='APIKEY')
     parser.add_option('-b', '--api-base-uri', type='string',
-        dest='api_base_uri', default='http://127.0.0.1',
-        help='EmonCMS Base API URI (default http://127.0.0.1)', metavar='URL')
+            dest='api_base_uri', default='http://127.0.0.1',
+            help='EmonCMS Base API URI (default http://127.0.0.1)',
+            metavar='URL')
     parser.add_option('-j', '--json-format', type='string', dest='json_format',
-        default='json', help='JSON format, "fulljson" or "json" (deafult "json")',
-        metavar='FORMAT')
+            default='json',
+            help='JSON format, "fulljson" or "json" (deafult "json")',
+            metavar='FORMAT')
     parser.add_option('-n', '--null', type='int', default=0, dest='null',
-    help='Percentage of null samples to emit (default 0)', metavar='PERCENT')
+            help='Percentage of null samples to emit (default 0)',
+            metavar='PERCENT')
     parser.add_option('-p', '--period', dest='period', type='int', default=30,
-        help='period between samples, in seconds (default 30)')
+            help='period between samples, in seconds (default 30)')
     parser.add_option('-d', '--duration', dest='duration', type='int',
-        default=3600, help='test duration, in seconds (default 3600)')
+            default=3600, help='test duration, in seconds (default 3600)')
+
     (options, args) = parser.parse_args()
 
     logging.basicConfig(
@@ -70,7 +75,7 @@ if __name__ == '__main__':
     valid_json_formats = ['json', 'fulljson']
     if not options.json_format in valid_json_formats:
         logging.error('Invalid JSON format: expected one of {}, got {}'.format(
-            ', '.join(valid_json_formats), options.json_format))
+                ', '.join(valid_json_formats), options.json_format))
         sys.exit(-1)
 
     logging.info('Connecting to EmonCMS API at %s...', options.api_base_uri)

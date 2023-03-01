@@ -6,6 +6,25 @@ Some notes about how to talk to a Huawei SUN2000 inverter [are available here](h
 
 Some notes about how to talk to a Daikin Altherma heat pump [are available here](https://gzuliani.github.io/emon/daikin-altherma.html) (italian only).
 
+## Dependencies
+
+* [PyModbus v.2.5.2](https://pymodbus.readthedocs.io/en/v2.5.3/)
+* [requests v. 2.21.0](https://pypi.org/project/requests/2.21.0/)
+
+## Test
+
+First install the dependencies:
+
+    $ cd solarmon
+    $ python3 -m venv venv
+    $ . venv/bin/activate
+    $ pip3 install requests==2.21.0
+    $ pip3 install pymodbus==2.5.2
+    
+Then run the tests with the following command:
+
+    $ PYTHONPATH=solarmon python3 -m unittest -v
+
 ## Implementation notes
 
 ### Input devices
