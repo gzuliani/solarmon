@@ -19,4 +19,4 @@ To start the service at boot time:
 
 To disable the service from starting automatically:
 
-    $ sudo systemctl disable huawei_sun2000
+    $ sudo systemctl disable solarmon
