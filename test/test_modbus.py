@@ -78,14 +78,14 @@ class MockDevice(HoldingRegisters):
             SignedLongBE('p05', '', 1, 0, 7),
             SignedLongLE('p06', '', 1, 0, 7),
             F32('p07', '', 1, 0, 9),
-            ASC('p08', 16, 5),
+            STR('p08', 16, 5),
         ])
         self._add_sparse_params([
             U32('p09', '', 1, 0, 12),
             UnsignedLongBE('p10', '', 1, 0, 12),
             UnsignedLongLE('p11', '', 1, 0, 12),
             SignedLong('p12', '', 1, 0, 3, 8),
-            ASC('p13', 21, 3),
+            STR('p13', 21, 3),
             UnsignedLong('p14', '', 1, 0, 5, 1),
         ])
 
