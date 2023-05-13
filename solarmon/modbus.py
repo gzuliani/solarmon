@@ -92,7 +92,7 @@ class AsciiString:
 
     def decode(self, values):
         assert len(values) == len(self.regs)
-        return ''.join([chr((x & 0xff00) >> 8) + chr(x & 0xff) for x in values])
+        return ''.join([chr((x & 0xff00) >> 8) + chr(x & 0xff) for x in values]).rstrip('\x00')
 
 
 class Number(Parameter):
@@ -289,7 +289,7 @@ class HoldingRegisters(Device):
 
 
 # abbreviations
-ASC = AsciiString
+STR = AsciiString
 I16 = SignedShort
 U16 = UnsignedShort
 I32 = SignedLongBE

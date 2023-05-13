@@ -589,3 +589,8 @@ L'aumento del timeout sembra aver peggiorato le cose:
 
     start               end                 duration errors errors/day       note
     2022-10-04T21:05:18 2022-10-05 08:28:20 11:23:02 78     164.442926162119 -
+
+## 20230513
+
+Aggiunti alcuni parametri specifici delle batterie perché sembra che un pacco batterie a volte si comporti in modo anomalo rispetto agli altri.
+
