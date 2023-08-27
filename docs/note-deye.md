@@ -170,5 +170,3 @@ Ciò farebbe pensare che anche all'interno del singolo registro il valore è mem
 * **grid_v_l1_n**: 240.9V
 * **inverter_v_l1_n**: 240.8V
 * **battery_temp**: 21.4°C
-
-
