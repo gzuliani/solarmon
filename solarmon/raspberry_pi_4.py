@@ -1,4 +1,7 @@
+import logging
 import os
+import psutil
+import re
 import subprocess
 import time
 
@@ -9,51 +12,22 @@ class Command:
         self._command = command
 
     def run(self):
-        return subprocess.run(
-            self._command, capture_output=True, shell=True).stdout
-
-
-class Cpu:
-
-    def __init__(self):
-        self._command = Command(
-            "top -n1 | awk '/Cpu/ {print $2,$4,$6,$8,$10}'")
-        self.refresh()
-
-    def refresh(self):
-        self.user, \
-        self.system, \
-        self.nice, \
-        self.idle, \
-        self.io_wait = [float(x.replace(b',', b'.'))
-                        for x in self._command.run().split()]
-
-
-class Ram:
-
-    def __init__(self):
-        self._command = Command(
-            "free | awk '/Mem/ {print $2,$3,$4,$5,$6,$7}'")
-        self.refresh()
-
-    def refresh(self):
-        self.total, \
-        self.used, \
-        self.free, \
-        self.shared, \
-        self.cache, \
-        self.available = [int(x) for x in self._command.run().split()]
+        logging.debug('Running command "%s"...', self._command)
+        result = subprocess.run(
+            self._command, capture_output=True, shell=True)
+        logging.debug('Command returned %s - %s',
+            result.returncode, result.stdout)
+        return result.stdout
 
 
 class CpuLoadPercent:
 
-    def __init__(self, cpu):
+    def __init__(self):
         self.name = 'cpu-load-percent'
-        self._cpu = cpu
 
     def read(self):
-        return 100 - self._cpu.idle
-        
+        return psutil.cpu_percent(.1)
+
 
 class CpuTemperature:
 
@@ -66,12 +40,12 @@ class CpuTemperature:
 
 class RamUsedPercent:
 
-    def __init__(self, ram):
+    def __init__(self):
         self.name = 'ram-used-percent'
-        self._ram = ram
 
     def read(self):
-        return self._ram.used / self._ram.total * 100
+        memory = psutil.virtual_memory()
+        return memory.percent
 
 
 class DiskUsedPercent:
@@ -89,34 +63,33 @@ class WifiSignalStrength:
 
     def __init__(self):
         self.name = 'wifi-signal-strength'
-        self._command = Command(
-            "iwconfig 2>/dev/null | grep -oP 'Signal level=\K(-\d+)'")
+        self._command = Command('iwconfig')
+        self._signal_level = re.compile(b'Signal level=(-\d+)')
 
     def read(self):
-        return int(self._command.run())
+        output = self._command.run()
+        match = self._signal_level.search(output)
+        return int(match.group(1)) if match else None
 
 
 class UpTime:
 
     def __init__(self):
         self.name = 'up-time'
-        self._command = Command('cat /proc/uptime')
 
     def read(self):
-        return float(self._command.run().split()[0])
-    
+        return float(open('/proc/uptime').read().split()[0])
+
 
 class RaspberryPi4:
 
     def __init__(self, name):
         self.name = name
-        self._cpu = Cpu()
-        self._ram = Ram()
         self._params = [
             UpTime(),
-            CpuLoadPercent(self._cpu),
+            CpuLoadPercent(),
             CpuTemperature(),
-            RamUsedPercent(self._ram),
+            RamUsedPercent(),
             DiskUsedPercent('/'),
             WifiSignalStrength(),
         ]
@@ -125,9 +98,10 @@ class RaspberryPi4:
         return self._params
 
     def read(self):
-        self._cpu.refresh()
-        self._ram.refresh()
         return [x.read() for x in self._params]
+
+    def reconfigure(self):
+        pass
 
 
 if __name__ == '__main__':

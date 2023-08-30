@@ -4,11 +4,13 @@ import time
 
 class InfluxDB:
 
-    def __init__(self, api_base_uri, api_token, org, bucket):
+    def __init__(self, api_base_uri, api_token, org, bucket,
+                 measurement='measurement'):
         self.name = 'Influx'
-        self._base_uri = api_base_uri \
-            + f'/api/v2/write?org={org}&bucket={bucket}&precision=s'
+        self._base_uri = api_base_uri + \
+            f'/api/v2/write?org={org}&bucket={bucket}&precision=s'
         self._api_token = api_token
+        self._measurement = measurement
         self._param_names = {}
 
     def write(self, data, timestamp=None):
@@ -27,7 +29,7 @@ class InfluxDB:
             }
             data = zip(self._param_names[device.name], values)
             data = ','.join([f'{k}={v}' for k, v in data])
-            data = f'measurement,source={device.name} {data} {timestamp}'
+            data = f'{self._measurement},source={device.name} {data} {timestamp}'
             logging.debug('Sending "%s" to %s...', data, self._base_uri)
             response = requests.post(
                 self._base_uri, headers=headers, data=data)

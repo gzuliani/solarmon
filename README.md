@@ -10,6 +10,7 @@ Some notes about how to talk to a Daikin Altherma heat pump [are available here]
 
 * [PyModbus v.2.5.2](https://pymodbus.readthedocs.io/en/v2.5.3/)
 * [requests v. 2.21.0](https://pypi.org/project/requests/2.21.0/)
+* [psutil](https://pypi.org/project/psutil/) (required by `raspberry_pi_4.RaspberryPi4` monitor)
 
 ## Test
 
@@ -20,7 +21,8 @@ First install the dependencies:
     $ . venv/bin/activate
     $ pip3 install requests==2.21.0
     $ pip3 install pymodbus==2.5.2
-    
+    $ pip3 psutil
+
 Then run the tests with the following command:
 
     $ PYTHONPATH=solarmon python3 -m unittest -v
