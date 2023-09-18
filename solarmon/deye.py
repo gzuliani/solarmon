@@ -9,6 +9,7 @@ class Inverter(HoldingRegisters):
             U16('grid_frequency',        'Hz',  100,    0,  79),
             U16('heat_sink_temp',        '°C',   10, 1000,  90),
             U16('igbt_module_temp',      '°C',   10, 1000,  91),
+            U16('environment_temp',      '°C',   10, 1000,  95),
         ])
         self._add_param_array([
             U16('pv1_voltage',            'V',   10,    0, 109),
