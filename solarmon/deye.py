@@ -13,13 +13,17 @@ class Inverter(HoldingRegisters):
         ])
         self._add_param_array([
             U16('pv1_voltage',            'V',   10,    0, 109),
+            U16('pv1_current',            'A',   10,    0, 110),
             U16('pv2_voltage',            'V',   10,    0, 111),
+            U16('pv2_current',            'A',   10,    0, 112),
             U16('grid_v_l1_n',            'V',   10,    0, 150),
             U16('inverter_v_l1_n',        'V',   10,    0, 154),
             U16('load_v_l1',              'V',   10,    0, 157),
-            I16('grid_l1_power',         'kW', 1000,    0, 167),
+#            I16('micro_inverter_power',  'kW', 1000,    0, 166),
+            I16('internal_ct_l1_power',  'kW', 1000,    0, 167),
             I16('grid_power',            'kW', 1000,    0, 169),
-            I16('grid_ct_power',         'kW', 1000,    0, 172),
+            I16('external_ct_l1_power',  'kW', 1000,    0, 170),
+#            I16('grid_ct_power',         'kW', 1000,    0, 172),
             I16('inverter_l1_power',     'kW', 1000,    0, 173),
             I16('inverter_power',        'kW', 1000,    0, 175),
             I16('load_l1_power',         'kW', 1000,    0, 176),
@@ -30,4 +34,5 @@ class Inverter(HoldingRegisters):
             I16('pv1_power',             'kW', 1000,    0, 186),
             I16('pv2_power',             'kW', 1000,    0, 187),
             I16('battery_power',         'kW', 1000,    0, 190),
+            I16('battery_current',        'A',  100,    0, 191),
         ])

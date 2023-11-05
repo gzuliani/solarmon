@@ -16,9 +16,7 @@ import raspberry_pi_4 as rasp
 sampling_period = 30  # seconds
 
 # device codes -- should be unique
-meter_1_name = 'meter-1'
-meter_2_name = 'meter-2'
-meter_3_name = 'meter-3'
+meter_x_name = 'meter-x'
 inverter_name = 'inverter'
 raspberry_name = 'raspberry'
 
@@ -48,6 +46,13 @@ class ShutdownRequest:
 
 
 def read_from(device):
+    '''
+    Queries the given device.
+
+    Return a list of values, one for each parameter returned by the
+    `params` method. `None` is used as NULL to point out the absence
+    of the value of a parameter.
+    '''
     try:
         data = [None if x == '' else x for x in device.read()]
     except Exception as e:
@@ -74,9 +79,7 @@ if __name__ == '__main__':
         input_devices = [
             rasp.RaspberryPi4(raspberry_name),
             deye.Inverter(inverter_name, rs485,  1),
-            meters.SDM120M(meter_1_name, rs485, 11),
-            meters.SDM120M(meter_2_name, rs485, 12),
-            meters.SDM120M(meter_3_name, rs485, 13),
+#            meters.SDM120M(meter_x_name, rs485, 11),
         ]
 
         qualified_param_names = [
