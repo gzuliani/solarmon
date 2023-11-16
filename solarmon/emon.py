@@ -12,8 +12,10 @@ class EmonCMS:
         self._json_variant = json_variant
         self._param_names = {}
 
-    def write(self, data):
-        for device, values in data:
+    def write(self, samples):
+        for sample in samples:
+            device = sample.device
+            values = sample.values
             if not values:
                 continue
             if not device.name in self._param_names:

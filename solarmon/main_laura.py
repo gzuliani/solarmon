@@ -13,7 +13,7 @@ import meters
 import modbus
 import persistence
 
-sampling_period = 30  # seconds
+sampling_period = 30 # seconds
 
 # device codes -- should be unique
 meter_1_name = 'house'
@@ -44,15 +44,36 @@ class ShutdownRequest:
         self.should_exit = True
 
 
+class Sample:
+
+    def __init__(self, device):
+        self.device = device
+        self.values = [None] * len(device.params())
+        self.exception = None
+
+    def load(self, values):
+        self.values = [None if x == '' else x for x in values]
+
+    def invalidate(self, exception):
+        self.exception = exception
+
+    def is_error(self):
+        return self.exception is not None
+    
+    def error(self):
+        return str(self.exception)
+
+
 def read_from(device):
+    sample = Sample(device)
     try:
-        data = [None if x == '' else x for x in device.read()]
+        sample.load(device.read())
     except Exception as e:
-        data = [None] * len(device.params())
+        sample.invalidate(e)
         logging.error('Could not read from "%s", reason: %s', device.name, e)
         logging.info('Reconfiguring device after a bad response...')
         device.reconfigure()
-    return data
+    return sample
 
 
 if __name__ == '__main__':
@@ -94,11 +115,11 @@ if __name__ == '__main__':
         while not exit_guard.should_exit:
             timer.wait_next_tick(abort_guard=lambda: exit_guard.should_exit)
 
-            data = [(x, read_from(x)) for x in input_devices]
+            samples = [read_from(x) for x in input_devices]
 
             for device in output_devices:
                 try:
-                    device.write(data)
+                    device.write(samples)
                 except Exception as e:
                     logging.error('Could not write to "%s", reason: %s',
                                   device.name, e)

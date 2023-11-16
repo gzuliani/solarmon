@@ -20,6 +20,13 @@ class Parameter:
         return self._fn(t)
 
 
+class Sample:
+
+    def __init__(self, device, values):
+        self.device = device
+        self.values = values
+
+
 class VirtualDevice:
 
     def __init__(self):
@@ -91,11 +98,11 @@ if __name__ == '__main__':
         duration = datetime.timedelta(seconds=options.duration)
         timer = Timer(options.period)
         while datetime.datetime.now() < start + duration:
-            sample = device.read()
+            values = device.read()
             if random.random() <= null_threshold:
-                sample = [None] * len(sample)
-            logging.info('Emitting sample %s...', sample)
-            emon.write([(device, sample)])
+                values = [None] * len(sample)
+            logging.info('Emitting sample %s...', values)
+            emon.write([Sample(device, values)])
             timer.wait_next_tick()
     except Exception as e:
         logging.exception('Unexpected exception caught')
