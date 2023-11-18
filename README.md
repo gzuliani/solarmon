@@ -73,13 +73,13 @@ The starting point is the last stable image of this distribution ([emonSD-10Nov2
 
   The `psutil` package is required by the `raspberry_pi_4.RaspberryPi4.py` module only. You don't need to install it if you do not intend to use such module.
 
-* connect the USB adapters to the Raspberry and set up the `etc/udev/rules.d/10-local.rules` to ensure they get a unique name. The document [docs/how-to-usb-static-names.md](https://github.com/gzuliani/solarmon/blob/main/docs/how-to-usb-static-names.md) explains how to do it, the folder [udev](https://github.com/gzuliani/solarmon/tree/main/udev) contains some working examples. When done, restart the **udev** server:
+* connect the USB adapters to the Raspberry and set up the `etc/udev/rules.d/10-local.rules` to ensure they get a unique name. The document [docs/how-to-usb-static-names.md](https://github.com/gzuliani/solarmon/blob/main/docs/how-to-usb-static-names.md) explains how to do it, the folder [debian/udev](https://github.com/gzuliani/solarmon/tree/main/udev) contains some working examples. When done, restart the **udev** server:
 
          pi@raspberrypi:~ $ sudo udevadm trigger
 
 * define the set of input and output devices in the `solarmon/main.py` source file; you can use the `solarmon/main_andrea.py` and `solarmon/main_laura.py` templates. Set the `api_key` global variable to the "Write API Key" of the EmonCMS local installation.
 
-* enable the rotation of the **solarmon** log following the instructions in [debian/etc/logrotate.d/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/etc/logrotate/readme.md).
+* enable the rotation of the **solarmon** log following the instructions in [debian/etc/logrotate.d/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/etc/logrotate.d/readme.md).
 
 * configure **solarmon** to run as a service following the instructions in [debian/lib/systemd/system/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/lib/systemd/system/readme.md).
 
