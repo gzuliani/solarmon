@@ -2,6 +2,7 @@
 
 Copy the `solarmon` file in the `/etc/logrotate.d` and assign it to the `root` user and group:
 
+    pi@raspberrypi:~ $ sudo cp solarmon/debian/etc/logrotate.d/solarmon /etc/logrotate.d
     pi@raspberrypi:~ $ sudo chown root:root /etc/logrotate.d/solarmon
 
 To check if the configuration is ok:

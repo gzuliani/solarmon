@@ -1,8 +1,10 @@
 # How to: assign a static name to a USB device
 
-Add a new `udev` rule, here's how:
+A new `udev` rule must be defined for the USB device, here's how:
 
-1. find the `VendorId` and `productId` attribute values of your device:
+1. connect the USB device
+
+2. find the `VendorId` and `productId` attribute values of the device:
 
         $ lsusb
         Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
@@ -16,15 +18,15 @@ Add a new `udev` rule, here's how:
     * vendorId: `10c4`
     * productId: `ea60`
 
-2. open or create the file `/etc/udev/rules.d/10-local.rules`:
+3. open or create the file `/etc/udev/rules.d/10-local.rules`:
 
         $ sudo nano /etc/udev/rules.d/10-local.rules
 
-3. add the following line to the file:
+4. add the following line to the file:
 
         SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyUSB_RS485"
 
-4. save, exit `nano` and then restart the `udev` service:
+5. save, exit `nano` and then restart the `udev` service:
 
         $ sudo udevadm trigger
 

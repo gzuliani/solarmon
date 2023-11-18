@@ -21,7 +21,7 @@ First install the dependencies:
     $ . venv/bin/activate
     $ pip3 install requests==2.21.0
     $ pip3 install pymodbus==2.5.2
-    $ pip3 psutil
+    $ pip3 install psutil
 
 Then run the tests with the following command:
 
@@ -39,7 +39,7 @@ A `Parameter` is a device-dependent object that represents a physical dimension 
 
 ### Output devices
 
-Output devices are used to publish the data acquired from the pool of input devices. Output devices have a `write` method that expects a list of (`Device`, `readings`) tuples where `readings` is a list that contains the values of the registers of the device or `None` if a particular parameter was not acquired.
+Output devices are used to publish the data acquired from the pool of input devices. Output devices have a `write` method that expects a list of `Samples`. A `Sample` is an object that contains a reference to a `Device` (in the `device` member) and a set of readings in the `values` member. `values` is a list that contains the values of the registers of the device. A value of `None` indicates that the value of that particular register could not be acquired.
 
 ### Main program
 
@@ -51,3 +51,38 @@ The program then enters the main loop:
 * if the acquistion fails for a given device, the communication channel used by that devices is reinitialized by means of the `reconnect` method of the associated `Communication` object;
 * a list of (`Device`, `readings`) tuples is then build;
 * the acquired data is forwared to the output device, one by one.
+
+### Installation
+
+#### EmonSD
+
+The starting point is the last stable image of this distribution ([emonSD-10Nov22 (Stable)](https://docs.openenergymonitor.org/emonsd/download.html) at the time of writing).
+
+**Warning:** do not apply any OS upgrade to this image!
+
+* clone this repository in the home directory of the **pi** user:
+
+        $ cd
+        pi@raspberrypi:~ $ git clone https://github.com/gzuliani/solarmon.git
+
+* install the dependencies as root:
+
+        pi@raspberrypi:~ $ sudo pip3 install requests==2.21.0
+        pi@raspberrypi:~ $ sudo pip3 install pymodbus==2.5.2
+        pi@raspberrypi:~ $ sudo pip3 install psutil
+
+  The `psutil` package is required by the `raspberry_pi_4.RaspberryPi4.py` module only. You don't need to install it if you do not intend to use such module.
+
+* connect the USB adapters to the Raspberry and set up the `etc/udev/rules.d/10-local.rules` to ensure they get a unique name. The document [docs/how-to-usb-static-names.md](https://github.com/gzuliani/solarmon/blob/main/docs/how-to-usb-static-names.md) explains how to do it, the folder [udev](https://github.com/gzuliani/solarmon/tree/main/udev) contains some working examples. When done, restart the **udev** server:
+
+         pi@raspberrypi:~ $ sudo udevadm trigger
+
+* define the set of input and output devices in the `solarmon/main.py` source file; you can use the `solarmon/main_andrea.py` and `solarmon/main_laura.py` templates. Set the `api_key` global variable to the "Write API Key" of the EmonCMS local installation.
+
+* enable the rotation of the **solarmon** log following the instructions in [debian/etc/logrotate.d/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/etc/logrotate/readme.md).
+
+* configure **solarmon** to run as a service following the instructions in [debian/lib/systemd/system/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/lib/systemd/system/readme.md).
+
+#### InfluxDB
+
+TODO.
