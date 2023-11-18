@@ -73,7 +73,7 @@ The starting point is the last stable image of this distribution ([emonSD-10Nov2
 
   The `psutil` package is required by the `raspberry_pi_4.RaspberryPi4.py` module only. You don't need to install it if you do not intend to use such module.
 
-* connect the USB adapters to the Raspberry and set up the `etc/udev/rules.d/10-local.rules` to ensure they get a unique name. The document [docs/how-to-usb-static-names.md](https://github.com/gzuliani/solarmon/blob/main/docs/how-to-usb-static-names.md) explains how to do it, the folder [debian/udev](https://github.com/gzuliani/solarmon/tree/main/udev) contains some working examples. When done, restart the **udev** server:
+* connect the USB adapters to the Raspberry and set up the `etc/udev/rules.d/10-local.rules` to ensure they get a unique name. The document [docs/how-to-usb-static-names.md](https://github.com/gzuliani/solarmon/blob/main/docs/how-to-usb-static-names.md) explains how to do it, the folder [debian/udev](https://github.com/gzuliani/solarmon/tree/main/debian/udev) contains some working examples. When done, restart the **udev** server:
 
          pi@raspberrypi:~ $ sudo udevadm trigger
 
