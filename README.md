@@ -16,16 +16,16 @@ Some notes about how to talk to a Daikin Altherma heat pump [are available here]
 
 First install the dependencies:
 
-    $ cd solarmon
-    $ python3 -m venv venv
-    $ . venv/bin/activate
-    $ pip3 install requests==2.21.0
-    $ pip3 install pymodbus==2.5.2
-    $ pip3 install psutil
+    pi@raspberrypi:~ $ cd solarmon
+    pi@raspberrypi:~/solarmon $ python3 -m venv venv
+    pi@raspberrypi:~/solarmon$ . venv/bin/activate
+    pi@raspberrypi:~/solarmon$ pip3 install requests==2.21.0
+    pi@raspberrypi:~/solarmon$ pip3 install pymodbus==2.5.2
+    pi@raspberrypi:~/solarmon$ pip3 install psutil
 
 Then run the tests with the following command:
 
-    $ PYTHONPATH=solarmon python3 -m unittest -v
+    pi@raspberrypi:~/solarmon$ PYTHONPATH=solarmon python3 -m unittest -v
 
 ## Implementation notes
 
@@ -86,3 +86,32 @@ The starting point is the last stable image of this distribution ([emonSD-10Nov2
 #### InfluxDB
 
 TODO.
+
+## Extensions
+
+`solarmon/room_temp_monitor.py` is a script that has been used to evaluate the efficiency of an heating system by monitoring indoor vs. outdoor temperatures. The former was acquired using a BME280 sensor, the latter was downloaded from a local weather service. In order for the `bme_280.Bme280` input device to work, an additional Python package must be installed:
+
+    pi@raspberrypi:~/solarmon $ pip3 install RPi.bme280
+
+The support for the I2C bus must be installed too:
+
+    pi@raspberrypi:~/solarmon $ sudo apt install i2c-tools python3-smbus
+
+To make it available automatically at start up the system configuration must be changed:
+
+    pi@raspberrypi:~/solarmon $ sudo raspi-config
+
+A configuration menu appears. Select "5 Interfacing Options", then "P5 I2C". Enable the "ARM I2C interface". Reboot the Raspberry Pi. To verify that the BME280 sensor has been identified, issue the command:
+
+    pi@raspberrypi:~ $ sudo i2cdetect -y 1
+         0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+    00:                         -- -- -- -- -- -- -- -- 
+    10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+    20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+    30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+    40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+    50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+    60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
+    70: -- -- -- -- -- -- 76 --                         
+
+where `76` is the default address of the BME280 device.
