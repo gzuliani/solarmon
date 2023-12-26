@@ -2,15 +2,37 @@ import datetime
 import logging
 import urllib
 import urllib.request
-import re
+import xml.dom.minidom
+
+
+class StationXmlData:
+
+    def __init__(self, data):
+        dom = xml.dom.minidom.parseString(data)
+        self._data = dom.getElementsByTagName('data')[0]
+
+    def hourly_data(self):
+        hourly_data = {}
+        meteo_data = self._data.getElementsByTagName('meteo_data')[0]
+        for child in meteo_data.childNodes:
+            if child.nodeType != child.ELEMENT_NODE:
+                continue
+            elif child.nodeName in ['observation_time']:
+                hourly_data[child.nodeName] = self._text(child)
+            elif child.nodeName in ['t180', 'rg', 'rh', 'press']:
+                hourly_data[child.nodeName] = float(self._text(child))
+        return hourly_data
+
+    def _text(self, node):
+        return ''.join(
+            x.data for x in node.childNodes if x.nodeType == x.TEXT_NODE)
 
 
 class Param:
 
-    def __init__(self, name, tag, factory):
+    def __init__(self, name, tag):
         self.name = name
         self.tag = tag
-        self.factory = factory
 
 
 class OsmerFvg:
@@ -27,12 +49,11 @@ class OsmerFvg:
         self._uri = '{}/{}.xml'.format(self.BASE_URI, station_code)
         self._timeout = 3
         self._params = [
-            Param('time', 'observation_time', str),
-            Param('temp', 't180', float),
-#            Param('cloudiness', 'cloudiness', int),
-            Param('radiation', 'rg', float),
-            Param('humidity', 'rh', float),
-            Param('pressure', 'press', float),
+            Param('time', 'observation_time'),
+            Param('temp', 't180'),
+            Param('radiation', 'rg'),
+            Param('humidity', 'rh'),
+            Param('pressure', 'press'),
         ]
         self._reading_interval = 1200 # seconds between two consecutive readings
         self._last_reading_time = None
@@ -58,20 +79,16 @@ class OsmerFvg:
 
     def _decode(self, response):
         values = []
-        response.decode()
+        data = StationXmlData(response.decode()).hourly_data()
         for param in self._params:
-            value = self._extract_param(param.tag, response)
+            value = data[param.tag]
             if param.name == 'time':
                 if value == self._last_observation_time:
                     logging.debug('Got the previous sample, ignoring it...')
                     return self._empty_sample()
                 self._last_observation_time = value
-            values.append(param.factory(value))
+            values.append(value)
         return values
-
-    def _extract_param(self, tag, response):
-        match = re.search('<{0}\s*[^>]*>([^<]*)</{0}>'.format(tag), str(response))
-        return match.group(1) if match else None
 
     def _empty_sample(self):
         return [None] * len(self._params)

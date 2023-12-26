@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--L'utilizzo dei dati e delle informazioni qui disponibili è soggetto alle condizioni e limitazioni descritte nelle note legali, che l'utente implicitamente accetta (http://www.meteo.fvg.it/note-legali.php)-->
+<!--I dati real-time non possono essere ripubblicati (in qualsiasi formato o rielaborazione) prima di 24 ore dall'ora di riferimento del dato stesso, salvo eventuali deroghe preventivamente concordate con il titolare dei diritti.-->
+<data id="meteo.fvg_osservazioni_xml">
+     <language>italiano</language>
+     <credit>meteo.fvg</credit>
+     <credit_url>https://www.meteo.fvg.it</credit_url>
+     <credit_mail>support@meteo.fvg.it</credit_mail>
+     <suggested_pickup>30 minuti dopo l'ora</suggested_pickup>
+     <suggested_pickup_period>60</suggested_pickup_period>
+     <last_update>19/12/2023 13:53:13 UTC</last_update>
+     <meteo_data>
+          <observation_time>19/12/2023 13.00 UTC</observation_time>
+          <observation_date>19/12/2023</observation_date>
+          <observation_hour>13.00 UTC</observation_hour>
+          <station_id>UDI</station_id>
+          <station_name>Udine S.O.</station_name>
+          <station_altitude quota="m">91</station_altitude>
+          <rr um="mm" description="precipitazione">0.0</rr>
+          <prec_type>0</prec_type>
+          <!--prec_type  0:nulla; 1:pioggia; 2:pioggia e neve; 3:neve-->
+          <t180 um="°C" description="temperatura a 2m">14.8</t180>
+          <v10 um="km/h" description="vento medio a 10m">5</v10>
+          <ff10 um="km/h" description="vento vettoriale a 10m">5</ff10>
+          <dd10 um="°N" description="direzione vento a 10m">201</dd10>
+          <dd10max um="°N" description="direzione vento max a 10m">176</dd10max>
+          <vmax um="km/h" description="vento massimo a 10m">10</vmax>
+          <rg um="KJ/m^2" description="radiazione">1083</rg>
+          <cloudiness>1</cloudiness>
+          <!--cloudiness  0:n.d.; 1:sereno; 2:poco nuvoloso; 3:variabile; 4:nuvoloso; 5:coperto-->
+          <rh um="%" description="umidità media a 2m">46</rh>
+          <press um="hPa" description="pressione">1011.9</press>
+          <bf um="min" description="bagnatura fogliare">0</bf>
+          <t50 um="°C" description="temperatura a 50cm">15.5</t50>
+          <tm10 um="°C" description="temperatura a -10cm">5.5</tm10>
+     </meteo_data>
+     <meteo_data_daily>
+          <summary_time>19/12/2023 13.00 UTC</summary_time>
+          <summary_date>19/12/2023</summary_date>
+          <summary_hour>13.00 UTC</summary_hour>
+          <station_id>UDI</station_id>
+          <station_name>Udine S.O.</station_name>
+          <station_altitude quota="m">91</station_altitude>
+          <rr_cum um="mm" description="precipitazione">0.0</rr_cum>
+          <t180_min um="°C" description="temperatura a 2m">-0.2</t180_min>
+          <t180_med um="°C" description="temperatura a 2m">4.6</t180_med>
+          <t180_max um="°C" description="temperatura a 2m">15.1</t180_max>
+          <v10_med um="km/h" description="vento medio a 10m">3</v10_med>
+          <ff10_med um="km/h" description="vento vettoriale a 10m">3</ff10_med>
+          <dd10max um="°N" description="direzione vento max a 10m">176</dd10max>
+          <vmax_max um="km/h" description="vento massimo a 10m">10</vmax_max>
+          <rg_cum um="KJ/m^2" description="radiazione">4248</rg_cum>
+          <cloudiness>2</cloudiness>
+          <!--cloudiness  0:n.d.; 1:sereno; 2:poco nuvoloso; 3:variabile; 4:nuvoloso; 5:coperto-->
+          <rh_med um="%" description="umidità media a 2m">73</rh_med>
+          <press_min um="hPa" description="pressione">1011.9</press_min>
+          <press_max um="hPa" description="pressione">1017.5</press_max>
+          <bf_cum um="min" description="bagnatura fogliare">550</bf_cum>
+          <t50_min um="°C" description="temperatura a 50cm">-1.8</t50_min>
+          <t50_max um="°C" description="temperatura a 50cm">15.9</t50_max>
+          <tm10_med um="°C" description="temperatura a -10cm">3.8</tm10_med>
+     </meteo_data_daily>
+</data>
