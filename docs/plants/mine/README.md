@@ -503,6 +503,107 @@ Fonte: [Restore data](https://docs.influxdata.com/influxdb/v2/admin/backup-resto
 
 Verificato il buon funzionamento su un'istanza diversa di InfluxDB installata su una Raspberry Pi 3B.
 
+### Task di aggregazione giornaliero
+
+Definito il task `daily_aggregates` e schedulato alle ore 02:00 UTC con un offset di 5 minuti. La versione iniziale del task (in assenza di contatori di energia dedicati al controllo dei consumi di specifici dispositivi):
+
+    import "date"
+    import "experimental"
+    import "math"
+
+    option task = {name: "daily_aggregates", cron: "0 2 * * *", offset: 5m}
+
+    yesterdayStart = date.truncate(t: date.sub(d: 1d, from: now()), unit: 1d)
+
+    yesterdayStop = date.add(d: 1d, to: yesterdayStart)
+
+    from(bucket: "raw_data")
+        |> range(start: yesterdayStart, stop: yesterdayStop)
+        |> filter(fn: (r) => r["_measurement"] == "solarmon")
+        |> filter(
+            fn: (r) =>
+                r["source"] == "inverter" and (r["_field"] == "battery_power" or r["_field"]
+                        ==
+                        "pv1_power" or r["_field"] == "pv2_power" or r["_field"] == "inverter_power"
+                        or
+                        r["_field"] == "load_power" or r["_field"] == "grid_power"),
+        )
+        |> pivot(rowKey: ["_time"], columnKey: ["source", "_field"], valueColumn: "_value")
+        |> map(fn: (r) => ({r with "pv_out": r["inverter_pv1_power"] + r["inverter_pv2_power"]}))
+        |> map(
+            fn: (r) =>
+                ({r with "battery_out":
+                        if r["inverter_battery_power"] > 0 then
+                            r["inverter_battery_power"]
+                        else
+                            0.,
+                }),
+        )
+        |> map(
+            fn: (r) =>
+                ({r with "battery_in":
+                        if r["inverter_battery_power"] < 0 then
+                            -r["inverter_battery_power"]
+                        else
+                            0.,
+                }),
+        )
+        |> map(
+            fn: (r) =>
+                ({r with "grid_in":
+                        if r["inverter_grid_power"] > 0 then
+                            r["inverter_grid_power"]
+                        else
+                            0.,
+                }),
+        )
+        |> map(
+            fn: (r) =>
+                ({r with "grid_out":
+                        if r["inverter_grid_power"] < 0 then
+                            -r["inverter_grid_power"]
+                        else
+                            0.,
+                }),
+        )
+        |> map(
+            fn: (r) =>
+                ({r with "inverter_in":
+                        if r["inverter_inverter_power"] < 0 then
+                            -r["inverter_inverter_power"]
+                        else
+                            0.,
+                }),
+        )
+        |> map(
+            fn: (r) =>
+                ({r with "inverter_out":
+                        if r["inverter_grid_power"] > 0 then
+                            r["inverter_grid_power"]
+                        else
+                            0.,
+                }),
+        )
+        |> map(fn: (r) => ({r with "load_in": r["inverter_load_power"]}))
+        |> drop(
+            columns: [
+                "inverter_battery_power",
+                "inverter_grid_power",
+                "inverter_inverter_power",
+                "inverter_load_power",
+                "inverter_pv1_power",
+                "inverter_pv2_power",
+            ],
+        )
+        |> experimental.unpivot()
+        |> aggregateWindow(
+            every: 1d,
+            fn: (column, tables=<-) => tables |> integral(unit: 1h),
+            timeSrc: "_start",
+            createEmpty: false,
+        )
+        |> to(bucket: "daily_data")
+
 ## Appendice B - Note su Grafana
 
 - minimizzare il numero di interrogazioni condividendo il risultato di una query su più visualizzazioni diverse;
