@@ -24,10 +24,20 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
     - [Solarmon](#solarmon)
       - [Strategie iniziali](#strategie-iniziali)
   - [Appendice A - Note su InfluxDB](#appendice-a---note-su-influxdb)
+    - [Note generali](#note-generali)
+    - [Importazione CSV](#importazione-csv)
+    - [Esportazione CSV](#esportazione-csv)
+    - [Cancellazione dei dati](#cancellazione-dei-dati)
+    - [Spazio occupato su disco](#spazio-occupato-su-disco)
+    - [Backup](#backup)
+    - [Restore](#restore)
+    - [Task di aggregazione giornaliero](#task-di-aggregazione-giornaliero)
+    - [Determinazione degli intervalli senza campioni](#determinazione-degli-intervalli-senza-campioni)
   - [Appendice B - Note su Grafana](#appendice-b---note-su-grafana)
   - [Appendice C - Note sull'inverter](#appendice-c---note-sullinverter)
     - [Punti di attenzione](#punti-di-attenzione)
   - [Appendice D - Passaggio dall'ora legale a quella solare](#appendice-d---passaggio-dallora-legale-a-quella-solare)
+  - [Appendice E - Esempio di query "complessa"](#appendice-e---esempio-di-query-complessa)
 
 ## Hardware
 
@@ -98,7 +108,7 @@ Completare la configurazione con i seguenti interventi:
 
 ### Adattatore USB/RS485
 
-Poiché Linux attribuisce un nome di dispositivo arbitrario – potenzialmente diverso ad ogni accensione – all'adattatore USB/RS485 che verrà utilizzato per raccogliere i dati dall'inverter e dai contatori di potenza, conviene associargli un nome simbolico fisso, per esempio **ttyUSB_RS485**. Dopo aver connesso l'adattatore alla scheda si ricavano gli identificativi del costruttore e del prodotto con il comando:
+Poiché Linux attribuisce un nome di dispositivo arbitrario — potenzialmente diverso ad ogni accensione — all'adattatore USB/RS485 che verrà utilizzato per raccogliere i dati dall'inverter e dai contatori di potenza, conviene associargli un nome simbolico fisso, per esempio **ttyUSB_RS485**. Dopo aver connesso l'adattatore alla scheda si ricavano gli identificativi del costruttore e del prodotto con il comando:
 
     pi@raspberry:~ $ lsusb
     Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
@@ -603,6 +613,52 @@ Definito il task `daily_aggregates` e schedulato alle ore 02:00 UTC con un offse
             createEmpty: false,
         )
         |> to(bucket: "daily_data")
+
+### Determinazione degli intervalli senza campioni
+
+La query per la determinazione gli intervalli di tempo privi di campioni è la seguente:
+
+    from(bucket: "raw_data")
+        |> range(start: ..., stop: ...)
+        |> filter(fn: (r) => r["_measurement"]=="solarmon")
+        |> filter(fn: (r) => r["source"]=="inverter" and r["_field"]=="run_state")
+        |> aggregateWindow(every: 5m, fn: last, timeSrc: "_start")
+        |> filter(fn: (r) => not exists r["_value"], onEmpty: "keep")
+        |> aggregateWindow(every: 1d, fn: count, timeSrc: "_start")
+        |> map(fn: (r) => ({r with _value: r._value * 5, _field: "no_data"}))
+        |> to(bucket: "daily_data")
+
+ed è così strutturata:
+
+- estrapolazione dei campioni di un registro arbitrario, in questo caso **run_state**, nel periodo considerato;
+- suddivisione del periodo in intervalli di 5 minuti e selezione dell'ultimo campione di ogni finestra temporale;
+- selezione degli intervalli privi di campioni, quelli nei quali si assume il processo di acquisizione si sia interrotto;
+- conteggio del numero di intervalli privi di campioni verificatesi nella giornata;
+- conversione del conteggio in minuti — moltiplicazione per cinque.
+
+In questo modo si ottiene una buona stima della durata dei periodi di inattività del sistema, per quanto arrotondati ai 5 minuti sia in testa che in coda.
+
+Il task giornaliero che alimenta il campo `no_data` che contiene il numero di minuti durante i quali non sono stati acquisiti campioni nella giornata precedente è così definito:
+
+    import "date"
+
+    option task = { name: "daily_missing_data", cron: "0 2 * * *", offset: 5m }
+
+    yesterdayStart = date.truncate(t: date.sub(d: 1d, from: now()), unit: 1d)
+    yesterdayStop = date.add(d: 1d, to: yesterdayStart)
+
+    from(bucket: "raw_data")
+        |> range(start: yesterdayStart, stop: yesterdayStop)
+        |> filter(fn: (r) => r["_measurement"]=="solarmon")
+        |> filter(fn: (r) => r["source"]=="inverter" and r["_field"]=="run_state")
+        |> aggregateWindow(every: 5m, fn: last, timeSrc: "_start")
+        |> filter(fn: (r) => not exists r["_value"], onEmpty: "keep")
+        |> aggregateWindow(every: 1d, fn: count, timeSrc: "_start")
+        |> map(fn: (r) => ({r with _value: r._value * 5, _field: "no_data"}))
+        |> drop(columns: ["source"])
+        |> to(bucket: "daily_data")
+
+La rimozione della colonna `source` avviene per uniformità con il task `daily_aggregates` che effettua un `pivot` che la rimuove implicitamente.
 
 ## Appendice B - Note su Grafana
 
