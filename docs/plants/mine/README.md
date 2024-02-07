@@ -626,6 +626,7 @@ La query per la determinazione gli intervalli di tempo privi di campioni è la s
         |> filter(fn: (r) => not exists r["_value"], onEmpty: "keep")
         |> aggregateWindow(every: 1d, fn: count, timeSrc: "_start")
         |> map(fn: (r) => ({r with _value: r._value * 5, _field: "no_data"}))
+        |> drop(columns: ["source"])
         |> to(bucket: "daily_data")
 
 ed è così strutturata:
@@ -635,6 +636,8 @@ ed è così strutturata:
 - selezione degli intervalli privi di campioni, quelli nei quali si assume il processo di acquisizione si sia interrotto;
 - conteggio del numero di intervalli privi di campioni verificatesi nella giornata;
 - conversione del conteggio in minuti — moltiplicazione per cinque.
+
+La rimozione della colonna `source` avviene per uniformità con il task `daily_aggregates` che effettua un `pivot` che la rimuove implicitamente.
 
 In questo modo si ottiene una buona stima della durata dei periodi di inattività del sistema, per quanto arrotondati ai 5 minuti sia in testa che in coda.
 
@@ -657,8 +660,6 @@ Il task giornaliero che alimenta il campo `no_data` che contiene il numero di mi
         |> map(fn: (r) => ({r with _value: r._value * 5, _field: "no_data"}))
         |> drop(columns: ["source"])
         |> to(bucket: "daily_data")
-
-La rimozione della colonna `source` avviene per uniformità con il task `daily_aggregates` che effettua un `pivot` che la rimuove implicitamente.
 
 ## Appendice B - Note su Grafana
 
