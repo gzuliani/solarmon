@@ -4,8 +4,8 @@ from modbus import TcpLink, HoldingRegisters, STR, I16, U16, U32, I32
 
 class HuaweiWifi(TcpLink):
 
-    def __init__(self, host, port, boot_time=2):
-        super().__init__(host, port)
+    def __init__(self, host, port, timeout, boot_time=2):
+        super().__init__(host, port, timeout)
         self._boot_time = boot_time
 
     def connect(self):
