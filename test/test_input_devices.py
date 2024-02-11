@@ -18,11 +18,11 @@ class MockModbusResponse:
 
 class MockModbusProxy:
 
-    def read_input_registers(self, addr, count, timeout, unit):
+    def read_input_registers(self, addr, count, unit):
         self.read_input_registers_called = True
         return MockModbusResponse(addr, count)
 
-    def read_holding_registers(self, addr, count, timeout, unit):
+    def read_holding_registers(self, addr, count, unit):
         self.read_holding_registers_called = True
         return MockModbusResponse(addr, count)
 

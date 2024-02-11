@@ -1,5 +1,5 @@
 import logging
-from pymodbus.client.sync import ModbusSerialClient, ModbusTcpClient
+from pymodbus.client import ModbusSerialClient, ModbusTcpClient
 from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadDecoder
 
@@ -44,30 +44,28 @@ class Connection:
         self.disconnect()
         self.connect()
 
-    def read_holding_registers(self, addr, count, timeout, unit):
+    def read_holding_registers(self, addr, count, unit):
         self._read_timer.wait_next_tick()
-        return self._client.read_holding_registers(
-                addr, count, timeout=timeout, unit=unit)
+        return self._client.read_holding_registers(addr, count, slave=unit)
 
-    def read_input_registers(self, addr, count, timeout, unit):
+    def read_input_registers(self, addr, count, unit):
         self._read_timer.wait_next_tick()
-        return self._client.read_input_registers(
-                addr, count, timeout=timeout, unit=unit)
+        return self._client.read_input_registers(addr, count, slave=unit)
 
 
 class UsbRtuAdapter(Connection):
 
-    def __init__(self, port, delay_between_reads=0):
+    def __init__(self, port, timeout, delay_between_reads=0):
         super().__init__(port,
-                ModbusSerialClient(method='rtu', port=port, baudrate=9600),
+                ModbusSerialClient(port=port, baudrate=9600, timeout=timeout),
                 delay_between_reads)
 
 
 class TcpLink(Connection):
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, timeout):
         super().__init__('{}:{}'.format(host, port),
-                ModbusTcpClient(host, port=port))
+                ModbusTcpClient(host, port=port, timeout=timeout))
 
 
 class Parameter:
@@ -184,17 +182,16 @@ class Float(Number):
 
     def _combine(self, values):
         return BinaryPayloadDecoder.fromRegisters(
-                values, byteorder=Endian.Big, wordorder=Endian.Big
+                values, byteorder=Endian.BIG, wordorder=Endian.BIG
         ).decode_32bit_float()
 
 
 class Device:
 
-    def __init__(self, name, connection, addr, timeout):
+    def __init__(self, name, connection, addr):
         self.name = name
         self.addr = addr
         self._connection = connection
-        self._timeout = timeout
         self._param_arrays = []
         self._sparse_params = []
 
@@ -242,12 +239,12 @@ class Device:
         return self._read_register_span(addr, count)
 
     def _read_register_span(self, addr, count):
-        response = self._read_registers(addr, count, self._timeout, self.addr)
+        response = self._read_registers(addr, count, self.addr)
         if response.isError():
             raise RuntimeError(response)
         return response.registers
 
-    def _read_registers(self, addr, count, timeout, unit):
+    def _read_registers(self, addr, count, unit):
         raise NotImplementedError
 
     @staticmethod
@@ -270,22 +267,20 @@ class Device:
 
 class InputRegisters(Device):
 
-    def __init__(self, name, connection, addr, timeout):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
 
-    def _read_registers(self, addr, count, timeout, unit):
-        return self._connection.read_input_registers(
-                addr, count, timeout, unit)
+    def _read_registers(self, addr, count, unit):
+        return self._connection.read_input_registers(addr, count, unit)
 
 
 class HoldingRegisters(Device):
 
-    def __init__(self, name, connection, addr, timeout):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
 
-    def _read_registers(self, addr, count, timeout, unit):
-        return self._connection.read_holding_registers(
-                addr, count, timeout, unit)
+    def _read_registers(self, addr, count, unit):
+        return self._connection.read_holding_registers(addr, count, unit)
 
 
 # abbreviations

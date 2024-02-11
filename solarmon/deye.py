@@ -25,8 +25,8 @@ QW_ = QwordLE
 
 class Inverter(HoldingRegisters):
 
-    def __init__(self, name, connection, addr, timeout=5):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
         self._add_param_array([
             U16('run_state',               '',    1,    0,  59),
             U16('grid_frequency',        'Hz',  100,    0,  79),

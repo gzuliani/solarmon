@@ -15,8 +15,8 @@ class HuaweiWifi(TcpLink):
 
 class Dongle(HoldingRegisters):
 
-    def __init__(self, name, connection, addr, timeout=5):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
         self._add_param_array([
             U32('total_input_power',              'kW', 1000, 0, 37498    ), # Total input power
             U32('load_power',                     'kW', 1000, 0, 37500    ), # Load power
@@ -27,8 +27,8 @@ class Dongle(HoldingRegisters):
 
 class Inverter(HoldingRegisters):
 
-    def __init__(self, name, connection, addr, timeout=5):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
         self._add_param_array([
             I32('P-PV',                           'kW', 1000, 0, 32064    ), # Input power
             U16('V-L1-inverter',                   'V',   10, 0, 32069    ), # Phase A voltage

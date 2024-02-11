@@ -43,11 +43,11 @@ class MockConnection:
         self.read_input_registers_called = False
         self.read_holding_registers_called = False
 
-    def read_input_registers(self, addr, count, timeout, unit):
+    def read_input_registers(self, addr, count, unit):
         self.read_input_registers_called = True
         return MockResponse(addr, count)
 
-    def read_holding_registers(self, addr, count, timeout, unit):
+    def read_holding_registers(self, addr, count, unit):
         self.read_holding_registers_called = True
         return MockResponse(addr, count)
 
@@ -55,21 +55,21 @@ class MockConnection:
 class MockReadOnlyDevice(InputRegisters):
 
     def __init__(self, connection):
-        super().__init__('name', connection, 'addr', timeout=0)
+        super().__init__('name', connection, 'addr')
         self._add_param_array([U16('', '', 1, 0, 0)])
 
 
 class MockReadWriteDevice(HoldingRegisters):
 
     def __init__(self, connection):
-        super().__init__('name', connection, 'addr', timeout=0)
+        super().__init__('name', connection, 'addr')
         self._add_param_array([U16('', '', 1, 0, 0)])
 
 
 class MockDevice(HoldingRegisters):
 
     def __init__(self, connection):
-        super().__init__('name', connection, 'addr', timeout=0)
+        super().__init__('name', connection, 'addr')
         self._add_param_array([
             I16('p01', '', 1, 0, 0),
             U16('p02', '', 1, 0, 2),

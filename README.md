@@ -8,8 +8,9 @@ Some notes about how to talk to a Daikin Altherma heat pump [are available here]
 
 ## Dependencies
 
-* [PyModbus v.2.5.2](https://pymodbus.readthedocs.io/en/v2.5.3/)
-* [requests v. 2.21.0](https://pypi.org/project/requests/2.21.0/)
+* Python >= 3.8
+* [PyModbus v.3.6.4](https://pymodbus.readthedocs.io/en/v3.6.4/)
+* [requests v. 2.31.0](https://pypi.org/project/requests/2.31.0/)
 * [psutil](https://pypi.org/project/psutil/) (required by `raspberry_pi_4.RaspberryPi4` monitor)
 
 ## Test
@@ -19,8 +20,8 @@ First install the dependencies:
     pi@raspberrypi:~ $ cd solarmon
     pi@raspberrypi:~/solarmon $ python3 -m venv venv
     pi@raspberrypi:~/solarmon$ . venv/bin/activate
-    pi@raspberrypi:~/solarmon$ pip3 install requests==2.21.0
-    pi@raspberrypi:~/solarmon$ pip3 install pymodbus==2.5.2
+    pi@raspberrypi:~/solarmon$ pip3 install requests==2.31.0
+    pi@raspberrypi:~/solarmon$ pip3 install pymodbus==3.6.4
     pi@raspberrypi:~/solarmon$ pip3 install psutil
 
 Then run the tests with the following command:
@@ -56,7 +57,7 @@ The program then enters the main loop:
 
 #### EmonSD
 
-The starting point is the last stable image of this distribution ([emonSD-10Nov22 (Stable)](https://docs.openenergymonitor.org/emonsd/download.html) at the time of writing).
+The starting point is the last stable image of this distribution ([emonSD-01Feb24](https://docs.openenergymonitor.org/emonsd/download.html) at the time of writing).
 
 **Warning:** do not apply any OS upgrade to this image!
 

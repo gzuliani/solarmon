@@ -86,18 +86,19 @@ if __name__ == '__main__':
     logging.info('Booting...')
 
     try:
-        rs485 = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
-        can = daikin.UsbCanAdapter('/dev/ttyUSB_HSCAN', 38400)
+        rs485_adapter = modbus.UsbRtuAdapter(
+            '/dev/ttyUSB_RS485', timeout=1, delay_between_reads=3)
+        can_adapter = daikin.UsbCanAdapter('/dev/ttyUSB_HSCAN', 38400)
 
-        rs485.connect()
-        can.connect()
+        rs485_adapter.connect()
+        can_adapter.connect()
 
         input_devices = [
-            deye.Inverter(inverter_name, rs485,  7),
-            meters.SDM120M(meter_1_name, rs485, 31),
-            meters.SDM120M(meter_2_name, rs485, 32),
-            meters.SDM120M(meter_3_name, rs485, 33),
-            daikin.Altherma(heat_pump_name, can),
+            deye.Inverter(inverter_name, rs485_adapter,  7),
+            meters.SDM120M(meter_1_name, rs485_adapter, 31),
+            meters.SDM120M(meter_2_name, rs485_adapter, 32),
+            meters.SDM120M(meter_3_name, rs485_adapter, 33),
+            daikin.Altherma(heat_pump_name, can_adapter),
         ]
 
         qualified_param_names = [
@@ -125,8 +126,8 @@ if __name__ == '__main__':
                                   device.name, e)
 
         logging.info('Shutting down...')
-        rs485.disconnect()
-        can.disconnect()
+        rs485_adapter.disconnect()
+        can_adapter.disconnect()
         logging.info('Exiting...')
     except:
         logging.exception('An unexpected fatal error occoured, exiting...')

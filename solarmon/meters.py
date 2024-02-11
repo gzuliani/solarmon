@@ -3,8 +3,8 @@ from modbus import HoldingRegisters, InputRegisters, I16, U16, U32, F32
 
 class JSY_MK_323(HoldingRegisters):
 
-    def __init__(self, name, connection, addr, timeout=1):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
         self._add_param_array([
             U16('V-L1',                   'V',  100, 0, 0x0048), # Phase A voltage
             # the following register actually has unit 'W' and gain 1
@@ -28,8 +28,8 @@ class JSY_MK_323(HoldingRegisters):
 
 class DDS238_1_ZN(HoldingRegisters):
 
-    def __init__(self, name, connection, addr, timeout=1):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
         self._add_param_array([
             U32('E-reverse-total',      'kWh',  100, 0, 0x0008), # Curent import energy
             U32('E-forward-total',      'kWh',  100, 0, 0x000a), # Curent import energy
@@ -41,8 +41,8 @@ class DDS238_1_ZN(HoldingRegisters):
 
 class SDM120M(InputRegisters):
 
-    def __init__(self, name, connection, addr, timeout=1):
-        super().__init__(name, connection, addr, timeout)
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
         self._add_param_array([
             F32('voltage',                'V',    1, 0, 0x0000), # Voltage
             # the following register actually has unit 'W'

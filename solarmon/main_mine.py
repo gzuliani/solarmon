@@ -18,13 +18,13 @@ sampling_period = 30  # seconds
 # device codes -- should be unique
 meter_x_name = 'meter-x'
 inverter_name = 'inverter'
-raspberry_name = 'raspberry'
+raspberry_name = 'rasp'
 
 # influxdb webapi
 api_base_uri = 'http://127.0.0.1:8086'
 api_token = '****'
 api_organization = 'home'
-api_bucket = 'raw'
+api_bucket = 'raw_data'
 api_measurement = 'solarmon'
 
 # csv
@@ -87,13 +87,14 @@ if __name__ == '__main__':
     logging.info('Booting...')
 
     try:
-        rs485 = modbus.UsbRtuAdapter('/dev/ttyUSB_RS485', delay_between_reads=3)
-        rs485.connect()
+        rs485_adapter = modbus.UsbRtuAdapter(
+            '/dev/ttyUSB_RS485', timeout=1, delay_between_reads=3)
+        rs485_adapter.connect()
 
         input_devices = [
             rasp.RaspberryPi4(raspberry_name),
-            deye.Inverter(inverter_name, rs485,  1),
-#            meters.SDM120M(meter_x_name, rs485, 11),
+            deye.Inverter(inverter_name, rs485_adapter,  1),
+#            meters.SDM120M(meter_x_name, rs485_adapter, 11),
         ]
 
         qualified_param_names = [
@@ -126,7 +127,7 @@ if __name__ == '__main__':
                                   device.name, e)
 
         logging.info('Shutting down...')
-        rs485.disconnect()
+        rs485_adapter.disconnect()
         logging.info('Exiting...')
     except:
         logging.exception('An unexpected fatal error occoured, exiting...')
