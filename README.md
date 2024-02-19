@@ -73,7 +73,7 @@ The starting point is the last stable image of this distribution ([emonSD-01Feb2
         pi@raspberrypi:~ $ sudo pip3 install psutil
 
 > [!WARNING]
-> The **EmonSD-01Feb24** image contains `requests` v. 2.28.0 and `pymodbus` v. 3.0.0. Updating this packages made the RS485 communication problematic, so better stay with the preinstalled ones.
+> The **EmonSD-01Feb24** image contains `requests` v. 2.28.0 and `pymodbus` v. 3.0.0. Updating these packages made the RS485 communication problematic, so better stay with the preinstalled ones.
 
   The `psutil` package is required by the `raspberry_pi_4.RaspberryPi4.py` module only. You don't need to install it if you do not intend to use such module.
 
