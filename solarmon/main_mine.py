@@ -15,11 +15,6 @@ import raspberry_pi_4 as rasp
 
 sampling_period = 30  # seconds
 
-# device codes -- should be unique
-meter_x_name = 'meter-x'
-inverter_name = 'inverter'
-raspberry_name = 'rasp'
-
 # influxdb webapi
 api_base_uri = 'http://127.0.0.1:8086'
 api_token = '****'
@@ -92,9 +87,12 @@ if __name__ == '__main__':
         rs485_adapter.connect()
 
         input_devices = [
-            rasp.RaspberryPi4(raspberry_name),
-            deye.Inverter(inverter_name, rs485_adapter,  1),
-#            meters.SDM120M(meter_x_name, rs485_adapter, 11),
+            rasp.RaspberryPi4('rasp'),
+            deye.Inverter('inverter', rs485_adapter,  1),
+            meters.SDM120M('1st-floor', rs485_adapter, 10),
+            meters.SDM120M('gnd-floor', rs485_adapter, 11),
+            meters.SDM120M('air-cond', rs485_adapter, 12),
+#            meters.SDM120M('ind-plane', rs485_adapter, 13),
         ]
 
         qualified_param_names = [
