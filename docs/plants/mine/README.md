@@ -524,95 +524,79 @@ Definito il task `daily_aggregates` e schedulato alle ore 02:00 UTC con un offse
     option task = {name: "daily_aggregates", cron: "0 2 * * *", offset: 5m}
 
     yesterdayStart = date.truncate(t: date.sub(d: 1d, from: now()), unit: 1d)
-
     yesterdayStop = date.add(d: 1d, to: yesterdayStart)
 
     from(bucket: "raw_data")
-        |> range(start: yesterdayStart, stop: yesterdayStop)
-        |> filter(fn: (r) => r["_measurement"] == "solarmon")
-        |> filter(
-            fn: (r) =>
-                r["source"] == "inverter" and (r["_field"] == "battery_power" or r["_field"]
-                        ==
-                        "pv1_power" or r["_field"] == "pv2_power" or r["_field"] == "inverter_power"
-                        or
-                        r["_field"] == "load_power" or r["_field"] == "grid_power"),
-        )
-        |> pivot(rowKey: ["_time"], columnKey: ["source", "_field"], valueColumn: "_value")
-        |> map(fn: (r) => ({r with "pv_out": r["inverter_pv1_power"] + r["inverter_pv2_power"]}))
-        |> map(
-            fn: (r) =>
-                ({r with "battery_out":
-                        if r["inverter_battery_power"] > 0 then
-                            r["inverter_battery_power"]
-                        else
-                            0.,
-                }),
-        )
-        |> map(
-            fn: (r) =>
-                ({r with "battery_in":
-                        if r["inverter_battery_power"] < 0 then
-                            -r["inverter_battery_power"]
-                        else
-                            0.,
-                }),
-        )
-        |> map(
-            fn: (r) =>
-                ({r with "grid_in":
-                        if r["inverter_grid_power"] > 0 then
-                            r["inverter_grid_power"]
-                        else
-                            0.,
-                }),
-        )
-        |> map(
-            fn: (r) =>
-                ({r with "grid_out":
-                        if r["inverter_grid_power"] < 0 then
-                            -r["inverter_grid_power"]
-                        else
-                            0.,
-                }),
-        )
-        |> map(
-            fn: (r) =>
-                ({r with "inverter_in":
-                        if r["inverter_inverter_power"] < 0 then
-                            -r["inverter_inverter_power"]
-                        else
-                            0.,
-                }),
-        )
-        |> map(
-            fn: (r) =>
-                ({r with "inverter_out":
-                        if r["inverter_grid_power"] > 0 then
-                            r["inverter_grid_power"]
-                        else
-                            0.,
-                }),
-        )
-        |> map(fn: (r) => ({r with "load_in": r["inverter_load_power"]}))
-        |> drop(
-            columns: [
-                "inverter_battery_power",
-                "inverter_grid_power",
-                "inverter_inverter_power",
-                "inverter_load_power",
-                "inverter_pv1_power",
-                "inverter_pv2_power",
-            ],
-        )
-        |> experimental.unpivot()
-        |> aggregateWindow(
-            every: 1d,
-            fn: (column, tables=<-) => tables |> integral(unit: 1h),
-            timeSrc: "_start",
-            createEmpty: false,
-        )
-        |> to(bucket: "daily_data")
+      |> range(start: yesterdayStart, stop: yesterdayStop)
+      |> filter(fn: (r) => r["_measurement"] == "solarmon")
+      |> filter(fn: (r) =>
+          (r["source"] == "inverter"
+              and (r["_field"] == "battery_power"
+              or r["_field"] == "pv1_power"
+              or r["_field"] == "pv2_power"
+              or r["_field"] == "inverter_power"
+              or r["_field"] == "load_power"
+              or r["_field"] == "grid_power"))
+          or (r["_field"] == "active-power"
+              and (r["source"] == "gnd-floor"
+              or r["source"] == "2nd-floor"
+              or r["source"] == "air-cond"
+              or r["source"] == "ind-plane")),)
+      |> pivot(rowKey: ["_time"], columnKey: ["source", "_field"], valueColumn: "_value")
+      |> map(fn: (r) => ({r with "gnd-floor_in": r["gnd-floor_active-power"]}))
+      |> map(fn: (r) => ({r with "2nd-floor_in": r["2nd-floor_active-power"]}))
+      |> map(fn: (r) => ({r with "air-cond_in": r["air-cond_active-power"]}))
+      |> map(fn: (r) => ({r with "ind-plane_in": r["ind-plane_active-power"]}))
+      |> map(fn: (r) => ({r with "pv_out": r["inverter_pv1_power"] + r["inverter_pv2_power"]}))
+      |> map(fn: (r) => ({r with "battery_out":
+          if r["inverter_battery_power"] > 0 then
+              r["inverter_battery_power"]
+          else
+              0.,}),)
+      |> map(fn: (r) => ({r with "battery_in":
+          if r["inverter_battery_power"] < 0 then
+              -r["inverter_battery_power"]
+          else
+              0.,}),)
+      |> map(fn: (r) => ({r with "grid_in":
+          if r["inverter_grid_power"] > 0 then
+              r["inverter_grid_power"]
+          else
+              0.,}),)
+      |> map(fn: (r) => ({r with "grid_out":
+          if r["inverter_grid_power"] < 0 then
+              -r["inverter_grid_power"]
+          else
+              0.,}),)
+      |> map(fn: (r) => ({r with "inverter_in":
+          if r["inverter_inverter_power"] < 0 then
+              -r["inverter_inverter_power"]
+          else
+              0.,}),)
+      |> map(fn: (r) => ({r with "inverter_out":
+          if r["inverter_grid_power"] > 0 then
+              r["inverter_grid_power"]
+          else
+              0.,}),)
+      |> map(fn: (r) => ({r with "load_in": r["inverter_load_power"]}))
+      |> drop(columns: [
+          "gnd-floor_active-power",
+          "2nd-floor_active-power",
+          "air-cond_active-power",
+          "ind-plane_active-power",
+          "inverter_battery_power",
+          "inverter_grid_power",
+          "inverter_inverter_power",
+          "inverter_load_power",
+          "inverter_pv1_power",
+          "inverter_pv2_power",],)
+      |> experimental.unpivot()
+      |> aggregateWindow(
+          every: 1d,
+          fn: (column, tables=<-) => tables |> integral(unit: 1h),
+          timeSrc: "_start",
+          createEmpty: false,)
+      |> to(bucket: "daily_data")
 
 ### Determinazione degli intervalli senza campioni
 
@@ -678,6 +662,67 @@ L'inverter installato è un Deye SUN-6K-SG03LP1-EU. Si tratta di un inverter mon
 
 - la potenza in uscita dalla batteria è limitata: usare carichi pesanti nottetempo potrebbe causare la richiesta di energia dalla rete (con i costi del caso);
 - l'autoconsumo in caso di interruzione di energia elettrica non è automatico: in tale evenienza l'inverter si scollega dalla rete (e quindi dall'impianto) per fornire energia all'uscita "backup" (la commutazione è automatica e pressoché istantanea), sempre se ci sono carichi collegati a tale linea.
+
+### Stima dei consumi
+
+Con l'installazione dei contatori di energia a monte dei due quadri elettrici di casa dispongo di tre stime diverse dei consumi. Posto:
+
+- **`battery_in`** l'integrale del valore assoluto della parte negativa di `battery_power`;
+- **`battery_out`** l'integrale della parte positiva di `battery_power`;
+- **`grid_id`** l'integrale della parte positiva di `grid_power`;
+- **`grid_out`** l'integrale del valore assoluto della parte negativa di `grid_power`;
+- **`pv_out`** la somma `pv1_power` e `pv2_power`;
+- **`load_in`** il valore di `load_power`;
+- **`house_in`** la somma delle potenze rilevate dai due contatori di energia;
+
+e definendo:
+
+- **`total_consumption`**:
+
+        (pv_out - battery_in - grid_out) + battery_out + grid_in
+
+  ove il primo termine rappresenta la porzione di energia fotovoltaica dirottata sul carico (formula equivalente: `pv1_power + pv2_power + battery_power + grid_power`);
+
+- **`inverter_consumption`**:
+
+        (pv_out - battery_in + battery_out) - inverter_power
+
+  ove il primo termine rappresenta la potenza in ingresso all'inverter (DC), il secondo quella in uscita (AC). La formula può essere riscritta nella forma `pv1_power + pv2_power + battery_power - inverter_power`;
+
+riscontro innazitutto che i valori di **`total_consumption`** sono allineati a quelli riportati dall'App SOLARMAN Smart, quindi che:
+
+        total_consumption = load_in + inverter_consumption
+
+La corrispondenza è totale, fino alle unità di W:
+
+| day        | total_consumption | load_in | inverter_consumption |
+|------------|------------------:|--------:|---------------------:|
+| 2024-02-12 |            10.558 |   8.806 |                1.752 |
+| 2024-02-13 |            11.131 |   9.207 |                1.925 |
+| 2024-02-14 |            12.328 |  10.318 |                2.010 |
+| 2024-02-15 |            10.390 |   8.266 |                2.124 |
+| 2024-02-16 |            11.467 |   9.308 |                2.159 |
+| 2024-02-17 |            11.341 |   9.259 |                2.082 |
+| 2024-02-18 |            12.209 |  10.197 |                2.012 |
+| 2024-02-19 |             9.595 |   7.641 |                1.955 |
+| 2024-02-20 |            11.300 |   9.135 |                2.165 |
+| 2024-02-21 |            11.119 |   8.931 |                2.188 |
+| 2024-02-22 |             8.454 |   6.518 |                1.936 |
+| 2024-02-23 |             8.599 |   6.917 |                1.683 |
+| 2024-02-24 |            12.202 |  10.161 |                2.042 |
+| 2024-02-25 |            12.507 |  10.344 |                2.162 |
+| 2024-02-26 |             9.570 |   7.395 |                2.175 |
+| 2024-02-27 |             7.949 |   5.960 |                1.989 |
+| 2024-02-28 |             9.509 |   7.479 |                2.031 |
+| 2024-02-29 |             4.898 |   3.119 |                1.780 |
+
+La spiegazione più naturale è che l'inverter determini il valore **`load_power`** con la formula:
+
+        load_power = inverter_power + grid_power
+
+Vale inoltre la relazione:
+
+        total_consumption = load_in > house_in
 
 ## Appendice D - Passaggio dall'ora legale a quella solare
 

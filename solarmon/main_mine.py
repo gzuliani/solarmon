@@ -89,7 +89,7 @@ if __name__ == '__main__':
         input_devices = [
             rasp.RaspberryPi4('rasp'),
             deye.Inverter('inverter', rs485_adapter,  1),
-            meters.SDM120M('1st-floor', rs485_adapter, 10),
+            meters.SDM120M('2nd-floor', rs485_adapter, 10),
             meters.SDM120M('gnd-floor', rs485_adapter, 11),
             meters.SDM120M('air-cond', rs485_adapter, 12),
 #            meters.SDM120M('ind-plane', rs485_adapter, 13),
