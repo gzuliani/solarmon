@@ -36,6 +36,8 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
   - [Appendice B - Note su Grafana](#appendice-b---note-su-grafana)
   - [Appendice C - Note sull'inverter](#appendice-c---note-sullinverter)
     - [Punti di attenzione](#punti-di-attenzione)
+    - [Stima dei consumi](#stima-dei-consumi)
+    - [Anomalie](#anomalie)
   - [Appendice D - Passaggio dall'ora legale a quella solare](#appendice-d---passaggio-dallora-legale-a-quella-solare)
   - [Appendice E - Esempio di query "complessa"](#appendice-e---esempio-di-query-complessa)
 
@@ -387,6 +389,8 @@ Poiché gran parte di queste grandezze sono espresse con valori con segno, bisog
 - per ottenere l'elenco dei tag di un bucket:
         show tag keys from "..."
         show field keys from "..."
+- non è possibile inserire in un `field` un valore di tipo diverso di quello del campo stesso
+- il tipo di un campo viene determinato all'atto del primo inserimento e non può essere modificato successivamente
 - una query influx produce un insieme di tabelle (concetto di "flusso" di tabelle):
   > If coming from relational SQL or SQL-like query languages, such as InfluxQL, the data model that Flux uses is different than what you’re used to. Flux returns multiple tables where each table contains a different field. A “relational” schema structures each field as a column in each row.
   Fonte: [Flux data model](https://docs.influxdata.com/flux/v0.x/get-started/data-model/).
@@ -445,6 +449,8 @@ Esempio di importazione di un file CSV prodotto da **solarmon**:
         --predicate '_measurement="solarmon"' \
         --start '2022-01-01T00:00:00Z' \
         --stop '2024-01-01T00:00:00Z'
+
+**Nota**: il comando `delete` non supporta l'operatore logico `NOT` né i filtri su `_field`. L'API **/api/v2/delete** invece non soffre di queste limitazioni.
 
 ### Spazio occupato su disco
 
@@ -723,6 +729,30 @@ La spiegazione più naturale è che l'inverter determini il valore **`load_power
 Vale inoltre la relazione:
 
         total_consumption = load_in > house_in
+
+### Anomalie
+
+La documentazione dell'inverter riporta l'elenco delle possibili anomalie, identificate nella forma `Fxx`, ove `xx` è un codice numerico compreso tra `08` e `64` (cfr. sez. "7. Fault information and processing" della guida utente).
+
+La specifica dell'interfaccia Modbus dell'inverter etichetta i registri 103, 104, 105 e 106 rispettivamente "Fault information word 1", "Fault information word 2", "Fault information word 3" e "Fault information word 4".
+
+Il 7 marzo 2024 alle ore 14:15 l'applicazione SolarSMART ha registrato un'anomalia di tipo **F55DC_VoltHigh_Fault**. In quell'istante i valori dei quattro registri erano:
+
+| Registro | Valore |
+|:--------:|:------:|
+|      103 |      0 |
+|      104 |      0 |
+|      105 |      0 |
+|      106 |     64 |
+
+Riscrivendo il tutto in formato binario:
+
+    -------106------- -------105------- -------104------- -------103-------
+    76543210 76543210 76543210 76543210 76543210 76543210 76543210 76543210
+
+    00000000 01000000 00000000 00000000 00000000 00000000 00000000 00000000
+
+L'unico bit a 1 è quello in posizione 54. Sembra quindi probabile che il codice delle anomalie presenti in un dato istante si ricavi sommando 1 all'indice dei bit a 1 del campo di bit ottenuto dalla giustapposizione dei 4 registri sopra indicati.
 
 ## Appendice D - Passaggio dall'ora legale a quella solare
 
