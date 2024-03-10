@@ -15,6 +15,40 @@ def quote_string(s):
                 })))
 
 
+class LineProtocol:
+
+    def __init__(self, measurement):
+        self._measurement = measurement
+        self._params = {}
+
+    def encode_error(self, unit, code, detail, timestamp):
+        tags = {'source': 'program'}
+        fields = {
+            'unit': quote_string(unit),
+            'code': quote_string(code),
+            'detail': quote_string(detail),
+        }
+        return self._encode(tags, fields, timestamp)
+
+    def encode_sample(self, sample, timestamp):
+        device = sample.device
+        if not device.name in self._params:
+            self._params[device.name] = [(
+            p.name, 'u' if p.type == 'bit_field' else '')
+                for p in device.params()]
+        data = zip(self._params[device.name], sample.values)
+        fields = dict((n, f'{v}{s}') for (n, s), v in data if v is not None)
+        if fields:
+            return self._encode({'source': device.name}, fields, timestamp)
+        else:
+            return None
+
+    def _encode(self, tags, fields, timestamp):
+        tags = ','.join(f'{k}={v}' for k, v in tags.items())
+        fields = ','.join(f'{k}={v}' for k, v in fields.items())
+        return f'{self._measurement},{tags} {fields} {timestamp}'
+
+
 class InfluxDB:
 
     def __init__(self, api_base_uri, api_token, org, bucket,
@@ -27,8 +61,9 @@ class InfluxDB:
             'Content-Type': 'text/plain; charset=utf-8',
             'Accept': 'application/json'
         }
-        self._measurement = measurement
+        self._protocol = LineProtocol(measurement)
         self._param_names = {}
+        self._param_suffixes = {}
 
     def write(self, samples, timestamp=None):
         if not timestamp:
@@ -40,21 +75,17 @@ class InfluxDB:
                 self._store_data(sample, timestamp)
 
     def _store_alert(self, sample, timestamp):
-        data = f'{self._measurement},source=program code="READ_ERROR",detail={quote_string(sample.error())},unit="{sample.device.name}" {timestamp}'
-        self._send_request(data)
+        self._send_request(
+            self._protocol.encode_error(
+                sample.device.name, 'READ_ERROR', sample.error(), timestamp))
 
     def _store_data(self, sample, timestamp):
-        device = sample.device
-        if not device.name in self._param_names:
-            self._param_names[device.name] = [
-                    x.name for x in device.params()]
-        data = zip(self._param_names[device.name], sample.values)
-        data = ','.join([f'{k}={v}' for k, v in data if v is not None])
-        if not data:
-            logging.warning('No data available for device "%s"...', device.name)
-            return
-        data = f'{self._measurement},source={device.name} {data} {timestamp}'
-        self._send_request(data)
+        data = self._protocol.encode_sample(sample, timestamp)
+        if data:
+            self._send_request(data)
+        else:
+            logging.warning(
+                'No data available for device "%s"...', sample.device.name)
 
     def _send_request(self, data):
         logging.debug('Sending "%s" to %s...', data, self._base_uri)

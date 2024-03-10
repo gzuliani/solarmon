@@ -1,6 +1,7 @@
 import unittest
 
-from solarmon.influxdb import quote_string
+from solarmon.deye import B64, I16
+from solarmon.influxdb import quote_string, LineProtocol
 
 
 class TestQuote(unittest.TestCase):
@@ -47,4 +48,53 @@ class TestQuote(unittest.TestCase):
         self.assertEqual(
             quote_string('Traceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\nNameError: name \'spam\' is not defined'),
             '"Traceback (most recent call last): File \\\"<stdin>\\\", line 1, in <module> NameError: name \'spam\' is not defined"')
-        
+
+
+class MockDevice:
+
+    def __init__(self):
+        self.name = 'inverter'
+        self._params = [
+            I16('voltage',       'V',  1, 0, 1),
+            I16('current',       'A',  1, 0, 2),
+            B64('fault_code',                3),
+            I16('frequency',     'Hz', 1, 0, 2),]
+
+    def params(self):
+        return self._params
+
+
+class MockSample:
+
+    def __init__(self):
+        self.device = MockDevice()
+        self.values = [0x00dc, 0x000a, 0x0040000000000000, 0x0032]
+        self.exception = None
+
+class MockSampleError:
+
+    def __init__(self):
+        self.exception = 'a \'quoted\' "string"'
+
+
+class TestLineProtocol(unittest.TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.protocol = LineProtocol('measurement')
+
+    def test_encode_error(self):
+        unit = 'inverter'
+        code = 'READ_ERROR'
+        detail = 'a \'quoted\' "string"'
+        timestamp = 1710002529
+        self.assertEqual(
+            self.protocol.encode_error(unit, code, detail, timestamp),
+            'measurement,source=program unit="inverter",code="READ_ERROR",detail="a \'quoted\' \\"string\\"" 1710002529')
+
+    def test_encode_sample(self):
+        sample = MockSample()
+        timestamp = 1710015972
+        self.assertEqual(
+            self.protocol.encode_sample(sample, timestamp),
+            'measurement,source=inverter voltage=220,current=10,fault_code=18014398509481984u,frequency=50 1710015972')

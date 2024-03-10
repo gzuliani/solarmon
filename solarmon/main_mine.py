@@ -55,7 +55,7 @@ class Sample:
 
     def is_error(self):
         return self.exception is not None
-    
+
     def error(self):
         return str(self.exception)
 

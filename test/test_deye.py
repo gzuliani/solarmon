@@ -45,7 +45,7 @@ class FaultCodes:
             if mask & (1 << i):
                 faults.append(i + 1)
         return faults
-        
+
 
 class TestFaultCodes(unittest.TestCase):
 
@@ -84,6 +84,7 @@ class TestQwordLE(unittest.TestCase):
 
     def test_decoding_of_a_dword(self):
         p = QwordLE('qword', 1)
+        # most significant register value first
         self.assertEqual(p.decode([0x0000, 0x0000, 0x0000, 0x0000]), 0x0000000000000000)
         self.assertEqual(p.decode([0x0000, 0x0000, 0x0000, 0x0001]), 0x0000000000000001)
         self.assertEqual(p.decode([0xcf2d, 0xc74b, 0xfa72, 0xa77f]), 0xcf2dc74bfa72a77f)

@@ -1,10 +1,11 @@
 from modbus import HoldingRegisters, I16, U16
 
+
 class Qword:
 
     def __init__(self, name, hihi_addr, hilo_addr, lohi_addr, lolo_addr):
         self.name = name
-        self.regs = [lolo_addr, lohi_addr, hilo_addr, hihi_addr]
+        self.regs = [hihi_addr, hilo_addr, lohi_addr, lolo_addr]
 
     def decode(self, values):
         assert len(values) == len(self.regs)
@@ -17,10 +18,14 @@ class Qword:
 class QwordLE(Qword):
 
     def __init__(self, name, addr):
-        super().__init__(name, addr + 3, addr + 2, addr + 1, addr + 0)
+        super().__init__(name, addr + 3, addr + 2, addr + 1, addr)
 
 
-QW_ = QwordLE
+class B64(QwordLE):
+
+    def __init__(self, name, addr):
+        super().__init__(name, addr)
+        self.type = 'bit_field'
 
 
 class Inverter(HoldingRegisters):
@@ -35,7 +40,7 @@ class Inverter(HoldingRegisters):
             U16('environment_temp',      '°C',   10, 1000,  95),
         ])
         self._add_param_array([
-            QW_('fault_bitmask',                           103),
+            B64('fault_code',                              103),
             U16('pv1_voltage',            'V',   10,    0, 109),
             U16('pv1_current',            'A',   10,    0, 110),
             U16('pv2_voltage',            'V',   10,    0, 111),

@@ -86,6 +86,7 @@ class AsciiString:
 
     def __init__(self, name, addr, count):
         self.name = name
+        self.type = 'text'
         self.regs = [x for x in range(addr, addr + count)]
 
     def decode(self, values):
@@ -97,6 +98,7 @@ class Number(Parameter):
 
     def __init__(self, name, unit, gain, bias, regs):
         super().__init__(name, regs)
+        self.type = 'number'
         self.unit = unit
         self.gain = gain
         self.bias = bias

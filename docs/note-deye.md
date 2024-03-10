@@ -33,7 +33,7 @@ C'è un altro aspetto nuovo introdotto da questo dispositivo: la definizione di 
 > this protocol is for Microinverter,string inverter and storage inverter
 
 Verosimilmente l'indicatore `MI` che si trova nelle specifiche sta ad indicare parametri relativi alla variante "Microinverter".
-  
+
 | Addr | Byte | Description                                     | R/W | data range     | gain  | unit   | note                                          |
 |------|------|-------------------------------------------------|-----|----------------|-------|--------|-----------------------------------------|
 |  000 |      | Device type                                     | R   |                |       |        | 0X0200, 0X0300, 0X0400, 0X0500 (MI) |

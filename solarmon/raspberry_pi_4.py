@@ -6,6 +6,13 @@ import subprocess
 import time
 
 
+class Param:
+
+    def __init__(self, name):
+        self.name = name
+        self.type = 'number'
+
+
 class FileSystem:
 
     def __init__(self, mount_point, name, type):
@@ -62,38 +69,38 @@ class Command:
         return result.stdout
 
 
-class CpuLoadPercent:
+class CpuLoadPercent(Param):
 
     def __init__(self):
-        self.name = 'cpu-load'
+        super().__init__('cpu-load')
 
     def read(self):
         return psutil.cpu_percent(.1)
 
 
-class CpuTemperature:
+class CpuTemperature(Param):
 
     def __init__(self):
-        self.name = 'cpu-t'
+        super().__init__('cpu-t')
 
     def read(self):
         return int(open('/sys/class/thermal/thermal_zone0/temp').read())/1000
 
 
-class RamUsedPercent:
+class RamUsedPercent(Param):
 
     def __init__(self):
-        self.name = 'ram-usage'
+        super().__init__('ram-usage')
 
     def read(self):
         memory = psutil.virtual_memory()
         return memory.percent
 
 
-class DiskUsedPercent:
+class DiskUsedPercent(Param):
 
     def __init__(self, name, path):
-        self.name = name
+        super().__init__(name)
         self._path = path
 
     def read(self):
@@ -101,10 +108,10 @@ class DiskUsedPercent:
         return (1 - stats.f_bfree / stats.f_blocks) * 100
 
 
-class WifiSignalStrength:
+class WifiSignalStrength(Param):
 
     def __init__(self, name, interface):
-        self.name = name
+        super().__init__(name)
         self.interface = interface
         self._command = Command(f'iwconfig {self.interface}')
         self._signal_level = re.compile(b'Signal level=(-\d+)')
@@ -115,10 +122,10 @@ class WifiSignalStrength:
         return int(match.group(1)) if match else None
 
 
-class UpTime:
+class UpTime(Param):
 
     def __init__(self):
-        self.name = 'up-time'
+        super().__init__('up-time')
 
     def read(self):
         return float(open('/proc/uptime').read().split()[0])
