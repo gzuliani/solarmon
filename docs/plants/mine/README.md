@@ -754,6 +754,46 @@ Riscrivendo il tutto in formato binario:
 
 L'unico bit a 1 è quello in posizione 54. Sembra quindi probabile che il codice delle anomalie presenti in un dato istante si ricavi sommando 1 all'indice dei bit a 1 del campo di bit ottenuto dalla giustapposizione dei 4 registri sopra indicati.
 
+Sotto questa ipotesi, ecco una query che evidenzia le anomalie riscontrate nell'ultimo mese:
+
+    import "bitwise"
+    import "date"
+    import "strings"
+    
+    pastMonthStart = date.truncate(t: date.sub(d: 30d, from: v.timeRangeStop), unit: 1d)
+    
+    from(bucket: "raw_data")
+      |> range(start: pastMonthStart, stop: v.timeRangeStop)
+      |> filter(fn: (r) => r._measurement == "solarmon" and r.source == "inverter" and r._field == "fault_code" and r._value > uint(v: 0))
+      |> map(fn: (r) => ({r with b00: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v:  0))) > 0) then "F01" else ""}))
+      |> map(fn: (r) => ({r with b06: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v:  6))) > 0) then "F07" else ""}))
+      |> map(fn: (r) => ({r with b12: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 12))) > 0) then "F13" else ""}))
+      |> map(fn: (r) => ({r with b14: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 14))) > 0) then "F15" else ""}))
+      |> map(fn: (r) => ({r with b15: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 15))) > 0) then "F16" else ""}))
+      |> map(fn: (r) => ({r with b17: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 17))) > 0) then "F18" else ""}))
+      |> map(fn: (r) => ({r with b19: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 19))) > 0) then "F20" else ""}))
+      |> map(fn: (r) => ({r with b20: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 20))) > 0) then "F21" else ""}))
+      |> map(fn: (r) => ({r with b21: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 21))) > 0) then "F22" else ""}))
+      |> map(fn: (r) => ({r with b22: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 22))) > 0) then "F23" else ""}))
+      |> map(fn: (r) => ({r with b23: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 23))) > 0) then "F24" else ""}))
+      |> map(fn: (r) => ({r with b25: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 25))) > 0) then "F26" else ""}))
+      |> map(fn: (r) => ({r with b28: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 28))) > 0) then "F29" else ""}))
+      |> map(fn: (r) => ({r with b33: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 33))) > 0) then "F34" else ""}))
+      |> map(fn: (r) => ({r with b34: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 34))) > 0) then "F35" else ""}))
+      |> map(fn: (r) => ({r with b40: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 40))) > 0) then "F41" else ""}))
+      |> map(fn: (r) => ({r with b41: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 41))) > 0) then "F42" else ""}))
+      |> map(fn: (r) => ({r with b45: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 45))) > 0) then "F46" else ""}))
+      |> map(fn: (r) => ({r with b46: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 46))) > 0) then "F47" else ""}))
+      |> map(fn: (r) => ({r with b47: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 47))) > 0) then "F48" else ""}))
+      |> map(fn: (r) => ({r with b54: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 54))) > 0) then "F55" else ""}))
+      |> map(fn: (r) => ({r with b55: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 55))) > 0) then "F56" else ""}))
+      |> map(fn: (r) => ({r with b57: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 57))) > 0) then "F58" else ""}))
+      |> map(fn: (r) => ({r with b61: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 61))) > 0) then "F62" else ""}))
+      |> map(fn: (r) => ({r with b62: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 62))) > 0) then "F63" else ""}))
+      |> map(fn: (r) => ({r with b63: if (bitwise.uand(a: r._value, b: bitwise.ulshift(a: uint(v: 1), b: uint(v: 63))) > 0) then "F64" else ""}))
+      |> map(fn: (r) => ({r with fault_codes: strings.joinStr(arr: [r.b00, r.b06, r.b12, r.b14, r.b15, r.b17, r.b19, r.b20, r.b21, r.b22, r.b23, r.b25, r.b28, r.b33, r.b34, r.b40, r.b41, r.b45, r.b46, r.b47, r.b54, r.b55, r.b57, r.b61, r.b62, r.b63], v: " ")}))
+      |> keep(columns: ["_time", "fault_codes"])
+
 ## Appendice D - Passaggio dall'ora legale a quella solare
 
 InfluxDB aggrega i dati sulla base dei tempi UTC. Grafana mostra invece i dati nell'orario locale:
