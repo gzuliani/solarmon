@@ -15,6 +15,13 @@ def quote_string(s):
                 })))
 
 
+def quote_if_string(x):
+    if isinstance(x, str):
+        return quote_string(x)
+    else:
+        return x
+
+
 class LineProtocol:
 
     def __init__(self, measurement):
@@ -37,7 +44,7 @@ class LineProtocol:
             p.name, 'u' if p.type == 'bit_field' else '')
                 for p in device.params()]
         data = zip(self._params[device.name], sample.values)
-        fields = dict((n, f'{v}{s}') for (n, s), v in data if v is not None)
+        fields = dict((n, f'{quote_if_string(v)}{s}') for (n, s), v in data if v is not None)
         if fields:
             return self._encode({'source': device.name}, fields, timestamp)
         else:
@@ -84,8 +91,9 @@ class InfluxDB:
         if data:
             self._send_request(data)
         else:
-            logging.warning(
-                'No data available for device "%s"...', sample.device.name)
+            pass
+            #logging.warning(
+            #    'No data available for device "%s"...', sample.device.name)
 
     def _send_request(self, data):
         logging.debug('Sending "%s" to %s...', data, self._base_uri)

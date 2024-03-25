@@ -2,7 +2,7 @@ import unittest
 
 from solarmon.deye import B64, I16
 from solarmon.influxdb import quote_string, LineProtocol
-
+from solarmon.modbus import STR
 
 class TestQuote(unittest.TestCase):
 
@@ -58,7 +58,8 @@ class MockDevice:
             I16('voltage',       'V',  1, 0, 1),
             I16('current',       'A',  1, 0, 2),
             B64('fault_code',                3),
-            I16('frequency',     'Hz', 1, 0, 2),]
+            I16('frequency',     'Hz', 1, 0, 2),
+            STR('serial',              1,    2),]
 
     def params(self):
         return self._params
@@ -68,8 +69,9 @@ class MockSample:
 
     def __init__(self):
         self.device = MockDevice()
-        self.values = [0x00dc, 0x000a, 0x0040000000000000, 0x0032]
+        self.values = [0x00dc, 0x000a, 0x0040000000000000, 0x0032, 'ABCD']
         self.exception = None
+
 
 class MockSampleError:
 
@@ -97,4 +99,4 @@ class TestLineProtocol(unittest.TestCase):
         timestamp = 1710015972
         self.assertEqual(
             self.protocol.encode_sample(sample, timestamp),
-            'measurement,source=inverter voltage=220,current=10,fault_code=18014398509481984u,frequency=50 1710015972')
+            'measurement,source=inverter voltage=220,current=10,fault_code=18014398509481984u,frequency=50,serial="ABCD" 1710015972')

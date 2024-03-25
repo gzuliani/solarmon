@@ -30,10 +30,10 @@ class StationXmlData:
 
 class Param:
 
-    def __init__(self, name, tag):
+    def __init__(self, name, tag, type):
         self.name = name
         self.tag = tag
-        self.type = 'number'
+        self.type = type
 
 
 class OsmerFvg:
@@ -50,11 +50,11 @@ class OsmerFvg:
         self._uri = '{}/{}.xml'.format(self.BASE_URI, station_code)
         self._timeout = 3
         self._params = [
-            Param('time', 'observation_time'),
-            Param('temp', 't180'),
-            Param('radiation', 'rg'),
-            Param('humidity', 'rh'),
-            Param('pressure', 'press'),
+            Param('obs_time', 'observation_time', 'text'),
+            Param('temp', 't180', 'number'),
+            Param('radiation', 'rg', 'number'),
+            Param('humidity', 'rh', 'number'),
+            Param('pressure', 'press', 'number'),
         ]
         self._reading_interval = 1200 # seconds between two consecutive readings
         self._last_reading_time = None

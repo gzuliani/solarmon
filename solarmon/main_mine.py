@@ -10,6 +10,7 @@ import deye
 import influxdb
 import meters
 import modbus
+import osmer_fvg
 import persistence
 import raspberry_pi_4 as rasp
 
@@ -93,6 +94,7 @@ if __name__ == '__main__':
             meters.SDM120M('gnd-floor', rs485_adapter, 11),
             meters.SDM120M('air-cond', rs485_adapter, 12),
 #            meters.SDM120M('ind-hob', rs485_adapter, 13),
+            osmer_fvg.OsmerFvg('osmer', 'UDI'), # keep it as the last one!
         ]
 
         qualified_param_names = [
