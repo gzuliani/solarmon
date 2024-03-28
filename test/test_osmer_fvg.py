@@ -17,3 +17,8 @@ class TestStationXmlData(unittest.TestCase):
             self.assertAlmostEqual(data['rg'], 1083)
             self.assertAlmostEqual(data['rh'], 46)
             self.assertAlmostEqual(data['press'], 1011.9)
+
+    def test_partial_data_parsing(self):
+        with open(os.path.join(THIS_DIR, 'data/UDI_partial.xml')) as f:
+            station_data = StationXmlData(f.read())
+            self.assertRaises(RuntimeError, station_data.hourly_data)

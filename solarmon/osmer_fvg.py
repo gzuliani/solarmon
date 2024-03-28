@@ -7,8 +7,9 @@ import xml.dom.minidom
 
 class StationXmlData:
 
-    def __init__(self, data):
-        dom = xml.dom.minidom.parseString(data)
+    def __init__(self, response):
+        self.response = response
+        dom = xml.dom.minidom.parseString(response)
         self._data = dom.getElementsByTagName('data')[0]
 
     def hourly_data(self):
@@ -21,6 +22,11 @@ class StationXmlData:
                 hourly_data[child.nodeName] = self._text(child)
             elif child.nodeName in ['t180', 'rg', 'rh', 'press']:
                 hourly_data[child.nodeName] = float(self._text(child))
+        if len(hourly_data) < 4:
+            logging.warning('Incomplete XML response "%s"', self.response.encode())
+            raise RuntimeError(
+                'Incomplete XML response (expected 4 parameters, got {})'.format(
+                len(hourly_data)))
         return hourly_data
 
     def _text(self, node):
@@ -83,7 +89,7 @@ class OsmerFvg:
         data = StationXmlData(response.decode()).hourly_data()
         for param in self._params:
             value = data[param.tag]
-            if param.name == 'time':
+            if param.name == 'obs_time':
                 if value == self._last_observation_time:
                     logging.debug('Got the previous sample, ignoring it...')
                     return self._empty_sample()

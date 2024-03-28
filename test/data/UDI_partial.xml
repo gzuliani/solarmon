@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--L\'utilizzo dei dati e delle informazioni qui disponibili \xc3\xa8 soggetto alle condizioni e limitazioni descritte nelle note legali, che l\'utente implicitamente accetta (http://www.meteo.fvg.it/note-legali.php)-->
+<!--I dati real-time non possono essere ripubblicati (in qualsiasi formato o rielaborazione) prima di 24 ore dall\'ora di riferimento del dato stesso, salvo eventuali deroghe preventivamente concordate con il titolare dei diritti.-->
+<data id="meteo.fvg_osservazioni_xml">
+     <language>italiano</language>
+     <credit>meteo.fvg</credit>
+     <credit_url>https://www.meteo.fvg.it</credit_url>
+     <credit_mail>support@meteo.fvg.it</credit_mail>
+     <suggested_pickup>30 minuti dopo l\'ora</suggested_pickup>
+     <suggested_pickup_period>60</suggested_pickup_period>
+     <last_update>28/03/2024 00:03:13 UTC</last_update>
+     <meteo_data>
+          <observation_time>28/03/2024 01.00 UTC</observation_time>
+          <observation_date>28/03/2024</observation_date>
+          <observation_hour>01.00 UTC</observation_hour>
+          <station_id>UDI</station_id>
+          <station_name>Udine S.O.</station_name>
+          <station_altitude quota="m">91</station_altitude>
+          <cloudiness>5</cloudiness>
+          <!--cloudiness  0:n.d.; 1:sereno; 2:poco nuvoloso; 3:variabile; 4:nuvoloso; 5:coperto-->
+</meteo_data>
+     <meteo_data_daily>
+          <summary_time>28/03/2024 01.00 UTC</summary_time>
+          <summary_date>28/03/2024</summary_date>
+          <summary_hour>01.00 UTC</summary_hour>
+          <station_id>UDI</station_id>
+          <station_name>Udine S.O.</station_name>
+          <station_altitude quota="m">91</station_altitude>
+     </meteo_data_daily>
+</data>
