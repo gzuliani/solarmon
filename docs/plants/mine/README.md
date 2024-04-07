@@ -38,8 +38,10 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
     - [Punti di attenzione](#punti-di-attenzione)
     - [Stima dei consumi](#stima-dei-consumi)
     - [Anomalie](#anomalie)
+    - [`load_power` nullo](#load_power-nullo)
   - [Appendice D - Passaggio dall'ora legale a quella solare](#appendice-d---passaggio-dallora-legale-a-quella-solare)
-  - [Appendice E - Esempio di query "complessa"](#appendice-e---esempio-di-query-complessa)
+  - [Appendice E - Acquisizione dati dall'OsmerFVG](#appendice-e---acquisizione-dati-dallosmerfvg)
+  - [Appendice F - Esempio di query "complessa"](#appendice-f---esempio-di-query-complessa)
 
 ## Hardware
 
@@ -794,6 +796,42 @@ Sotto questa ipotesi, ecco una query che evidenzia le anomalie riscontrate nell'
       |> map(fn: (r) => ({r with fault_codes: strings.joinStr(arr: [r.b00, r.b06, r.b12, r.b14, r.b15, r.b17, r.b19, r.b20, r.b21, r.b22, r.b23, r.b25, r.b28, r.b33, r.b34, r.b40, r.b41, r.b45, r.b46, r.b47, r.b54, r.b55, r.b57, r.b61, r.b62, r.b63], v: " ")}))
       |> keep(columns: ["_time", "fault_codes"])
 
+### `load_power` nullo
+
+Accade a volte che il parametro `load_power` assuma il poco verosimile valore zero:
+
+![`load_power` nullo](img/null_load_power.png)
+
+Grazie all'installazione di due contatori di energia nei due quadri elettrici di casa posso verificare che si tratta di una discrepanza attribuibile all'inverter:
+
+| time                | meter_1 | meter_2 | load_power |
+|---------------------|---------|---------|------------|
+| 2024-03-25T12:07:40 | 0.005   | 0.257   | 0.214      |
+| 2024-03-25T12:08:10 | 0.005   | 0.040   | 0.183      |
+| 2024-03-25T12:08:41 | 0.005   | 0.040   | 0.000      |
+| 2024-03-25T12:09:11 | 0.005   | 0.249   | 0.030      |
+| 2024-03-25T12:09:41 | 0.005   | 0.245   | 0.031      |
+| 2024-03-25T12:10:12 | 0.006   | 0.040   | 0.078      |
+| 2024-03-25T12:10:42 | 0.005   | 0.051   | 0.000      |
+| 2024-03-25T12:11:12 | 0.005   | 0.048   | 0.030      |
+| 2024-03-25T12:11:43 | 0.005   | 0.049   | 0.030      |
+| 2024-03-25T12:12:13 | 0.005   | 0.043   | 0.031      |
+| 2024-03-25T12:12:44 | 0.005   | 0.043   | 0.120      |
+| 2024-03-25T12:13:14 | 0.005   | 0.194   | 0.000      |
+| 2024-03-25T12:13:44 | 0.005   | 0.047   | 0.000      |
+| 2024-03-25T12:14:15 | 0.005   | 0.052   | 2.180      |
+| 2024-03-25T12:14:45 | 0.005   | 2.110   | 0.030      |
+| 2024-03-25T12:15:16 | 0.005   | 2.060   | 0.030      |
+| 2024-03-25T12:15:46 | 0.005   | 2.380   | 2.510      |
+| 2024-03-25T12:16:16 | 0.005   | 2.430   | 2.550      |
+| 2024-03-25T12:16:47 | 0.006   | 2.470   | 2.570      |
+
+Può quindi accadere di vedere la linea del `load_power` scendere al di sotto della somma della potenza registrata dai due contatori di energia:
+
+![`load_power` inferiore alla potenza assorbita dai carichi](img/inconsistent_load_power_level.png)
+
+La ragione è che quei sporadici ed inattesi valori nulli del `load_power` causano un temporaneo abbassamento della media mobile mostrata nei grafici.
+
 ## Appendice D - Passaggio dall'ora legale a quella solare
 
 InfluxDB aggrega i dati sulla base dei tempi UTC. Grafana mostra invece i dati nell'orario locale:
@@ -804,7 +842,38 @@ Quando InfluxDB aggrega i dati orari in quelli giornalieri, cosa accade dei dati
 
 ![Passaggio ora legale/ora solare in UTC e nell'orario locale](img/utc_vs_local_dst.png)
 
-## Appendice E - Esempio di query "complessa"
+## Appendice E - Acquisizione dati dall'OsmerFVG
+
+L'Osservatorio meteorologico regionale consente di scaricare i dati orari e gli aggregati giornalieri acquisiti dalle varie stazioni di cui dispone alla pagina [https://dev.meteo.fvg.it/](https://dev.meteo.fvg.it/). I dati orari vengono resi disponibili dopo il ventesimo minuto dell'ora successiva (i dati relativi all'intervallo temporale 11:00÷12:00 sono pubblicati alle 12:20).
+
+**Nota 1**: non è corretto estrarre i massimi/minimi di giornata dai dati orari, essendo questi delle medie orarie. Se di interesse, scaricare quelli giornalieri a fine giornata direttamente dal sito. L'unica eccezione è il valore di radiazione che, essendo un integrale, quello giornaliero equivale alla somma degli integrali orari.
+
+**Nota 2**: il bollettino delle 00:20 è vuoto; pensavo contenesse i dati dell'intervallo 23:00÷00:00 della giornata precedente, ma evidentemente non è così. La perdita del dato di radiazione non influisce molto sui computi giornalieri, se non per qualche unità.
+
+**Nota 3**: riferendosi all'ora precedente a quella di acquisizione, i dati provenienti da questa sorgente vanno traslati indietro di un'ora prima di essere messi a confronto con i dati acquisiti in tempo reale:
+
+    radiation = from(bucket: "raw_data")
+    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+    |> filter(fn: (r) => r._measurement == "solarmon")
+    |> filter(fn: (r) => (r.source == "osmer" and r._field == "radiation"))
+    |> timeShift(duration: -1h)
+    |> drop(columns: ["_measurement", "source"])
+
+    pv_power = from(bucket: "raw_data")
+    |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+    |> filter(fn: (r) => r._measurement == "solarmon")
+    |> filter(fn: (r) =>
+        (r.source == "inverter" and r._field == "pv1_power")
+        or (r.source == "inverter" and r._field == "pv2_power"))
+    |> drop(columns: ["_measurement", "source"])
+
+    union(tables: [radiation, pv_power])
+
+Se non si effettua l'operazione `timeShift` i dati risultano essere fuori sincrono:
+
+![Ritardo dei dati meteorologici rispetto a quelli acquisiti in tempo reale](img/out_of_sync_radiation.png)
+
+## Appendice F - Esempio di query "complessa"
 
 Esempio di sviluppo di una query "complessa", in questo caso l'aggregato settimanale dei consumi giornalieri ripartiti per sorgente. Si presuppone che il campo `pv_out` indichi l'energia prodotta dai pannelli, `battery_out` quella erogata dalla batteria, `grid_in` quella acquistata dalla rete. In prima approssimazione la quota d'energia dei pannelli direttamente utilizzata dai carichi si determina scorporando da `pv_out` la parte immagazzinata nella batteria (`battery_in`) e quella rilasciata in rete (`grid_out`):
 
