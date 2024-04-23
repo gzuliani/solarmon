@@ -234,6 +234,7 @@ Le istruzioni proseguono nella pagina [Start the Grafana server](https://grafana
 >
 > To start the service, run the following commands:
 >
+>
 >     sudo systemctl daemon-reload
 >     sudo systemctl start grafana-server
 >     sudo systemctl status grafana-server
@@ -849,6 +850,41 @@ L'Osservatorio meteorologico regionale consente di scaricare i dati orari e gli 
 **Nota 1**: non è corretto estrarre i massimi/minimi di giornata dai dati orari, essendo questi delle medie orarie. Se di interesse, scaricare quelli giornalieri a fine giornata direttamente dal sito. L'unica eccezione è il valore di radiazione che, essendo un integrale, quello giornaliero equivale alla somma degli integrali orari.
 
 **Nota 2**: il bollettino delle 00:20 è vuoto; pensavo contenesse i dati dell'intervallo 23:00÷00:00 della giornata precedente, ma evidentemente non è così. La perdita del dato di radiazione non influisce molto sui computi giornalieri, se non per qualche unità.
+
+**[Aggiornamento del 17/04/2024]** Ricevo il seguente messaggio dall'OSMER:
+
+>> Buongiorno,
+>>
+>> scrivo per un chiarimento.
+>>
+>> Ho da poco installato un impianto solare e sto sviluppando in
+>> autonomia un piccolo sistema di monitoraggio dell'impianto. Volendo
+>> incrociare i valori della potenza erogata dai pannelli con
+>> l'irraggiamento ho predisposto un componente software che scarica i
+>> dati orari della stazione "UDI" dal vostro sito all'URL
+>> "https://dev.meteo.fvg.it/xml/stazioni/UDI.xml".
+>>
+>> Mi sono accorto che registro sistematicamente l'assenza del dato
+>> nell'acquisizione delle 00:30. Ho inteso che dopo il ventesimo minuto
+>> di ogni ora voi rendete disponibili i dati dell'ora precedente, motivo
+>> per cui mi sarei atteso di trovare i dati relativi all'intervallo
+>> orario 23:00-00:00 della giornata precedente.
+>>
+>> Perdere quel campione non cambia nulla per i miei scopi, ma volevo
+>> essere sicuro di non sbagliare qualcosa.
+>>
+>> In particolare, vedo che il nodo `meteo_data`, oltre all'anagrafica
+>> della stazione, contiene solo il dato di `cloudiness`.
+>>
+>> [omissis]
+>
+> Buongiorno Sig. Zuliani,
+>
+> grazie della segnalazione, dovremmo aver risolto il problema da lei riscontrato.
+>
+> A disposizione per eventuali chiarimenti
+
+Il problema è effettivamente rientrato.
 
 **Nota 3**: riferendosi all'ora precedente a quella di acquisizione, i dati provenienti da questa sorgente vanno traslati indietro di un'ora prima di essere messi a confronto con i dati acquisiti in tempo reale:
 
