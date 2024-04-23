@@ -851,7 +851,7 @@ L'Osservatorio meteorologico regionale consente di scaricare i dati orari e gli 
 
 **Nota 2**: il bollettino delle 00:20 è vuoto; pensavo contenesse i dati dell'intervallo 23:00÷00:00 della giornata precedente, ma evidentemente non è così. La perdita del dato di radiazione non influisce molto sui computi giornalieri, se non per qualche unità.
 
-**[Aggiornamento del 17/04/2024]** Ricevo il seguente messaggio dall'OSMER:
+**[Aggiornamento del 17/04/2024]** Ricevo il seguente messaggio dall'OsmerFVG in risposta alla mia segnalazione fatta un paio di settimane fa:
 
 >> Buongiorno,
 >>
