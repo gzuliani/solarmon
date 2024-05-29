@@ -2,8 +2,10 @@
 # the line above disables stdout/stderr buffering
 
 import datetime
-import logging
+import json
+import logging.config
 import signal
+import sys
 
 import clock
 import deye
@@ -75,11 +77,15 @@ def read_from(device):
 
 if __name__ == '__main__':
 
-    logging.basicConfig(
-        filename='/var/log/solarmon.log',
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s',
-        datefmt='%Y-%m-%dT%H:%M:%S')
+    if len(sys.argv) > 1:
+        config_file_path = sys.argv[1]
+    else:
+        config_file_path = '/etc/solarmon.conf'
+
+    with open(config_file_path) as f:
+        config = json.load(f)
+
+    logging.config.dictConfig(config['log'])
     logging.info('Booting...')
 
     try:
@@ -93,7 +99,7 @@ if __name__ == '__main__':
             meters.SDM120M('2nd-floor', rs485_adapter, 10),
             meters.SDM120M('gnd-floor', rs485_adapter, 11),
             meters.SDM120M('air-cond', rs485_adapter, 12),
-#            meters.SDM120M('ind-hob', rs485_adapter, 13),
+            # meters.SDM120M('ind-hob', rs485_adapter, 13),
             osmer_fvg.OsmerFvg('osmer', 'UDI'), # keep it as the last one!
         ]
 
@@ -108,7 +114,7 @@ if __name__ == '__main__':
                 api_organization,
                 api_bucket,
                 api_measurement),
-            persistence.CsvFile('CSV', csv_file_path(), qualified_param_names),
+            # persistence.CsvFile('CSV', csv_file_path(), qualified_param_names),
         ]
 
         exit_guard = ShutdownRequest()

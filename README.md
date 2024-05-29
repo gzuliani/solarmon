@@ -83,7 +83,7 @@ The starting point is the last stable image of this distribution ([emonSD-01Feb2
 
 * define the set of input and output devices in the `solarmon/main.py` source file; you can use the `solarmon/main_andrea.py` and `solarmon/main_laura.py` templates. Set the `api_key` global variable to the "Write API Key" of the EmonCMS local installation.
 
-* enable the rotation of the **solarmon** log following the instructions in [debian/etc/logrotate.d/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/etc/logrotate.d/readme.md).
+* install and customize the **solarmon** configuration file following the instructions in [debian/etc/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/etc/readme.md).
 
 * configure **solarmon** to run as a service following the instructions in [debian/lib/systemd/system/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/lib/systemd/system/readme.md).
 

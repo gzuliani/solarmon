@@ -2,8 +2,10 @@
 # the line above disables stdout/stderr buffering
 
 import datetime
-import logging
+import json
+import logging.config
 import signal
+import sys
 
 import clock
 import daikin
@@ -78,11 +80,15 @@ def read_from(device):
 
 if __name__ == '__main__':
 
-    logging.basicConfig(
-        filename='/var/log/solarmon.log',
-        level=logging.INFO,
-        format='%(asctime)s %(levelname)s %(message)s',
-        datefmt='%Y-%m-%dT%H:%M:%S')
+    if len(sys.argv) > 1:
+        config_file_path = sys.argv[1]
+    else:
+        config_file_path = '/etc/solarmon.conf'
+
+    with open(config_file_path) as f:
+        config = json.load(f)
+
+    logging.config.dictConfig(config['log'])
     logging.info('Booting...')
 
     try:

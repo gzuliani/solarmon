@@ -1,9 +1,0 @@
-/var/log/solarmon.log {
-    copytruncate
-    norenamecopy
-    maxsize 1M
-    rotate 3
-    compress
-    missingok
-    notifempty
-}
