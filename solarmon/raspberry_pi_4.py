@@ -135,6 +135,18 @@ class RaspberryPi4:
 
     def __init__(self, name):
         self.name = name
+        self.reconfigure()
+
+    def params(self):
+        return self._params
+
+    def read(self):
+        # keep reconfiguring until a wifi network becomes availabel
+        if len(self._wifi_ifaces) == 0:
+            self.reconfigure()
+        return [x.read() for x in self._params]
+
+    def reconfigure(self):
         self._params = [
             UpTime(),
             CpuLoadPercent(),
@@ -151,20 +163,12 @@ class RaspberryPi4:
                     f'disk-usage_{fs.mount_point}',
                     fs.mount_point))
         # wifi signal strength
-        for iface in WirelessInterface.list():
+        self._wifi_ifaces = WirelessInterface.list()
+        for iface in self._wifi_ifaces:
             self._params.append(
                 WifiSignalStrength(
                     f'rssi_{iface.ssid}',
                     iface.name))
-
-    def params(self):
-        return self._params
-
-    def read(self):
-        return [x.read() for x in self._params]
-
-    def reconfigure(self):
-        pass
 
 
 if __name__ == '__main__':
