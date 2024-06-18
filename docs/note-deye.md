@@ -110,7 +110,7 @@ Possibili altre sorgenti, incomplete ma più facilmente interpretabili:
 * [fields.rs](https://github.com/bmerry/sunsniff/blob/main/src/fields.rs) in **sunsniff**;
 * [flow.json](https://github.com/jacauc/SunSynk-NodeRed/blob/master/flow.json) in **SunSynk-NodeRed** (filtrare per `address`).
 
-#20230214
+## 20230214
 
 L'inverter Deye in uso è di tipo ibrido.
 
@@ -152,6 +152,8 @@ Il codice già supporta la lettura dei doppi registri, è sufficiente impostare 
 
 **Attenzione**: l'inverter Deye memorizza i dati in modalità *little-endian*:
 
+| Addr | Byte | Description                                     | R/W | data range     | gain  | unit   | note                                          |
+|------|------|-------------------------------------------------|-----|----------------|-------|--------|-----------------------------------------|
 |  063 |      | Total active power - low word                   | R   | [0,65536]      | 0.1   | kWh    | (MI) |
 |  064 |      | Total active power - high word                  | R   | [0,65536]      | 0.1   | kWh    | (MI) |
 
@@ -159,10 +161,10 @@ Il codice già supporta la lettura dei doppi registri, è sufficiente impostare 
 
 Il registro `000` contiene il codice che identifica il tipo di inverter; nel caso specifico il valore letto è `3`. Il manuale così descrive il contenuto del registro:
 
-> 0X0200 string machine
-> 0X0300 Single Phase Energy Storage Machine
-> 0X0400 Microinverter MI
-> 0X0500 Three-phase energy storage machine
+> * `0X0200`: string machine
+> * `0X0300`: Single Phase Energy Storage Machine
+> * `0X0400`: Microinverter MI
+> * `0X0500`: Three-phase energy storage machine
 
 Ciò farebbe pensare che anche all'interno del singolo registro il valore è memorizzato in modalità little-endian; in realtà i valori di tensione e frequenza letti finora ipotizzando che il primo byte sia quello significativo producono valori verosimili:
 
