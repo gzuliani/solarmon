@@ -104,7 +104,6 @@ class Number(Parameter):
         self.bias = bias
 
     def _decode(self, values):
-        assert len(values) == len(self.regs)
         return (self._combine(values) - self.bias) / self.gain
 
     def _combine(self, values):
