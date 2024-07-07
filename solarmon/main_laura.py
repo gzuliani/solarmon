@@ -100,7 +100,7 @@ if __name__ == '__main__':
         can_adapter.connect()
 
         input_devices = [
-            deye.Inverter(inverter_name, rs485_adapter,  7),
+            deye.Inverter(inverter_name, rs485_adapter,  1),
             meters.SDM120M(meter_1_name, rs485_adapter, 31),
             meters.SDM120M(meter_2_name, rs485_adapter, 32),
             meters.SDM120M(meter_3_name, rs485_adapter, 33),
