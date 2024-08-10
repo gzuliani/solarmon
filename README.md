@@ -6,14 +6,18 @@ Some notes about how to talk to a Huawei SUN2000 inverter [are available here](h
 
 Some notes about how to talk to a Daikin Altherma heat pump [are available here](https://gzuliani.github.io/emon/daikin-altherma.html) (italian only).
 
-## Dependencies
+## Development environment
+
+Follow the instructions below to set up a development environment for Solarmon. If you intend to just install the software, go to the [Installation](#installation) section.
+
+### Dependencies
 
 * Python >= 3.8
 * [PyModbus v.3.6.4](https://pymodbus.readthedocs.io/en/v3.6.4/)
 * [requests v. 2.31.0](https://pypi.org/project/requests/2.31.0/)
 * [psutil](https://pypi.org/project/psutil/) (required by `raspberry_pi_4.RaspberryPi4` monitor)
 
-## Test
+### Test
 
 First install the dependencies:
 
@@ -53,9 +57,9 @@ The program then enters the main loop:
 * a list of (`Device`, `readings`) tuples is then build;
 * the acquired data is forwared to the output device, one by one.
 
-### Installation
+## Installation
 
-#### EmonSD
+### EmonSD
 
 The starting point is the last stable image of this distribution ([emonSD-01Feb24](https://docs.openenergymonitor.org/emonsd/download.html) at the time of writing).
 
@@ -87,9 +91,9 @@ The starting point is the last stable image of this distribution ([emonSD-01Feb2
 
 * configure **solarmon** to run as a service following the instructions in [debian/lib/systemd/system/readme.md](https://github.com/gzuliani/solarmon/tree/main/debian/lib/systemd/system/readme.md).
 
-#### InfluxDB
+### Raspberry Pi OS + InfluxDB + Grafana
 
-TODO.
+TODO. Some notes are available [here](docs/plants/mine/README.md) (italian only).
 
 ## Extensions
 

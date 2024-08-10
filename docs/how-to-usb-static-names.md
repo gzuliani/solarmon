@@ -22,6 +22,8 @@ A new `udev` rule must be defined for the USB device, here's how:
 
         $ sudo nano /etc/udev/rules.d/10-local.rules
 
+   The file name is not mandatory, as long as it has the `.rules` extensions. Another quite common choice is `10-usb-serial.rules`.
+
 4. add the following line to the file:
 
         SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="ttyUSB_RS485"
