@@ -5,6 +5,13 @@ from pymodbus.payload import BinaryPayloadDecoder
 
 import clock
 
+try:
+    # pymodbus>=3.5.0
+    BIG_ENDIAN = Endian.BIG
+except:
+    # pymodbus<=3.4.1
+    BIG_ENDIAN = Endian.Big
+
 
 class Connection:
 
@@ -183,7 +190,7 @@ class Float(Number):
 
     def _combine(self, values):
         return BinaryPayloadDecoder.fromRegisters(
-                values, byteorder=Endian.BIG, wordorder=Endian.BIG
+                values, byteorder=BIG_ENDIAN, wordorder=BIG_ENDIAN
         ).decode_32bit_float()
 
 

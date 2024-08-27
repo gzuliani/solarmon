@@ -141,7 +141,7 @@ class RaspberryPi4:
         return self._params
 
     def read(self):
-        # keep reconfiguring until a wifi network becomes availabel
+        # keep reconfiguring until a wifi network becomes available
         if len(self._wifi_ifaces) == 0:
             self.reconfigure()
         return [x.read() for x in self._params]
