@@ -37,7 +37,7 @@ class Inverter(HoldingRegisters):
             U16('grid_frequency',        'Hz',  100,    0,  79),
             U16('heat_sink_temp',        '°C',   10, 1000,  90),
             U16('igbt_module_temp',      '°C',   10, 1000,  91),
-            U16('environment_temp',      '°C',   10, 1000,  95),
+#            U16('environment_temp',      '°C',   10, 1000,  95), # always returns -100
         ])
         self._add_param_array([
             B64('fault_code',                              103),
@@ -49,10 +49,10 @@ class Inverter(HoldingRegisters):
             U16('inverter_v_l1_n',        'V',   10,    0, 154),
             U16('load_v_l1',              'V',   10,    0, 157),
 #            I16('micro_inverter_power',  'kW', 1000,    0, 166),
-            I16('internal_ct_l1_power',  'kW', 1000,    0, 167),
+            I16('grid_l1_power',         'kW', 1000,    0, 167), # should be "internal_ct_l1_power", reverted to "grid_l1_power" for hystorical reasons
             I16('grid_power',            'kW', 1000,    0, 169),
             I16('external_ct_l1_power',  'kW', 1000,    0, 170),
-#            I16('grid_ct_power',         'kW', 1000,    0, 172),
+            I16('grid_ct_power',         'kW', 1000,    0, 172),
             I16('inverter_l1_power',     'kW', 1000,    0, 173),
             I16('inverter_power',        'kW', 1000,    0, 175),
             I16('load_l1_power',         'kW', 1000,    0, 176),
