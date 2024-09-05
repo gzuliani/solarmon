@@ -28,7 +28,7 @@ class SerialConnection:
             try:
                 logging.info('Disconnecting from "%s"...', self._name)
                 self.serial.close()
-                logging.info('Connection closed!'.format())
+                logging.info('Connection closed!')
             except Exception as e:
                 logging.info('Could not disconnect, reason: %s...', e)
 
