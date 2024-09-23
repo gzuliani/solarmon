@@ -36,7 +36,9 @@ Then run the tests with the following command:
 
 ### Input devices
 
-Input `Device`s represent a source of data such as a SUN2000 Huawei inverter, a Daikin heat pump or a generic power meter. Input devices have a `name` attribute, a set of `Parameter`s and a `read` method that can be used to capture their values. The `reconfigure` method can be used to reset the device in case of errors.
+Input `Device`s represent a source of data such as a SUN2000 Huawei inverter, a Daikin heat pump or a generic power meter. Input devices have a `name` attribute, a set of `Parameter`s -- accessible by means of the `params` method -- and a `read` method that can be used to capture their values. The `reconfigure` method can be used to reset the device in case of errors.
+
+Devices used to have a static set of parameters, so that the `params` method always returned the same set of objects. Starting with the `RaspberryPi4` device, the parameter set has become dynamic, i.e. it may change as a result of a call to the `read` method.
 
 A `Connection` object represents a channel that can be used to communicate with a real device such a serial port or a WiFi or Ethernet connection. Device objects may use some sort of `Adapter`s to implement the communication protocol of the real device. See for example the `eml327.ELM327` OBD/Serial adapter object or the `modbus.UsbRtuAdapter` RS485/Serial adapter object.
 

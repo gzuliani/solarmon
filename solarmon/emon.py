@@ -10,7 +10,6 @@ class EmonCMS:
         self._base_uri = api_base_uri + '/input/post.json'
         self._api_key = api_key
         self._json_variant = json_variant
-        self._param_names = {}
 
     def write(self, samples):
         for sample in samples:
@@ -18,11 +17,8 @@ class EmonCMS:
             values = sample.values
             if not values:
                 continue
-            if not device.name in self._param_names:
-                self._param_names[device.name] = [
-                        x.name for x in device.params()]
-            sample_as_json = json.dumps(dict(zip(
-                    self._param_names[device.name], values)))
+            names = [x.name for x in device.params()]
+            sample_as_json = json.dumps(dict(zip(names, values)))
             logging.debug('Sending "%s" to EmonCMS...', sample_as_json)
             response = requests.post(self._base_uri, data={
                 'node': device.name,

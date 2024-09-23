@@ -119,7 +119,10 @@ class WifiSignalStrength(Param):
     def read(self):
         output = self._command.run()
         match = self._signal_level.search(output)
-        return int(match.group(1)) if match else None
+        if not match:
+            raise RuntimeError(
+                'interface "{}" not found'.format(self.interface))
+        return int(match.group(1))
 
 
 class UpTime(Param):
@@ -133,16 +136,19 @@ class UpTime(Param):
 
 class RaspberryPi4:
 
-    def __init__(self, name):
+    def __init__(self, name, num_of_wifi_ifaces):
         self.name = name
+        self._num_of_wifi_ifaces = num_of_wifi_ifaces
         self.reconfigure()
 
     def params(self):
         return self._params
 
     def read(self):
-        # keep reconfiguring until a wifi network becomes available
-        if len(self._wifi_ifaces) == 0:
+        # keep reconfiguring until
+        # the expected number of wifi interfaces
+        # matches the expectations
+        if len(self._wifi_ifaces) != self._num_of_wifi_ifaces:
             self.reconfigure()
         return [x.read() for x in self._params]
 

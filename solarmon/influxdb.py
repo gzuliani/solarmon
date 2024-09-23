@@ -26,7 +26,6 @@ class LineProtocol:
 
     def __init__(self, measurement):
         self._measurement = measurement
-        self._params = {}
 
     def encode_error(self, unit, code, detail, timestamp):
         tags = {'source': 'program'}
@@ -39,11 +38,9 @@ class LineProtocol:
 
     def encode_sample(self, sample, timestamp):
         device = sample.device
-        if not device.name in self._params:
-            self._params[device.name] = [(
-            p.name, 'u' if p.type == 'bit_field' else '')
+        params = [(p.name, 'u' if p.type == 'bit_field' else '')
                 for p in device.params()]
-        data = zip(self._params[device.name], sample.values)
+        data = zip(params, sample.values)
         fields = dict((n, f'{quote_if_string(v)}{s}') for (n, s), v in data if v is not None)
         if fields:
             return self._encode({'source': device.name}, fields, timestamp)
@@ -69,8 +66,6 @@ class InfluxDB:
             'Accept': 'application/json'
         }
         self._protocol = LineProtocol(measurement)
-        self._param_names = {}
-        self._param_suffixes = {}
 
     def write(self, samples, timestamp=None):
         if not timestamp:
