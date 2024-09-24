@@ -9,12 +9,11 @@ from pysolarmanv5 import PySolarmanV5
 # Mimics the pymodbus.Response
 class Response:
 
-    def __init__(self, data, error=None):
+    def __init__(self, data):
         self.registers = data
-        self._error = error
 
     def isError(self):
-        return self._error
+        return False
 
 
 class StickLoggerWiFi:
@@ -53,17 +52,11 @@ class StickLoggerWiFi:
         self.connect()
 
     def read_holding_registers(self, addr, count, unit):
-        try:
-            return Response(
-                self._client.read_holding_registers(
-                    register_addr=addr, quantity=count))
-        except Exception as e:
-            return Response(None, error=str(e))
+        return Response(
+            self._client.read_holding_registers(
+                register_addr=addr, quantity=count))
 
     def read_input_registers(self, addr, count, unit):
-        try:
-            return Response(
-                self._client.read_input_registers(
-                    register_addr=addr, quantity=count))
-        except Exception as e:
-            return Response(None, error=str(e))
+        return Response(
+            self._client.read_input_registers(
+                register_addr=addr, quantity=count))
