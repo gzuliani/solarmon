@@ -109,7 +109,7 @@ if __name__ == '__main__':
         while datetime.datetime.now() < start + duration:
             values = device.read()
             if random.random() <= null_threshold:
-                values = [None] * len(sample)
+                values = [None] * len(values)
             logging.info('Emitting sample %s...', values)
             influx_db.write([Sample(device, values)])
             timer.wait_next_tick()
