@@ -18,30 +18,31 @@ class Response:
 
 class StickLoggerWiFi:
 
-    def __init__(self, ip_addr, serial_no):
+    def __init__(self, ip_addr, serial, unit):
         self.ip_addr = ip_addr
-        self.serial_no = serial_no
+        self.serial = serial
+        self.unit = unit
         self._connected = False
+        self._client = None
 
     def connect(self):
         if not self._connected:
-            print('Connecting to "%s"...' % self.ip_addr)
-            logging.info('Connecting to "%s"...' % self.ip_addr)
+            logging.info('Connecting to "%s@%s"...', self.unit, self.ip_addr)
             try:
                 self._client = PySolarmanV5(
-                    self.ip_addr, self.serial_no, port=8899, mb_slave_id=1)
+                    self.ip_addr, self.serial, mb_slave_id=self.unit)
                 self._connected = True
-                print('Connection established!')
                 logging.info('Connection established!')
             except Exception as e:
-                print('Could not connect, reason: %s' % e)
-                logging.info('Could not connect, reason: %s' % e)
+                logging.info('Could not connect, reason: %s', e)
 
     def disconnect(self):
         if self._connected:
             try:
-                logging.info('Disconnecting from "%s"...', self._name)
+                logging.info('Disconnecting from "%s@%s"...',
+                    self.unit, self.ip_addr)
                 self._client.disconnect()
+                self._client = None
                 self._connected = False
                 logging.info('Connection closed!')
             except Exception as e:
@@ -52,11 +53,17 @@ class StickLoggerWiFi:
         self.connect()
 
     def read_holding_registers(self, addr, count, unit):
+        assert unit == self.unit
+        if not self._connected:
+            raise RuntimeError('No connection available')
         return Response(
             self._client.read_holding_registers(
                 register_addr=addr, quantity=count))
 
     def read_input_registers(self, addr, count, unit):
+        assert unit == self.unit
+        if not self._connected:
+            raise RuntimeError('No connection available')
         return Response(
             self._client.read_input_registers(
                 register_addr=addr, quantity=count))

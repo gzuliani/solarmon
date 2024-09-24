@@ -11,13 +11,15 @@ import ui
 
 if __name__ == '__main__':
 
-    solarman_wifi = solarman.StickLoggerWiFi('192.168.1.2', 2777916217)
-#    solarman_wifi = solarman.StickLoggerWiFi('10.10.100.254', 2777916217)
+    ip_addr = '192.168.1.2'  # Home WiFi
+#    ip_addr = '10.10.100.254'  # Data Logger WiFi
+    serial = 2777916217
+    unit = 1  # Inverter Modbus address
+
+    solarman_wifi = solarman.StickLoggerWiFi(ip_addr, serial, unit)
     solarman_wifi.connect()
-
-    input_device = deye.Inverter('inverter', solarman_wifi,  1)
+    input_device = deye.Inverter('inverter', solarman_wifi, unit)
     print(','.join(x.name for x in input_device.params()))
-
     exit_guard = ui.ShutdownRequest()
 
     while not exit_guard.should_exit:
