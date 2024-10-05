@@ -19,6 +19,7 @@ import ui
 
 sampling_period = 30 # seconds
 
+
 # emoncms webapi
 api_base_uri = 'http://127.0.0.1'
 api_key = '****'
@@ -54,11 +55,11 @@ if __name__ == '__main__':
         input_devices = [
             rasp.RaspberryPi4('rasp', num_of_wifi_ifaces=2),
             huawei_sun2000.Inverter('inverter', huawei_wifi, 0),
-            meters.SDM120M('meter_1_name', rs485_adapter, 10),
-            meters.SDM120M('meter_2_name', rs485_adapter, 11),
-            meters.SDM120M('meter_3_name', rs485_adapter, 12),
-            meters.SDM120M('meter_4_name', rs485_adapter, 13),
-            meters.SDM120M('meter_5_name', rs485_adapter, 14),
+            meters.SDM120M('house', rs485_adapter, 10),
+            meters.SDM120M('services', rs485_adapter, 11),
+            meters.SDM120M('induction', rs485_adapter, 12),
+            meters.SDM120M('air-cond', rs485_adapter, 13),
+            meters.SDM120M('old-fv', rs485_adapter, 14),
         ]
 
         output_devices = [
