@@ -88,6 +88,9 @@ class OsmerFvg:
         values = []
         data = StationXmlData(response.decode()).hourly_data()
         for param in self._params:
+            if not param.tag in data:
+                logging.warning('Missing parameter \"%s\"...', param.tag)
+                continue
             value = data[param.tag]
             if param.name == 'obs_time':
                 if value == self._last_observation_time:

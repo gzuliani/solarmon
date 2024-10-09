@@ -59,13 +59,14 @@ if __name__ == '__main__':
             '/dev/ttyUSB_RS485', timeout=1, delay_between_reads=3)
         rs485_adapter.connect()
 
-        dongle_wifi = solarman.StickLoggerWiFi(
-            dongle_ip, dongle_serial, deye_modbus_addr)
-        dongle_wifi.connect()
+        # dongle_wifi = solarman.StickLoggerWiFi(
+        #    dongle_ip, dongle_serial, deye_modbus_addr)
+        # dongle_wifi.connect()
 
         input_devices = [
             rasp.RaspberryPi4('rasp', num_of_wifi_ifaces=1),
-            deye.Inverter('inverter', dongle_wifi, deye_modbus_addr),
+            # deye.Inverter('inverter', dongle_wifi, deye_modbus_addr),
+            deye.Inverter('inverter', rs485_adapter, 1),
             meters.SDM120M('2nd-floor', rs485_adapter, 10),
             meters.SDM120M('gnd-floor', rs485_adapter, 11),
             meters.SDM120M('air-cond', rs485_adapter, 12),
@@ -99,7 +100,7 @@ if __name__ == '__main__':
                                   device.name, e)
 
         logging.info('Shutting down...')
-        dongle_wifi.disconnect()
+        # dongle_wifi.disconnect()
         rs485_adapter.disconnect()
         logging.info('Exiting...')
     except:

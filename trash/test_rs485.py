@@ -4,6 +4,7 @@
 import datetime
 
 import clock
+import deye
 import meters
 import modbus
 import pymodbus
@@ -17,12 +18,13 @@ if __name__ == '__main__':
     print(f'using pymodbus v. {pymodbus.__version__}')
     print(f'connecting...')
     rs485_adapter = modbus.UsbRtuAdapter(
-        '/dev/ttyUSB_RS485', timeout=1, delay_between_reads=3)
+        '/dev/ttyUSB0', timeout=1, delay_between_reads=3)
     rs485_adapter.connect()
     print(f'connection established...')
 
-    meters = [
-        meters.SDM120M('meter_1', rs485_adapter, 10),
+    devices = [
+        deye.Inverter('inverter', rs485_adapter, 1),
+        # meters.SDM120M('meter_1', rs485_adapter, 10),
     ]
 
     print(f'starting sampling...')
@@ -32,13 +34,13 @@ if __name__ == '__main__':
         timer.wait_next_tick()
         now = datetime.datetime.now()
 
-        for meter in meters:
+        for device in devices:
             try:
-                meter.read()
-                print(f'{now} {meter.name} OK')
+                device.read()
+                print(f'{now} {device.name} OK')
             except KeyboardInterrupt:
                 break
             except Exception as e:
-                print(f'{now} {meter.name} ERROR: {e}')
+                print(f'{now} {device.name} ERROR: {e}')
 
     rs485_adapter.disconnect()
