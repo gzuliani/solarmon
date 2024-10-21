@@ -48,11 +48,39 @@ class WirelessInterface:
         ifaces = []
         iwconfig_output = Command('iwconfig').run().decode()
         for line in iwconfig_output.split('\n'):
-            match = re.search('^([\w]+)\s+ IEEE.*ESSID:"([^"]*)"', line)
+            match = re.search(r'^([\S]+)\s+ IEEE.*ESSID:"([^"]*)"', line)
             if match:
                 name, ssid = match.group(1), match.group(2)
                 ifaces.append(WirelessInterface(name, ssid))
         return ifaces
+
+
+class WifiIfaceCount:
+
+    def __init__(self, num_of_ifaces):
+        self._num_of_ifaces = -1
+        self._expected_num_of_ifaces = num_of_ifaces
+
+    def is_fulfilled(self):
+        return self._num_of_ifaces == self._expected_num_of_ifaces
+
+    def load(self, ifaces):
+        self._num_of_ifaces = len(ifaces)
+        return ifaces
+
+
+class WifiIfaceNames:
+
+    def __init__(self, names):
+        self._names = names
+        self._ifaces = []
+
+    def is_fulfilled(self):
+        return len(self._ifaces) == len(self._names)
+
+    def load(self, ifaces):
+        self._ifaces = [x for x in ifaces if x.name in self._names]
+        return self._ifaces
 
 
 class Command:
@@ -114,7 +142,7 @@ class WifiSignalStrength(Param):
         super().__init__(name)
         self.interface = interface
         self._command = Command(f'iwconfig {self.interface}')
-        self._signal_level = re.compile(b'Signal level=(-\d+)')
+        self._signal_level = re.compile(b'Signal level=(-\\d+)')
 
     def read(self):
         output = self._command.run()
@@ -136,19 +164,17 @@ class UpTime(Param):
 
 class RaspberryPi4:
 
-    def __init__(self, name, num_of_wifi_ifaces):
+    def __init__(self, name, wifi_filter):
         self.name = name
-        self._num_of_wifi_ifaces = num_of_wifi_ifaces
+        self._wifi_filter = wifi_filter
         self.reconfigure()
 
     def params(self):
         return self._params
 
     def read(self):
-        # keep reconfiguring until
-        # the expected number of wifi interfaces
-        # matches the expectations
-        if len(self._wifi_ifaces) != self._num_of_wifi_ifaces:
+        # keep reconfiguring until all the wifi interfaces are identified
+        if not self._wifi_filter.is_fulfilled():
             self.reconfigure()
         return [x.read() for x in self._params]
 
@@ -169,17 +195,15 @@ class RaspberryPi4:
                     f'disk-usage_{fs.mount_point}',
                     fs.mount_point))
         # wifi signal strength
-        self._wifi_ifaces = WirelessInterface.list()
-        for iface in self._wifi_ifaces:
+        for iface in self._wifi_filter.load(WirelessInterface.list()):
             self._params.append(
-                WifiSignalStrength(
-                    f'rssi_{iface.ssid}',
-                    iface.name))
+                WifiSignalStrength(f'rssi_{iface.ssid}', iface.name))
 
 
 if __name__ == '__main__':
 
-    device = RaspberryPi4("rasp")
+    device = RaspberryPi4("rasp", WifiIfaceCount(1))
+#    device = RaspberryPi4("rasp", WifiIfaceNames(['wlan0']))
     print(','.join(x.name for x in device.params()))
 
     while True:

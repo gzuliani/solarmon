@@ -59,7 +59,7 @@ if __name__ == '__main__':
         can_adapter.connect()
 
         input_devices = [
-            rasp.RaspberryPi4('rasp', num_of_wifi_ifaces=1),
+            rasp.RaspberryPi4('rasp', rasp.WifiIfaceCount(1)),
             deye.Inverter(inverter_name, rs485_adapter,  1),
             meters.SDM120M(meter_1_name, rs485_adapter, 31),
             meters.SDM120M(meter_2_name, rs485_adapter, 32),

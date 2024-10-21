@@ -53,7 +53,7 @@ if __name__ == '__main__':
         rs485_adapter.connect()
 
         input_devices = [
-            rasp.RaspberryPi4('rasp', num_of_wifi_ifaces=2),
+            rasp.RaspberryPi4('rasp', rasp.WifiIfaceNames(['wlan0'])),
             huawei_sun2000.Inverter('inverter', huawei_wifi, 0),
             meters.SDM120M('house', rs485_adapter, 10),
             meters.SDM120M('services', rs485_adapter, 11),

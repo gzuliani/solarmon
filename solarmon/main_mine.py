@@ -64,7 +64,7 @@ if __name__ == '__main__':
         # dongle_wifi.connect()
 
         input_devices = [
-            rasp.RaspberryPi4('rasp', num_of_wifi_ifaces=1),
+            rasp.RaspberryPi4('rasp', rasp.WifiIfaceCount(1)),
             # deye.Inverter('inverter', dongle_wifi, deye_modbus_addr),
             deye.Inverter('inverter', rs485_adapter, 1),
             meters.SDM120M('2nd-floor', rs485_adapter, 10),

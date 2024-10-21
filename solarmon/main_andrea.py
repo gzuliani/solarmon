@@ -62,7 +62,7 @@ if __name__ == '__main__':
         can_adapter.connect()
 
         input_devices = [
-            rasp.RaspberryPi4('rasp', num_of_wifi_ifaces=2),
+            rasp.RaspberryPi4('rasp', rasp.WifiIfaceNames(['wlan0'])),
             huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0),
             meters.JSY_MK_323(heat_pump_meter_name, rs485_adapter, 22),
             meters.DDS238_1_ZN(old_pv_meter_name, rs485_adapter, 21),
