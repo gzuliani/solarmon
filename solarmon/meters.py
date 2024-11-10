@@ -45,6 +45,7 @@ class SDM120M(InputRegisters):
         super().__init__(name, connection, addr)
         self._add_param_array([
             F32('voltage',                'V',    1, 0, 0x0000), # Voltage
+            F32('current',                'A',    1, 0, 0x0006), # Current
             # the following register actually has unit 'W'
             F32('active-power',          'kW', 1000, 0, 0x000c), # Active Power
             F32('frequency',             'Hz',    1, 0, 0x0046), # Frequency
