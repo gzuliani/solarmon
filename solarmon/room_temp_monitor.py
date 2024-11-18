@@ -27,7 +27,6 @@ def csv_file_path():
 
 
 class ShutdownRequest:
-
     def __init__(self):
         self.should_exit = False
         signal.signal(signal.SIGINT, self._exit)
@@ -39,7 +38,6 @@ class ShutdownRequest:
 
 
 class Sample:
-
     def __init__(self, device):
         self.device = device
         self.values = [None] * len(device.params())

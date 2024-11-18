@@ -3,13 +3,11 @@ import bme280
 
 
 class Param:
-
     def __init__(self, name):
         self.name = name
 
 
 class Bme280:
-
     def __init__(self, name, port, addr):
         self.name = name
         self._port = port

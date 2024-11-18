@@ -5,7 +5,6 @@ from solarmon.influxdb import quote_string, LineProtocol
 from solarmon.modbus import STR
 
 class TestQuote(unittest.TestCase):
-
     def test_string_quoting_supports_the_empty_string(self):
         self.assertEqual(quote_string(''), '""')
 
@@ -51,7 +50,6 @@ class TestQuote(unittest.TestCase):
 
 
 class MockDevice:
-
     def __init__(self):
         self.name = 'inverter'
         self._params = [
@@ -66,7 +64,6 @@ class MockDevice:
 
 
 class MockSample:
-
     def __init__(self):
         self.device = MockDevice()
         self.values = [0x00dc, 0x000a, 0x0040000000000000, 0x0032, 'ABCD']
@@ -74,13 +71,11 @@ class MockSample:
 
 
 class MockSampleError:
-
     def __init__(self):
         self.exception = 'a \'quoted\' "string"'
 
 
 class TestLineProtocol(unittest.TestCase):
-
     def setUp(self):
         super().setUp()
         self.protocol = LineProtocol('measurement')

@@ -4,7 +4,6 @@ from solarmon.modbus import *
 
 
 class MockResponse:
-
     def __init__(self, addr, count):
         self.registers = [
             0x80c5,  # 0x0000
@@ -38,7 +37,6 @@ class MockResponse:
 
 
 class MockConnection:
-
     def __init__(self):
         self.read_input_registers_called = False
         self.read_holding_registers_called = False
@@ -53,21 +51,18 @@ class MockConnection:
 
 
 class MockReadOnlyDevice(InputRegisters):
-
     def __init__(self, connection):
         super().__init__('name', connection, 'addr')
         self._add_param_array([U16('', '', 1, 0, 0)])
 
 
 class MockReadWriteDevice(HoldingRegisters):
-
     def __init__(self, connection):
         super().__init__('name', connection, 'addr')
         self._add_param_array([U16('', '', 1, 0, 0)])
 
 
 class MockDevice(HoldingRegisters):
-
     def __init__(self, connection):
         super().__init__('name', connection, 'addr')
         self._add_param_array([
@@ -91,7 +86,6 @@ class MockDevice(HoldingRegisters):
 
 
 class TestParameter(unittest.TestCase):
-
     def test_name_is_persistent(self):
         p = Parameter('name', [])
         self.assertEqual(p.name, 'name')
@@ -161,7 +155,6 @@ class TestParameter(unittest.TestCase):
 
 
 class TestDevice(unittest.TestCase):
-
     def test_read_only_devices_use_input_registers(self):
         connection = MockConnection()
         self.assertFalse(connection.read_input_registers_called)

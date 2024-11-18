@@ -3,7 +3,6 @@ import time
 
 
 class ELM327:
-
     def __init__(self, port):
         self._port = port
         self._is_monitoring = False

@@ -2,7 +2,6 @@ import logging
 
 
 class Sample:
-
     def __init__(self, device):
         self.device = device
         self.values = [None] * len(device.params())

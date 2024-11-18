@@ -3,7 +3,6 @@ import signal
 
 
 class ShutdownRequest:
-
     def __init__(self):
         self.should_exit = False
         signal.signal(signal.SIGINT, self._exit)

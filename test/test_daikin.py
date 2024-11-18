@@ -4,7 +4,6 @@ from solarmon.daikin import *
 
 
 class TestPacket(unittest.TestCase):
-
     def test_packets_are_made_of_14_bytes(self):
         with self.assertRaises(RuntimeError):
             Packet(b'0123456789ABC')
@@ -38,7 +37,6 @@ class TestPacket(unittest.TestCase):
 
 
 class TestParameter(unittest.TestCase):
-
     REQUEST = b'6100FA0A0C0000'
 
     def test_param_attributes_are_persistent(self):

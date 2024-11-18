@@ -3,7 +3,6 @@ import time
 from modbus import TcpLink, HoldingRegisters, STR, I16, U16, U32, I32
 
 class HuaweiWifi(TcpLink):
-
     def __init__(self, host, port, timeout, boot_time=2):
         super().__init__(host, port, timeout)
         self._boot_time = boot_time
@@ -14,7 +13,6 @@ class HuaweiWifi(TcpLink):
 
 
 class Dongle(HoldingRegisters):
-
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
         self._add_param_array([
@@ -22,39 +20,16 @@ class Dongle(HoldingRegisters):
             U32('load_power',                     'kW', 1000, 0, 37500    ), # Load power
             I32('grid_power',                     'kW', 1000, 0, 37502    ), # Grid power
             I32('total_battery_power',            'kW', 1000, 0, 37504    ), # Total battery power
+            I32('total_active_power',             'kW', 1000, 0, 37516    ), # Total active power
         ])
 
 
-class Inverter(HoldingRegisters):
-
+# register ranges common to single and three-phase inverters
+class CommonRegisters(HoldingRegisters):
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
-        self._add_param_array([
-            I32('P-PV',                           'kW', 1000, 0, 32064    ), # Input power
-            U16('V-L1-inverter',                   'V',   10, 0, 32069    ), # Phase A voltage
-            U16('V-L2-inverter',                   'V',   10, 0, 32070    ), # Phase B voltage
-            U16('V-L3-inverter',                   'V',   10, 0, 32071    ), # Phase C voltage
-            I32('P-inverter',                     'kW', 1000, 0, 32080    ), # Active power
-            I16('T-inverter',                     '°C',   10, 0, 32087    ), # Internal temperature
-            U32('E-inverter-total',               'kW',  100, 0, 32106    ), # Accumulated energy yield
-            U32('E-inverter-day',                 'kW',  100, 0, 32114    ), # Daily energy yield
-        ])
-        self._add_param_array([
-            I32('V-L1-grid',                       'V',   10, 0, 37101    ), # Grid voltage (A phase)
-            I32('V-L2-grid',                       'V',   10, 0, 37103    ), # B phase voltage
-            I32('V-L3-grid',                       'V',   10, 0, 37105    ), # C phase voltage
-            # the following register actually has unit 'W' and gain 1
-            I32('P-to_grid',                      'kW', 1000, 0, 37113    ), # [Power meter collection] Active power
-            I16('F-grid',                         'Hz',  100, 0, 37118    ), # Grid frequency
-            I32('E-to_grid-total',               'kWh',  100, 0, 37119    ), # Positive active electricity
-            I32('E-from_grid-total',             'kWh',  100, 0, 37121    ), # Reverse active power
-            # the following register actually has unit 'W' and gain 1
-            I32('P-L1-to_grid',                   'kW', 1000, 0, 37132    ), # A phase active power
-            # the following register actually has unit 'W' and gain 1
-            I32('P-L2-to_grid',                   'kW', 1000, 0, 37134    ), # B phase active power
-            # the following register actually has unit 'W' and gain 1
-            I32('P-L3-to_grid',                   'kW', 1000, 0, 37136    ), # C phase active power
-        ])
+        self._add_32xxx_params()
+        self._add_371xx_params()
         self._add_param_array([
             I16('T-esu2',                         '°C',   10, 0, 37752    ), # [Energy storage unit 2] Battery temperature
             U16('SOC-battery',                     '%',   10, 0, 37760    ), # [Energy storage] SOC
@@ -152,4 +127,112 @@ class Inverter(HoldingRegisters):
         ])
         self._add_sparse_params([
             I16('T-esu1',                         '°C',   10, 0, 37022    ), # temperature
+        ])
+
+
+# old inverter model, contains both single and three-phase data
+class Inverter(CommonRegisters):
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
+
+    def _add_32xxx_params(self):
+        self._add_param_array([
+            I32('P-PV',                           'kW', 1000, 0, 32064    ), # Input power
+            U16('V-L1-inverter',                   'V',   10, 0, 32069    ), # Phase A voltage
+            U16('V-L2-inverter',                   'V',   10, 0, 32070    ), # Phase B voltage
+            U16('V-L3-inverter',                   'V',   10, 0, 32071    ), # Phase C voltage
+            I32('P-inverter',                     'kW', 1000, 0, 32080    ), # Active power
+            I16('T-inverter',                     '°C',   10, 0, 32087    ), # Internal temperature
+            U32('E-inverter-total',               'kW',  100, 0, 32106    ), # Accumulated energy yield
+            U32('E-inverter-day',                 'kW',  100, 0, 32114    ), # Daily energy yield
+        ])
+
+    def _add_371xx_params(self):
+        self._add_param_array([
+            I32('V-L1-grid',                       'V',   10, 0, 37101    ), # Grid voltage (A phase)
+            I32('V-L2-grid',                       'V',   10, 0, 37103    ), # B phase voltage
+            I32('V-L3-grid',                       'V',   10, 0, 37105    ), # C phase voltage
+            # the following register actually has unit 'W' and gain 1
+            I32('P-to_grid',                      'kW', 1000, 0, 37113    ), # [Power meter collection] Active power
+            I16('F-grid',                         'Hz',  100, 0, 37118    ), # Grid frequency
+            I32('E-to_grid-total',               'kWh',  100, 0, 37119    ), # Positive active electricity
+            I32('E-from_grid-total',             'kWh',  100, 0, 37121    ), # Reverse active power
+            # the following register actually has unit 'W' and gain 1
+            I32('P-L1-to_grid',                   'kW', 1000, 0, 37132    ), # A phase active power
+            # the following register actually has unit 'W' and gain 1
+            I32('P-L2-to_grid',                   'kW', 1000, 0, 37134    ), # B phase active power
+            # the following register actually has unit 'W' and gain 1
+            I32('P-L3-to_grid',                   'kW', 1000, 0, 37136    ), # C phase active power
+        ])
+
+
+class SinglePhaseInverter(CommonRegisters):
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
+
+    def _add_32xxx_params(self):
+        self._add_param_array([
+            I16('V-PV1',                           'V',   10, 0, 32016    ), # PV1 voltage
+            I16('C-PV1',                           'A',  100, 0, 32017    ), # PV1 current
+            I16('V-PV2',                           'V',   10, 0, 32018    ), # PV2 voltage
+            I16('C-PV2',                           'A',  100, 0, 32019    ), # PV2 current
+            I32('P-PV',                           'kW', 1000, 0, 32064    ), # Input power
+            U16('V-power-grid',                    'V',   10, 0, 32066    ), # Power grid voltage/Line voltage between phases A and B
+            I32('C-power-grid',                    'A', 1000, 0, 32072    ), # Power grid current/Phase A current
+            I32('P-inverter',                     'kW', 1000, 0, 32080    ), # Active power
+            I16('T-inverter',                     '°C',   10, 0, 32087    ), # Internal temperature
+            U16('Status',                           '',    1, 0, 32089    ), # Device status
+            U32('E-inverter-total',               'kW',  100, 0, 32106    ), # Accumulated energy yield
+            U32('E-inverter-day',                 'kW',  100, 0, 32114    ), # Daily energy yield
+        ])
+
+    def _add_371xx_params(self):
+        self._add_param_array([
+            I32('V-grid',                          'V',   10, 0, 37101    ), # Grid voltage (A phase)
+            I32('C-meter-grid',                    'A',  100, 0, 37107    ), # Grid current (A phase)
+            # the following register actually has unit 'W' and gain 1
+            I32('P-to_grid',                      'kW', 1000, 0, 37113    ), # [Power meter collection] Active power
+            I16('F-grid',                         'Hz',  100, 0, 37118    ), # Grid frequency
+            I32('E-to_grid-total',               'kWh',  100, 0, 37119    ), # Positive active electricity
+            I32('E-from_grid-total',             'kWh',  100, 0, 37121    ), # Reverse active power
+        ])
+
+
+class ThreePhaseInverter(CommonRegisters):
+    def __init__(self, name, connection, addr):
+        super().__init__(name, connection, addr)
+
+    def _add_32xxx_params(self):
+        self._add_param_array([
+            I16('V-PV1',                           'V',   10, 0, 32016    ), # PV1 voltage
+            I16('C-PV1',                           'A',  100, 0, 32017    ), # PV1 current
+            I16('V-PV2',                           'V',   10, 0, 32018    ), # PV2 voltage
+            I16('C-PV2',                           'A',  100, 0, 32019    ), # PV2 current
+            I32('P-PV',                           'kW', 1000, 0, 32064    ), # Input power
+            U16('V-L1-inverter',                   'V',   10, 0, 32069    ), # Phase A voltage
+            U16('V-L2-inverter',                   'V',   10, 0, 32070    ), # Phase B voltage
+            U16('V-L3-inverter',                   'V',   10, 0, 32071    ), # Phase C voltage
+            I32('P-inverter',                     'kW', 1000, 0, 32080    ), # Active power
+            I16('T-inverter',                     '°C',   10, 0, 32087    ), # Internal temperature
+            U16('Status',                           '',    1, 0, 32089    ), # Device status
+            U32('E-inverter-total',               'kW',  100, 0, 32106    ), # Accumulated energy yield
+            U32('E-inverter-day',                 'kW',  100, 0, 32114    ), # Daily energy yield
+        ])
+
+    def _add_371xx_params(self):
+        self._add_param_array([
+            I32('V-L1-grid',                       'V',   10, 0, 37101    ), # Grid voltage (A phase)
+            I32('V-L2-grid',                       'V',   10, 0, 37103    ), # B phase voltage
+            I32('V-L3-grid',                       'V',   10, 0, 37105    ), # C phase voltage
+            # the following register actually has unit 'W' and gain 1
+            I32('P-to_grid',                      'kW', 1000, 0, 37113    ), # [Power meter collection] Active power
+            I16('F-grid',                         'Hz',  100, 0, 37118    ), # Grid frequency
+            I32('E-to_grid-total',               'kWh',  100, 0, 37119    ), # Positive active electricity
+            I32('E-from_grid-total',             'kWh',  100, 0, 37121    ), # Reverse active power
+            # the following register actually has unit 'W' and gain 1
+            I32('P-L1-to_grid',                   'kW', 1000, 0, 37132    ), # A phase active power
+            # the following register actually has unit 'W' and gain 1
+            I32('P-L2-to_grid',                   'kW', 1000, 0, 37134    ), # B phase active power
+            # the following register actually has unit 'W' and gain 1
+            I32('P-L3-to_grid',                   'kW', 1000, 0, 37136    ), # C phase active power
         ])

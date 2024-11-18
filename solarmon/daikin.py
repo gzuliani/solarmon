@@ -6,7 +6,6 @@ from elm327 import ELM327
 
 
 class SerialConnection:
-
     def __init__(self, port, baudrate):
         self._name = port
         self._baudrate = baudrate
@@ -38,7 +37,6 @@ class SerialConnection:
 
 
 class Packet:
-
     FRAME_SIZE = 14
 
     def __init__(self, frame):
@@ -58,7 +56,6 @@ class Packet:
 
 
 class Parameter:
-
     def __init__(self, name, unit, header, request):
         self.name = name
         self.unit = unit
@@ -75,7 +72,6 @@ class Parameter:
 
 
 class MostSignificantByte(Parameter):
-
     def __init__(self, name, unit, header, request):
         super().__init__(name, unit, header, request)
 
@@ -84,7 +80,6 @@ class MostSignificantByte(Parameter):
 
 
 class Word(Parameter):
-
     def __init__(self, name, unit, header, request):
         super().__init__(name, unit, header, request)
 
@@ -97,7 +92,6 @@ class Word(Parameter):
 
 
 class SignedInt(Word):
-
     def __init__(self, name, unit, divisor, header, request):
         super().__init__(name, unit, header, request)
         self.divisor = divisor
@@ -107,7 +101,6 @@ class SignedInt(Word):
 
 
 class Float(Word):
-
     def __init__(self, name, unit, divisor, header, request):
         super().__init__(name, unit, header, request)
         self.divisor = divisor
@@ -123,7 +116,6 @@ FLT = Float
 
 
 class UsbCanAdapter:
-
     def __init__(self, port, baudrate):
         self._connection = SerialConnection(port, baudrate)
         self._init()
@@ -189,7 +181,6 @@ class UsbCanAdapter:
 
 
 class Device:
-
     def __init__(self, name, obd_adapter):
         self.name = name
         self._obd_adapter = obd_adapter
@@ -199,7 +190,6 @@ class Device:
 
 
 class Altherma(Device):
-
     def __init__(self, name, obd_adapter):
         super().__init__(name, obd_adapter)
         self._params = [
@@ -271,7 +261,6 @@ class Altherma(Device):
 
 
 class CanBusMonitor(threading.Thread, Device):
-
     def __init__(self, name, obd_adapter):
         threading.Thread.__init__(self)
         Device.__init__(self, name, obd_adapter)

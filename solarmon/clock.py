@@ -3,7 +3,6 @@ import time
 
 
 class WallClock:
-
     def __init__(self):
         self._minute = self._current_minute()
 
@@ -19,7 +18,6 @@ class WallClock:
 
 
 class Timer:
-
     def __init__(self, interval):
         self._interval = interval
         self._start = time.time()

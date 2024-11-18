@@ -2,7 +2,6 @@ from modbus import HoldingRegisters, I16, U16
 
 
 class Qword:
-
     def __init__(self, name, hihi_addr, hilo_addr, lohi_addr, lolo_addr):
         self.name = name
         self.regs = [hihi_addr, hilo_addr, lohi_addr, lolo_addr]
@@ -16,20 +15,17 @@ class Qword:
 
 
 class QwordLE(Qword):
-
     def __init__(self, name, addr):
         super().__init__(name, addr + 3, addr + 2, addr + 1, addr)
 
 
 class B64(QwordLE):
-
     def __init__(self, name, addr):
         super().__init__(name, addr)
         self.type = 'bit_field'
 
 
 class Inverter(HoldingRegisters):
-
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
         self._add_param_array([

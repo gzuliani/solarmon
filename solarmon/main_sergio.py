@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
         input_devices = [
             rasp.RaspberryPi4('rasp', rasp.WifiIfaceNames(['wlan0'])),
-            huawei_sun2000.Inverter('inverter', huawei_wifi, 0),
+            huawei_sun2000.SinglePhaseInverter('inverter', huawei_wifi, 0),
             meters.SDM120M('house', rs485_adapter, 10),
             meters.SDM120M('services', rs485_adapter, 11),
             meters.SDM120M('induction', rs485_adapter, 12),

@@ -7,14 +7,12 @@ import time
 
 
 class Param:
-
     def __init__(self, name):
         self.name = name
         self.type = 'number'
 
 
 class FileSystem:
-
     def __init__(self, mount_point, name, type):
         self.mount_point = mount_point
         self.name = name
@@ -39,7 +37,6 @@ class FileSystem:
 
 
 class WirelessInterface:
-
     def __init__(self, name, ssid):
         self.name = name
         self.ssid = ssid
@@ -56,7 +53,6 @@ class WirelessInterface:
 
 
 class WifiIfaceCount:
-
     def __init__(self, num_of_ifaces):
         self._num_of_ifaces = -1
         self._expected_num_of_ifaces = num_of_ifaces
@@ -70,7 +66,6 @@ class WifiIfaceCount:
 
 
 class WifiIfaceNames:
-
     def __init__(self, names):
         self._names = names
         self._ifaces = []
@@ -84,7 +79,6 @@ class WifiIfaceNames:
 
 
 class Command:
-
     def __init__(self, command):
         self._command = command
 
@@ -98,7 +92,6 @@ class Command:
 
 
 class CpuLoadPercent(Param):
-
     def __init__(self):
         super().__init__('cpu-load')
 
@@ -107,7 +100,6 @@ class CpuLoadPercent(Param):
 
 
 class CpuTemperature(Param):
-
     def __init__(self):
         super().__init__('cpu-t')
 
@@ -116,7 +108,6 @@ class CpuTemperature(Param):
 
 
 class RamUsedPercent(Param):
-
     def __init__(self):
         super().__init__('ram-usage')
 
@@ -126,7 +117,6 @@ class RamUsedPercent(Param):
 
 
 class DiskUsedPercent(Param):
-
     def __init__(self, name, path):
         super().__init__(name)
         self._path = path
@@ -137,7 +127,6 @@ class DiskUsedPercent(Param):
 
 
 class WifiSignalStrength(Param):
-
     def __init__(self, name, interface):
         super().__init__(name)
         self.interface = interface
@@ -154,7 +143,6 @@ class WifiSignalStrength(Param):
 
 
 class UpTime(Param):
-
     def __init__(self):
         super().__init__('up-time')
 
@@ -163,7 +151,6 @@ class UpTime(Param):
 
 
 class RaspberryPi4:
-
     def __init__(self, name, wifi_filter):
         self.name = name
         self._wifi_filter = wifi_filter

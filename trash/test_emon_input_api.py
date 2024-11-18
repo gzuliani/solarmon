@@ -11,7 +11,6 @@ from emon import EmonCMS
 
 
 class Parameter:
-
     def __init__(self, name, fn):
         self.name = name
         self._fn = fn
@@ -21,14 +20,12 @@ class Parameter:
 
 
 class Sample:
-
     def __init__(self, device, values):
         self.device = device
         self.values = values
 
 
 class VirtualDevice:
-
     def __init__(self):
         self.name = 'test-node'
         self._t0 = time.time()

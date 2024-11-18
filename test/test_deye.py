@@ -4,7 +4,6 @@ from solarmon.deye import *
 
 
 class FaultCodes:
-
     def __init__(self):
         self._descriptions = {
              1: 'DC input polarity reverse fault',
@@ -48,7 +47,6 @@ class FaultCodes:
 
 
 class TestFaultCodes(unittest.TestCase):
-
     def setUp(self):
         self.fault_codes = FaultCodes()
 
@@ -81,7 +79,6 @@ class TestFaultCodes(unittest.TestCase):
 
 
 class TestQwordLE(unittest.TestCase):
-
     def test_decoding_of_a_dword(self):
         p = QwordLE('qword', 1)
         # most significant register value first

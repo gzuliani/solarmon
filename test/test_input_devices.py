@@ -8,7 +8,6 @@ import meters
 
 
 class MockModbusResponse:
-
     def __init__(self, addr, count):
         self.registers = [random.randrange(65536)] * count
 
@@ -17,7 +16,6 @@ class MockModbusResponse:
 
 
 class MockModbusProxy:
-
     def read_input_registers(self, addr, count, unit):
         self.read_input_registers_called = True
         return MockModbusResponse(addr, count)
@@ -28,7 +26,6 @@ class MockModbusProxy:
 
 
 class MockCanBusProxy:
-
     def set_header(self, _):
         return b'OK\r'
 
@@ -46,7 +43,6 @@ class MockCanBusProxy:
 
 
 class TestInputDevices(unittest.TestCase):
-
     def test_reading_from_input_devices_is_safe(self):
         modbus_proxy = MockModbusProxy()
         canbus_proxy = MockCanBusProxy()

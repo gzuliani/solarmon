@@ -4,7 +4,6 @@ import time
 
 
 def quote_string(s):
-
     return '"{}"'.format(
         ' '.join(s.split()).translate(
             str.maketrans(
@@ -23,7 +22,6 @@ def quote_if_string(x):
 
 
 class LineProtocol:
-
     def __init__(self, measurement):
         self._measurement = measurement
 
@@ -54,7 +52,6 @@ class LineProtocol:
 
 
 class InfluxDB:
-
     def __init__(self, api_base_uri, api_token, org, bucket,
                  measurement='measurement'):
         self.name = 'Influx'

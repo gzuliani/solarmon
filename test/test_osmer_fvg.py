@@ -8,7 +8,6 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestStationXmlData(unittest.TestCase):
-
     def test_hourly_data_parsing(self):
         with open(os.path.join(THIS_DIR, 'data/UDI.xml')) as f:
             data = StationXmlData(f.read()).hourly_data()

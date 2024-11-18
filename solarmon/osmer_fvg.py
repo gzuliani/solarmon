@@ -6,7 +6,6 @@ import xml.dom.minidom
 
 
 class StationXmlData:
-
     def __init__(self, response):
         self.response = response
         dom = xml.dom.minidom.parseString(response)
@@ -35,7 +34,6 @@ class StationXmlData:
 
 
 class Param:
-
     def __init__(self, name, tag, type):
         self.name = name
         self.tag = tag
@@ -43,7 +41,6 @@ class Param:
 
 
 class OsmerFvg:
-
     BASE_URI = 'https://dev.meteo.fvg.it/xml/stazioni'
 
 

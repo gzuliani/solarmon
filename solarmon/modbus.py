@@ -14,7 +14,6 @@ except:
 
 
 class Connection:
-
     def __init__(self, name, client, delay_between_reads=0):
         self._name = name
         self._client = client
@@ -61,7 +60,6 @@ class Connection:
 
 
 class UsbRtuAdapter(Connection):
-
     def __init__(self, port, timeout, delay_between_reads=0):
         super().__init__(port,
                 ModbusSerialClient(port=port, baudrate=9600, timeout=timeout),
@@ -69,14 +67,12 @@ class UsbRtuAdapter(Connection):
 
 
 class TcpLink(Connection):
-
     def __init__(self, host, port, timeout):
         super().__init__('{}:{}'.format(host, port),
                 ModbusTcpClient(host, port=port, timeout=timeout))
 
 
 class Parameter:
-
     def __init__(self, name, regs):
         self.name = name
         self.regs = regs
@@ -90,7 +86,6 @@ class Parameter:
 
 
 class AsciiString:
-
     def __init__(self, name, addr, count):
         self.name = name
         self.type = 'text'
@@ -102,7 +97,6 @@ class AsciiString:
 
 
 class Number(Parameter):
-
     def __init__(self, name, unit, gain, bias, regs):
         super().__init__(name, regs)
         self.type = 'number'
@@ -118,7 +112,6 @@ class Number(Parameter):
 
 
 class UnsignedShort(Number):
-
     def __init__(self, name, unit, gain, bias, addr):
         super().__init__(name, unit, gain, bias, [addr])
 
@@ -127,7 +120,6 @@ class UnsignedShort(Number):
 
 
 class SignedShort(Number):
-
     def __init__(self, name, unit, gain, bias, addr):
         super().__init__(name, unit, gain, bias, [addr])
 
@@ -139,7 +131,6 @@ class SignedShort(Number):
 
 
 class UnsignedLong(Number):
-
     def __init__(self, name, unit, gain, bias, hi_addr, lo_addr):
         super().__init__(name, unit, gain, bias, [hi_addr, lo_addr])
 
@@ -148,19 +139,16 @@ class UnsignedLong(Number):
 
 
 class UnsignedLongBE(UnsignedLong):
-
     def __init__(self, name, unit, gain, bias, addr):
         super().__init__(name, unit, gain, bias, addr, addr + 1)
 
 
 class UnsignedLongLE(UnsignedLong):
-
     def __init__(self, name, unit, gain, bias, addr):
         super().__init__(name, unit, gain, bias, addr + 1, addr)
 
 
 class SignedLong(Number):
-
     def __init__(self, name, unit, gain, bias, hi_addr, lo_addr):
         super().__init__(name, unit, gain, bias, [hi_addr, lo_addr])
 
@@ -172,19 +160,16 @@ class SignedLong(Number):
 
 
 class SignedLongBE(SignedLong):
-
     def __init__(self, name, unit, gain, bias, addr):
         super().__init__(name, unit, gain, bias, addr, addr + 1)
 
 
 class SignedLongLE(SignedLong):
-
     def __init__(self, name, unit, gain, bias, addr):
         super().__init__(name, unit, gain, bias, addr + 1, addr)
 
 
 class Float(Number):
-
     def __init__(self, name, unit, gain, bias, addr):
         super().__init__(name, unit, gain, bias, [addr, addr + 1])
 
@@ -195,7 +180,6 @@ class Float(Number):
 
 
 class Device:
-
     def __init__(self, name, connection, addr):
         self.name = name
         self.addr = addr
@@ -274,7 +258,6 @@ class Device:
 
 
 class InputRegisters(Device):
-
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
 
@@ -283,7 +266,6 @@ class InputRegisters(Device):
 
 
 class HoldingRegisters(Device):
-
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
 

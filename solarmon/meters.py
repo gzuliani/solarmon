@@ -2,7 +2,6 @@ from modbus import HoldingRegisters, InputRegisters, I16, U16, U32, F32
 
 
 class JSY_MK_323(HoldingRegisters):
-
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
         self._add_param_array([
@@ -27,7 +26,6 @@ class JSY_MK_323(HoldingRegisters):
 
 
 class DDS238_1_ZN(HoldingRegisters):
-
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
         self._add_param_array([
@@ -40,7 +38,6 @@ class DDS238_1_ZN(HoldingRegisters):
 
 
 class SDM120M(InputRegisters):
-
     def __init__(self, name, connection, addr):
         super().__init__(name, connection, addr)
         self._add_param_array([

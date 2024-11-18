@@ -6,14 +6,13 @@ import sys
 
 from influxdb import InfluxDB
 
-class Parameter:
 
+class Parameter:
     def __init__(self, name):
         self.name = name
 
 
 class Device:
-
     def __init__(self, name):
         self.name = name
         self._param_names = []
@@ -31,7 +30,6 @@ class Device:
 
 
 class Csv:
-
     def __init__(self, path):
         self._file = open(path)
         headers = self._read_next_line()

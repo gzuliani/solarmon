@@ -8,7 +8,6 @@ from pysolarmanv5 import PySolarmanV5
 
 # Mimics the pymodbus.Response
 class Response:
-
     def __init__(self, data):
         self.registers = data
 
@@ -17,7 +16,6 @@ class Response:
 
 
 class StickLoggerWiFi:
-
     def __init__(self, ip_addr, serial, unit):
         self.ip_addr = ip_addr
         self.serial = serial

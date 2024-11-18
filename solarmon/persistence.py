@@ -2,7 +2,6 @@ import datetime
 
 
 class CsvFile:
-
     def __init__(self, name, path):
         self.name = name
         self._file = open(path, "w")

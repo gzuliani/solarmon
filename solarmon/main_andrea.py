@@ -31,6 +31,13 @@ heat_pump_name = 'daikin'
 api_base_uri = 'http://127.0.0.1'
 api_key = '****'
 
+# huawei sun2000 inverter type, one of:
+# * huawei_sun2000.Inverter (deprecated)
+# * huawei_sun2000.SinglePhaseInverter
+# * huawei_sun2000.ThreePhaseInverter
+huawei_sun2000_inverter_type = huawei_sun2000.Inverter
+
+
 # csv
 def csv_file_path():
     return 'solarmon_{}.csv'.format(
@@ -63,7 +70,7 @@ if __name__ == '__main__':
 
         input_devices = [
             rasp.RaspberryPi4('rasp', rasp.WifiIfaceNames(['wlan0'])),
-            huawei_sun2000.Inverter(inverter_name, huawei_wifi, 0),
+            huawei_sun2000_inverter_type(inverter_name, huawei_wifi, 0),
             meters.JSY_MK_323(heat_pump_meter_name, rs485_adapter, 22),
             meters.DDS238_1_ZN(old_pv_meter_name, rs485_adapter, 21),
             meters.DDS238_1_ZN(house_meter_name, rs485_adapter, 23),

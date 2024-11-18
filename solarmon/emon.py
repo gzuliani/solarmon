@@ -4,7 +4,6 @@ import requests
 
 
 class EmonCMS:
-
     def __init__(self, api_base_uri, api_key, json_variant='json'):
         self.name = 'EmonCMS'
         self._base_uri = api_base_uri + '/input/post.json'
