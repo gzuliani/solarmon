@@ -31,6 +31,10 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
     - [Spazio occupato su disco](#spazio-occupato-su-disco)
     - [Backup](#backup)
     - [Restore](#restore)
+    - [Ripristino della serie storica "raw\_data"](#ripristino-della-serie-storica-raw_data)
+      - [Creazione dell'istanza InfluxDB](#creazione-dellistanza-influxdb)
+      - [Ripristino di backup precedenti l'ultimo](#ripristino-di-backup-precedenti-lultimo)
+      - [Ripristino del backup più recente](#ripristino-del-backup-più-recente)
     - [Task di aggregazione giornaliero](#task-di-aggregazione-giornaliero)
     - [Determinazione degli intervalli senza campioni](#determinazione-degli-intervalli-senza-campioni)
   - [Appendice B - Note su Grafana](#appendice-b---note-su-grafana)
@@ -428,7 +432,7 @@ Poiché gran parte di queste grandezze sono espresse con valori con segno, bisog
 
 Esempio di importazione di un file CSV prodotto da **solarmon**:
 
-    influx write dryrun \
+    pi@raspberry:~ $ influx write dryrun \
         -b raw_data \
         -f data.csv \
         --header "#constant measurement,solarmon" \
@@ -437,17 +441,17 @@ Esempio di importazione di un file CSV prodotto da **solarmon**:
 
 ### Esportazione CSV
 
-    influx query 'from(bucket:"raw_data") |> range(start: 2023-09-25T22:00:00Z, stop: 2023-09-27T20:00:00Z) |> filter(fn: (r) => r["source"] == "inverter")' --raw > out.csv
+    pi@raspberry:~ $ influx query 'from(bucket:"raw_data") |> range(start: 2023-09-25T22:00:00Z, stop: 2023-09-27T20:00:00Z) |> filter(fn: (r) => r["source"] == "inverter")' --raw > out.csv
 
 ### Cancellazione dei dati
 
-    influx delete \
+    pi@raspberry:~ $ influx delete \
         --bucket raw_data \
         --predicate '_measurement="solarmon" AND source="meter-1"' \
         --start '2023-01-01T00:00:00Z' \
         --stop '2024-01-01T00:00:00Z'
 
-    influx delete \
+    pi@raspberry:~ $ influx delete \
         --bucket daily_data \
         --predicate '_measurement="solarmon"' \
         --start '2022-01-01T00:00:00Z' \
@@ -521,6 +525,68 @@ aggiungere quindi la riga:
 Fonte: [Restore data](https://docs.influxdata.com/influxdb/v2/admin/backup-restore/restore/).
 
 Verificato il buon funzionamento su un'istanza diversa di InfluxDB installata su una Raspberry Pi 3B.
+
+### Ripristino della serie storica "raw_data"
+
+L'installazione InfluxDB a bordo della Raspberry Pi sulla quale gira il servizio Solarmon contiene due bucket:
+
+- **raw_data** che contiene i dati orari (campionati ogni secondo);
+- **daily_data** che contiene gli aggregati giornalieri.
+
+Per limitare il consumo di spazio sulla SD card il primo bucket ha una *data retention* di un anno, il secondo infinita.
+
+Il backup del contenuto del database avviene ogni tre mesi.
+
+Come ricostruire l'intera serie temporale a partire dai backup periodici?
+
+#### Creazione dell'istanza InfluxDB
+
+Considerate le limitate risorse della Raspberry Pi conviene effettuare il ripristino su una macchina più carrozzata. Dopo aver proceduto all'installazione di una versione di InfluxDB compatibile con quello d'origine, recuperare il token amministrativo dell'istanza InfluxDB della Raspberry Pi e creare una nuova istanza sulla macchina di destinazione identica all'originale, avendo quindi cura di fornire gli stessi nome utente, organizzazione e bucket. L'unica differenza sta nela data retention del il bucket "raw_data", che in questo caso sarà illimitata:
+
+    user@host:~$ influx setup --token [ROOT-TOKEN]
+    > Welcome to InfluxDB 2.0!
+    ? Please type your primary username pi
+    ? Please type your password ************
+    ? Please type your password again ************
+    ? Please type your primary organization name home
+    ? Please type your primary bucket name raw_data
+    ? Please type your retention period in hours, or 0 for infinite 0
+    ? Setup with these parameters?
+      Username:          pi
+      Organization:      home
+      Bucket:            raw_data
+      Retention Period:  infinite
+    Yes
+    User    Organization    Bucket
+    pi      home            raw_data
+
+#### Ripristino di backup precedenti l'ultimo
+
+Poiché il backup più recente contiene l'intera serie temporale del bucket "daily_data", non è necessario importarlo dai backup precedenti; è perciò sufficiente recuperare i dati del bucket "raw_data". Poiché il ripristino di un bucket distrugge la sua versione in linea, occorre procedere in due fasi:
+
+* recuperare i dati del bucket "raw_data" dal backup ripristinandoli in un bucket temporaneo;
+* riversare i dati dal bucket temporaneo nel bucket "raw_data".
+
+I comandi sono:
+
+    user@host:~$ influx restore BACKUP-DIR --bucket raw_data --new-bucket raw_data_tmp
+    user@host:~$ influx query 'from(bucket:"raw_data_tmp") |> range(start: START-TIME, stop: END-TIME) |> to(bucket: "raw_data")' > /dev/null
+    user@host:~$ influx bucket delete -n raw_data_tmp
+
+I parametri START-TIME ed END-TIME possono essere prefissati (es. START-TIME alla data di messa in opera del sistema di monitoraggio, END-TIME la data odierna) oppure determinati dalla data del backup (es. fintanto che la data retention del bucket "raw_data" è pari a un anno: START-TIME = BACKUP-TIME - 365d, END-TIME=BACKUP-TIME)
+
+**Nota**: considerato che il bucket "raw_data" contiene i dati orari di un anno e che i backup vengono effettuati con cadenza trimestrale, per velocizzare il processo di ripristino conviene procedere rispettando la sequenza temporale dei backup iniziando dal più remoto; dei successivi sarà sufficiente estrarre i soli dati relativi agli ultimi tre mesi.
+
+#### Ripristino del backup più recente
+
+Nell'ipotesi che l'istanza di InfluxDB sia aggiornata al penultimo backup, l'integrazione dei dati dell'ultimo deve considerare anche il bucket "daily_data":
+
+    user@host:~$ influx restore BACKUP-DIR --bucket raw_data --new-bucket raw_data_tmp
+    user@host:~$ influx query 'from(bucket:"raw_data_tmp") |> range(start: START-TIME, stop: END-TIME) |> to(bucket: "raw_data")' > /dev/null
+    user@host:~$ influx bucket delete -n raw_data_tmp
+
+    user@host:~$ influx bucket delete -n daily_data
+    user@host:~$ influx restore BACKUP-DIR --bucket daily_data
 
 ### Task di aggregazione giornaliero
 
