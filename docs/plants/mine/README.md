@@ -564,8 +564,8 @@ Considerate le limitate risorse della Raspberry Pi conviene effettuare il ripris
 
 Poiché il backup più recente contiene l'intera serie temporale del bucket "daily_data", non è necessario importarlo dai backup precedenti; è perciò sufficiente recuperare i dati del bucket "raw_data". Poiché il ripristino di un bucket distrugge la sua versione in linea, occorre procedere in due fasi:
 
-* recuperare i dati del bucket "raw_data" dal backup ripristinandoli in un bucket temporaneo;
-* riversare i dati dal bucket temporaneo nel bucket "raw_data".
+- recuperare i dati del bucket "raw_data" dal backup ripristinandoli in un bucket temporaneo;
+- riversare i dati dal bucket temporaneo nel bucket "raw_data".
 
 I comandi sono:
 
@@ -677,24 +677,24 @@ Definito il task `daily_aggregates` e schedulato alle ore 02:00 UTC con un offse
 
 La query per la determinazione gli intervalli di tempo privi di campioni è la seguente:
 
-    from(bucket: "raw_data")
-        |> range(start: ..., stop: ...)
-        |> filter(fn: (r) => r["_measurement"]=="solarmon")
-        |> filter(fn: (r) => r["source"]=="inverter" and r["_field"]=="run_state")
-        |> aggregateWindow(every: 5m, fn: last, timeSrc: "_start")
-        |> filter(fn: (r) => not exists r["_value"], onEmpty: "keep")
-        |> aggregateWindow(every: 1d, fn: count, timeSrc: "_start")
-        |> map(fn: (r) => ({r with _value: r._value * 5, _field: "no_data"}))
-        |> drop(columns: ["source"])
-        |> to(bucket: "daily_data")
+    partial_data =
+        from(bucket: "raw_data")
+            |> range(start: START_OF_DAY, stop: START_OF_DAY + 1d)
+            |> filter(fn: (r) => r["_measurement"] == "solarmon")
+            |> filter(fn: (r) => r["source"] == "inverter" and r["_field"] == "run_state")
+            |> aggregateWindow(every: 5m, fn: last, timeSrc: "_start")
+            |> filter(fn: (r) => r["_value"] > 0)
+            |> aggregateWindow(every: 1d, fn: count, timeSrc: "_start")
+            |> map(fn: (r) => ({r with _value: 1440 - r._value * 5, _field: "no_data"}))
+            |> drop(columns: ["source"])
 
 ed è così strutturata:
 
 - estrapolazione dei campioni di un registro arbitrario, in questo caso **run_state**, nel periodo considerato;
-- suddivisione del periodo in intervalli di 5 minuti e selezione dell'ultimo campione di ogni finestra temporale;
-- selezione degli intervalli privi di campioni, quelli nei quali si assume il processo di acquisizione si sia interrotto;
-- conteggio del numero di intervalli privi di campioni verificatesi nella giornata;
-- conversione del conteggio in minuti — moltiplicazione per cinque.
+- suddivisione del periodo in intervalli di 5 minuti (con selezione dell'ultimo campione di ogni finestra temporale);
+- selezione degli intervalli contenenti almeno un campione;
+- conteggio del numero di tail intervalli nella giornata;
+- conversione del conteggio in minuti (moltiplicazione per cinque) e determinazione della frazione giornaliera non coperta da campioni (1440 è il numero di minuti nella giornata).
 
 La rimozione della colonna `source` avviene per uniformità con il task `daily_aggregates` che effettua un `pivot` che la rimuove implicitamente.
 
@@ -702,6 +702,7 @@ In questo modo si ottiene una buona stima della durata dei periodi di inattivit�
 
 Il task giornaliero che alimenta il campo `no_data` che contiene il numero di minuti durante i quali non sono stati acquisiti campioni nella giornata precedente è così definito:
 
+    import "array"
     import "date"
 
     option task = { name: "daily_missing_data", cron: "0 2 * * *", offset: 5m }
@@ -709,16 +710,28 @@ Il task giornaliero che alimenta il campo `no_data` che contiene il numero di mi
     yesterdayStart = date.truncate(t: date.sub(d: 1d, from: now()), unit: 1d)
     yesterdayStop = date.add(d: 1d, to: yesterdayStart)
 
-    from(bucket: "raw_data")
-        |> range(start: yesterdayStart, stop: yesterdayStop)
-        |> filter(fn: (r) => r["_measurement"]=="solarmon")
-        |> filter(fn: (r) => r["source"]=="inverter" and r["_field"]=="run_state")
-        |> aggregateWindow(every: 5m, fn: last, timeSrc: "_start")
-        |> filter(fn: (r) => not exists r["_value"], onEmpty: "keep")
-        |> aggregateWindow(every: 1d, fn: count, timeSrc: "_start")
-        |> map(fn: (r) => ({r with _value: r._value * 5, _field: "no_data"}))
-        |> drop(columns: ["source"])
+    partial_data =
+        from(bucket: "raw_data")
+            |> range(start: yesterdayStart, stop: yesterdayStop)
+            |> filter(fn: (r) => r["_measurement"] == "solarmon")
+            |> filter(fn: (r) => r["source"] == "inverter" and r["_field"] == "run_state")
+            |> aggregateWindow(every: 5m, fn: last, timeSrc: "_start")
+            |> filter(fn: (r) => r["_value"] > 0)
+            |> aggregateWindow(every: 1d, fn: count, timeSrc: "_start")
+            |> map(fn: (r) => ({r with _value: 1440 - r._value * 5, _field: "no_data"}))
+            |> drop(columns: ["source"])
+
+    no_data =
+        array.from(
+            rows: [{_measurement: "solarmon", _field: "no_data", _value: 1440, _time: yesterdayStart}],
+        )
+
+    union(tables: [partial_data, no_data])
+        |> group()
+        |> min()
         |> to(bucket: "daily_data")
+
+`partial_data` è l'interrogazione discussa prima; `no_data` è una query ausiliaria che ritorna invariabilmente il valore 1440 che rappresenta un'intera giornata priva di campioni; il task registra il minimo dei valori ottenuti. Lo strategemma si rende necessario perché a fronte di un'intera a giornata priva di campioni, `partial_data` produce un flusso vuoto anziché un flusso composto da una tabella vuota.
 
 ## Appendice B - Note su Grafana
 
