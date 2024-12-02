@@ -393,7 +393,7 @@ Lo stesso comando lanciato dopo aver ricevuto un `NO DATA` in risposta ad una in
 
 Una discrepanza inattesa, per simmetria me ne sarei aspettati 11.
 
-I comandi `ATAL` "Allow long messages" (con lunghezza superiore a 7 bytes) che `ATNL` -- "Normal length messages", `ATMA` mostra sempre un `DLC` di 7 byte; le interrogazioni ritornano `NO DATA` indipendentemente dall'impostazione `AL`/`NL` attiva.
+Dopo un comando `ATAL` "Allow long messages" (con lunghezza superiore a 7 bytes) o `ATNL` -- "Normal length messages" `ATMA` mostra sempre un `DLC` di 7 byte; le interrogazioni ritornano `NO DATA` indipendentemente dall'impostazione `AL`/`NL` attiva.
 
 ## 20221228
 
@@ -431,7 +431,7 @@ Esistono alternative all'interrogazione via seriale dell'ELM327?
         }
         ...
 
-    [Qui](https://stackoveQui](rflow.com/questions/57134822/python-obd-most-commands-not-supported) si vede che la libreria usa i soliti comandi `AT`.
+    [Qui](https://stackoverflow.com/questions/57134822/python-obd-most-commands-not-supported) si vede che la libreria usa i soliti comandi `AT`.
 
 * https://python-can.readthedocs.io/en/stable/ - questa è una libreria generica, ma non è chiaro se supporta l'ELM327.
 
