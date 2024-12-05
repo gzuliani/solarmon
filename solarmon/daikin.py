@@ -118,10 +118,10 @@ FLT = Float
 class UsbCanAdapter:
     def __init__(self, port, baudrate):
         self._connection = SerialConnection(port, baudrate)
-        self._init()
 
     def connect(self):
         self._connection.connect()
+        self._init()
 
     def disconnect(self):
         self._connection.connect()

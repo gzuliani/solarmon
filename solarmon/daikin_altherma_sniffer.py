@@ -4,7 +4,7 @@ import optparse
 import sys
 
 from clock import Timer
-from daikin import SerialConnection, CanBusMonitor, MSB, INT, FLT
+from daikin import UsbCanAdapter, CanBusMonitor, MSB, INT, FLT
 
 
 if __name__ == '__main__':
@@ -25,9 +25,9 @@ if __name__ == '__main__':
             format='%(asctime)s %(levelname)s %(message)s',
             datefmt='%Y-%m-%dT%H:%M:%S')
 
-    connection = SerialConnection('/dev/ttyUSB_HSCAN', 38400)
-    connection.connect()
-    monitor = CanBusMonitor('altherma', connection)
+    can_adapter = UsbCanAdapter('/dev/ttyUSB_HSCAN', 38400)
+    can_adapter.connect()
+    monitor = CanBusMonitor('altherma', can_adapter)
     monitor.set_params([
         FLT('t_dhw',          'deg',   10, b'190', b'31000E00000000'),
         FLT('water_pressure', 'bar', 1000, b'190', b'31001C00000000'),
@@ -59,6 +59,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         logging.warning('KeyboardInterrupt excpetion caught')
     monitor.terminate_and_wait()
-    connection.disconnect()
+    can_adapter.disconnect()
     if output is not sys.stdout:
         output.close()
