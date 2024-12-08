@@ -969,7 +969,149 @@ Relativamente ai messaggi d'errore in **/var/log/emoncms/emoncms.log**:
 
 Queste segnalazioni sono associate a parametri valorizzati a `null`. Probabilmente ciò è dovuto al fatto che Solarmon utilizza il formato `json` dell'Input API di EmonCMS che in realtà è un simil-JSON. Il formato che supporta il JSON standard è il `fulljson`. Cambiare da `json` a `fulljson` richiederebbe molto probabilmente la ridefinizione di tutti i *feed*, per questa ragione si decide di lasciare tutto così com'è.
 
-## 20230116
+## 20230117
 
 Una veloce verifica ha evidenziato che la versione di EmonCMS attualmente installata sulle due Raspberry (v. 11.2.3) non implementa correttamente la gestione dei `null` nel formato `fulljson`: essi vengono infatti trasformati in `0`, cosa del tutto inaccettabile.
 Il problema sembrerebbe rientrato con la [versione 11.3.0](https://community.openenergymonitor.org/t/emoncms-stable-release-v11-3-0/22537).
+
+## 20241206
+
+### Controllo della velocità della pompa di ricircolo
+
+Se la pompa di calore è in stand-by la pompa di ricircolo si avvia automaticamente se la temperatura esterna è al di sotto dei 2°C per evitare il congelamento dell'acqua nelle tubazioni. A volte raggiunge il regime 95% sebbene il valore impostato sia inferiore (45%).
+
+La documentazione riporta che in caso di portata inferiore ad una soglia prestabilita la pompa di ricircolo gira ad un regime superiore a quello impostato dall'utente. Forse è proprio questo il caso, ma si è deciso di investire del tempo per determinare quali sono i comandi per impostare il regime ed eventualmente il comando di avvio della pompa di ricircolo.
+
+Oggi ci sono le condizioni ideali per il test, essendo la temperatura esterna sufficientemente bassa. Questi gli eventi raccolti manualmente; contemporaneamente viene catturato tutto il traffico CAN (cfr. file 20241206_can_sniffing.txt):
+
+* 2024-12-06 19:59:xx - invio comando di stand-by
+* 2024-12-06 19:59:44 - pompa di ricircolo partita
+* 2024-12-06 20:01:19 - lettura regime pompa di ricircolo (7 - 65%)
+* 2024-12-06 20:05:37 - invio comando di riscaldamento (causa l'uscita dallo stato di stand-by)
+* 2024-12-06 20:06:38 - rallentamento della pompa di ricircolo
+* 2024-12-06 20:07:44 - uscita dallo stato di stand-by
+* 2024-12-06 20:08:10 - invio comando di stand-by
+* 2024-12-06 20:08:13 - pompa di ricircolo partita
+* 2024-12-06 20:09:46 - impostazione regime pompa di ricircolo da 7 (65%) a 8 (55%)
+* 2024-12-06 20:10:05 - riavvio della pompa di calore
+* 2024-12-06 20:11:51 - display operativo, pompa di calore non ancora ripartita
+* 2024-12-06 20:15:25 - pompa di calore ripartita
+* 2024-12-06 20:15:48 - lettura regime pompa di ricircolo (8 - 55%)
+
+Conteggio dei comandi semplici (1 byte) sconosciuti:
+
+     12 01
+    234 0C
+     18 0D
+     48 10
+      6 11
+     12 52
+      6 53
+      6 56
+      6 57
+      6 58
+      6 5A
+      6 5D
+      6 5E
+     20 61
+      6 6D
+      6 6F
+     54 FE
+
+Conteggio comandi estesi (`FA` + 2 byte) sconosciuti:
+
+    228 011E
+     10 0122
+     10 0123
+     10 0124
+     10 0125
+     10 0126
+     46 0148
+      6 0176
+    234 01EC
+     12 01F2
+      6 02F4
+      8 069E
+     32 06D0
+      4 06D1
+      6 06D9
+      4 06DB
+      4 06DC
+      4 06DD
+      7 06E1
+     16 0822
+     30 093C
+      6 0A2B
+      6 0A5D
+     14 100A
+    228 1353
+      6 1356
+    234 1358
+    228 C0C4
+      1 C0F5
+      8 C159
+      9 C15A
+     11 C15B
+      6 C15C
+      6 C15D
+      6 C15E
+     28 C179
+      4 C34C
+      4 C34D
+     28 FDAC
+      6 FDC1
+
+### Considerazioni
+
+Non trovo evidenze di comandi specifici per l'avvio della pompa di ricircolo: forse avviene internamente ad uno specifico componente, cosa che non richiede la trasmissione di un comando sulla linea CAN.
+
+`C0F5` è l'unico comando che appare una volta, subito prima della richiesta di conferma di riavvio (forse anche di poco successivo).
+
+C'è qualche parametro associato ai valori 7/8? Sì, il `06E1`:
+
+    2024-12-06 20:09:27.172115 A100FA06E10000 ???
+    2024-12-06 20:09:27.177727 220AFA06E10007 ???
+    2024-12-06 20:09:33.912052 A100FA06E10000 ???
+    2024-12-06 20:09:33.917789 220AFA06E10007 ???
+    2024-12-06 20:09:44.112867 A000FA06E10008 ???
+    2024-12-06 20:09:45.902038 A100FA06E10000 ???
+    2024-12-06 20:09:45.907693 220AFA06E10008 ???
+
+Proprio nell'intorno dell'evento "impostazione regime pompa da 7 (65%) a 8 (55%)" delle 20:09:46.
+
+Perché non compare anche alle 20:01:19, in relazione all'evento "lettura regime pompa (7 - 65%)"?
+
+Subito dopo quell'evento compare il comando `0D`, che però compare anche dopo, con valori di volta in volta diversi:
+
+    2024-12-06 20:00:00.255063 200A0D01AF0000 ??? 431
+    2024-12-06 20:00:03.757288 200A0D01A00000 ??? 416
+    2024-12-06 20:00:07.859918 200A0D01910000 ??? 401
+    2024-12-06 20:00:14.413011 200A0D01820000 ??? 386
+    2024-12-06 20:01:23.932024 31000D00000000 ???   0
+    2024-12-06 20:01:23.937817 220A0D017D0000 ??? 381
+    2024-12-06 20:02:51.606616 200A0D017F0000 ??? 383
+    2024-12-06 20:03:18.530360 200A0D017F0000 ??? 383
+    2024-12-06 20:05:54.036624 200A0D01730000 ??? 371
+    2024-12-06 20:07:50.813945 200A0D01820000 ??? 386
+    2024-12-06 20:08:10.226580 200A0D01910000 ??? 401
+    2024-12-06 20:08:38.497762 200A0D01810000 ??? 385
+    2024-12-06 20:08:47.351362 200A0D01720000 ??? 370
+    2024-12-06 20:09:51.595756 200A0D01690000 ??? 361
+    2024-12-06 20:10:15.606300 200A0D01690000 ??? 361
+    2024-12-06 20:16:26.906192 200A0D01630000 ??? 355
+    2024-12-06 20:16:51.560931 200A0D01630000 ??? 355
+    2024-12-06 20:17:15.573345 200A0D01640000 ??? 356
+
+Sembrerebbe più una temperatura espressa in decimi di grado (come del resto accade per tutte le altre temperature).
+
+Dei comandi che circolano più frequentemente, `0C` potrebbe rappresentare uno stato, assume infatti solo i valori `0004` e `0005`, nei seguenti intervalli temporali:
+
+    0005  ...     - 19:57:59
+    0004 19:58:09 - 20:01:01
+    0005 20:01:33 - 20:09:51
+    0004 20:09:57 - 
+    0005 20:10:06 - ...
+
+Non vedo nessuna potenziale correlazione con le operazioni eseguite manualmente sulla pompa di calore.
+
+Tutti gli altri comandi ad alta frequenza (`01EC`, `1358`, `011E`, `1353` e `C0C4`) sono associati al valore `0000`, quindi nessuna ipotesi è immaginabile.
