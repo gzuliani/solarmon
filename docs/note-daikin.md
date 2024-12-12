@@ -141,7 +141,7 @@ Cosa accade se si invia la richiesta di lettura del parametro "water_pressure"?
     >31 00 1C 00 00 00 00
     CAN ERROR
 
-Forse va inviata la sequenza binaria anziché quella esadecimale? Qualcosa in questo caso arriva (la sequenza è stata inviata attraverso il comando "Send File" dopo aver preparato un file con il contenuto binario equivalente), ma non è leggibile -- non è una stringa ASCCI, e la cosa tutto sommato è anche comprensibile; in ogni caso non è `CAN ERROR`, e questo fa ben sperare.
+Forse va inviata la sequenza binaria anziché quella esadecimale? Qualcosa in questo caso arriva (la sequenza è stata inviata attraverso il comando "Send File" dopo aver preparato un file con il contenuto binario equivalente), ma non è leggibile -- non è una stringa ASCII, e la cosa tutto sommato è anche comprensibile; in ogni caso non è `CAN ERROR`, e questo fa ben sperare.
 
 ## 20221219
 
