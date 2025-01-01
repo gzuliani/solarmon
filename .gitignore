@@ -7,4 +7,4 @@ credentials.txt
 *viessmann*
 
 # exclude influxdb backups
-influxdb/backup
+docs/plants/mine/backup/influxdb
