@@ -5,6 +5,3 @@ credentials.txt
 
 # exclude confidential files
 *viessmann*
-
-# exclude influxdb backups
-docs/plants/mine/backup/influxdb
