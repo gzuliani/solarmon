@@ -35,6 +35,7 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
       - [Creazione dell'istanza InfluxDB](#creazione-dellistanza-influxdb)
       - [Ripristino di backup precedenti l'ultimo](#ripristino-di-backup-precedenti-lultimo)
       - [Ripristino del backup più recente](#ripristino-del-backup-più-recente)
+      - [Export CSV](#export-csv)
     - [Task di aggregazione giornaliero](#task-di-aggregazione-giornaliero)
     - [Determinazione degli intervalli senza campioni](#determinazione-degli-intervalli-senza-campioni)
   - [Appendice B - Note su Grafana](#appendice-b---note-su-grafana)
@@ -208,7 +209,7 @@ Conettersi alla GUI di InfluxDB all'indirizzo `http://<raspberry-pi-IP>:8086` e 
 - organization name: home
 - bucket name: raw_data
 
-In seguito alla creazione dell'utente InfluxDB fornisce l'*API token* che garantisce i privilegi di amministratore, e dovrà essere specificato ogni qualvolta si invocherà il comando `influxdb` da terminale. È tuttavia possibile associare questo token alla connessione di default in modo da risparmiarsi la fatica di indicarlo ogni volta:
+In seguito alla creazione dell'utente InfluxDB fornisce l'*API token* che garantisce i privilegi di amministratore, e dovrà essere specificato ogni qualvolta si invocherà il comando `influx` da terminale. È tuttavia possibile associare questo token alla connessione di default in modo da risparmiarsi la fatica di indicarlo ogni volta:
 
     pi@raspberry:~ $ influx config create \
       --config-name default \
@@ -587,6 +588,38 @@ Nell'ipotesi che l'istanza di InfluxDB sia aggiornata al penultimo backup, l'int
 
     user@host:~$ influx bucket delete -n daily_data
     user@host:~$ influx restore BACKUP-DIR --bucket daily_data
+
+#### Export CSV
+
+Sono almeno due le strade percorribili per salvare i dati grezzi e gli aggregati giornalieri anno per anno su file CSV:
+
+- esportazione su CSV annotato (formato proprietario)
+
+        user@host:~$ influx query 'from(bucket:"raw_data") |> range(start:2024-01-01T00:00:00Z, stop:2025-01-01T00:00:00Z) |>drop (columns:["_start", "_stop", "_measurement"])' --raw > raw_data_2024.txt
+
+  Lo svantaggio principale è la dimensione del file ottenuto, dovuta alla verbosità del formato: oltre 2.8GB.
+
+- esportazione tabulare
+
+        user@host:~$ influx query 'from(bucket: "raw_data") |> range(start: 2024-01-01T00:00:00Z, stop: 2025-01-01T00:00:00Z) |> filter(fn: (r) => r.source=="inverter") |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value") |> drop(columns: ["_start", "_stop", "_measurement", "source"])' --raw > inverter_2024.txt
+
+  Lo svantaggio in questo caso è l'impossibilità di esportare i dati in un'unica soluzione: l'operazione `pivot` richiede un quantitativo eccessivo di memoria per gli 8GB di RAM di cui è dotato il portatile in uso. L'alternativa è separare i dati per sorgente; l'esportazione in questo caso ha successo e complessivamente ammonta a 512MB:
+
+  | Sorgente  | Dimensione |
+  |-----------|-----------:|
+  | 2nd-floor |     91.2MB |
+  | air-cond  |     80.1MB |
+  | gnd-floor |     93.0MB |
+  | inverter  |    164.8MB |
+  | osmer     |    414.7kB |
+  | program   |      2.2MB |
+  | rasp      |     80.9MB |
+
+  L'esportazione tabulare inoltre è applicabile anche agli aggregati giornalieri:
+
+        user@host:~$ influx query 'from(bucket: "daily_data") |> range(start: 2024-01-01T00:00:00Z, stop: 2025-01-01T00:00:00Z)|> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value") |> drop(columns: ["_start", "_stop", "_measurement"])' --raw > daily_data_2024.txt
+
+  Il file risultante pesa 74.8kB.
 
 ### Task di aggregazione giornaliero
 
