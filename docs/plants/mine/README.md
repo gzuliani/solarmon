@@ -47,6 +47,7 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
   - [Appendice D - Passaggio dall'ora legale a quella solare](#appendice-d---passaggio-dallora-legale-a-quella-solare)
   - [Appendice E - Acquisizione dati dall'OsmerFVG](#appendice-e---acquisizione-dati-dallosmerfvg)
   - [Appendice F - Esempio di query "complessa"](#appendice-f---esempio-di-query-complessa)
+  - [Appendice G - Stabilizzazione della connessione WiFi](#appendice-g---stabilizzazione-della-connessione-wifi)
 
 ## Hardware
 
@@ -874,9 +875,9 @@ Sotto questa ipotesi, ecco una query che evidenzia le anomalie riscontrate nell'
     import "bitwise"
     import "date"
     import "strings"
-    
+
     pastMonthStart = date.truncate(t: date.sub(d: 30d, from: v.timeRangeStop), unit: 1d)
-    
+
     from(bucket: "raw_data")
       |> range(start: pastMonthStart, stop: v.timeRangeStop)
       |> filter(fn: (r) => r._measurement == "solarmon" and r.source == "inverter" and r._field == "fault_code" and r._value > uint(v: 0))
@@ -1240,3 +1241,80 @@ Le due query ora vanno unificate per ottenere un'unica serie di tre tabelle:
 | 2024-01-06 01:00:00 |        0.39 |
 
 Da notare la direttiva `drop()` che, eliminando le colonne di sistema `_start` e `_stop`, consente il raggruppamento dei dati giornalieri per nome del parametro.
+
+## Appendice G - Stabilizzazione della connessione WiFi
+
+Di tanto in tanto la Raspberry Pi 4 perde la connessione alla rete WiFi e non la riaggancia più. L'unica soluzione a quel punto è forzare il riavvio della scheda scollegando l'alimentazione per qualche secondo. In rete sono molteplici gli articoli che suggeriscono di disattivare il Power Management del modulo WiFi e il protocollo IPv6 nella speranza di rendere la connessione più stabile.
+
+### Disabilitare il Power Management del modulo WiFi
+
+Verificare che il Power Management è attivo:
+
+    pi@raspberrypi:~ $ iwconfig
+    ...
+
+    wlan0     IEEE 802.11  ESSID:********
+              Mode:Managed  Frequency:5.26 GHz  Access Point: 00:00:00:00:00:00
+              Bit Rate=292.5 Mb/s   Tx-Power=31 dBm
+              Retry short limit:7   RTS thr:off   Fragment thr:off
+        >>>>  Power Management:on
+              Link Quality=37/70  Signal level=-73 dBm
+              Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+              Tx excessive retries:49  Invalid misc:0   Missed beacon:0
+
+Aprire il file `/etc/rc.local` e aggiungere la riga:
+
+    /sbin/iwconfig wlan0 power off
+
+Riavviare la scheda, quindi verificare che il Power Management non è più attivo:
+
+    pi@raspberrypi:~ $ iwconfig
+    ...
+
+    wlan0     IEEE 802.11  ESSID:********
+              Mode:Managed  Frequency:5.26 GHz  Access Point: 00:00:00:00:00:00
+              Bit Rate=292.5 Mb/s   Tx-Power=31 dBm
+              Retry short limit:7   RTS thr:off   Fragment thr:off
+        >>>>  Power Management:off
+              Link Quality=37/70  Signal level=-73 dBm
+              Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+              Tx excessive retries:49  Invalid misc:0   Missed beacon:0
+
+### Disabilitare il protocollo IPv6
+
+Di norma il protocollo IPv6 è abilitato:
+
+    pi@raspberrypi:~ $ ifconfig
+    ...
+
+    wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+            inet 192.168.1.184  netmask 255.255.255.0  broadcast 192.168.1.255
+      >>>>  inet6 fe80::fc5e:d7e3:c16:6b88  prefixlen 64  scopeid 0x20<link>
+            ether d8:3a:dd:4b:aa:58  txqueuelen 1000  (Ethernet)
+            RX packets 8052  bytes 3113138 (2.9 MiB)
+            RX errors 0  dropped 1  overruns 0  frame 0
+            TX packets 26465  bytes 24747264 (23.6 MiB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+Per disabilitare il protocollo IPv6 aprire il file `sysctl.conf` e aggiugere la riga:
+
+    net.ipv6.conf.all.disable_ipv6 = 1
+
+Rendere effettiva la nuova impostazione con il comando:
+
+    pi@raspberrypi:~ $ sudo sysctl -p
+
+Verificare che il protocollo IPv6 non è più in uso:
+
+    pi@raspberrypi:~ $ ifconfig
+    ...
+
+    wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+            inet 192.168.1.184  netmask 255.255.255.0  broadcast 192.168.1.255
+            ether d8:3a:dd:4b:aa:58  txqueuelen 1000  (Ethernet)
+            RX packets 8931  bytes 3218531 (3.0 MiB)
+            RX errors 0  dropped 1  overruns 0  frame 0
+            TX packets 27069  bytes 24824989 (23.6 MiB)
+            TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+Per riattivare il protocollo IPv6 cancellare la riga o impostare il parametro a `0`, quindi ridare il comando `sudo sysctl -p`.
