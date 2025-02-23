@@ -48,6 +48,9 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
   - [Appendice E - Acquisizione dati dall'OsmerFVG](#appendice-e---acquisizione-dati-dallosmerfvg)
   - [Appendice F - Esempio di query "complessa"](#appendice-f---esempio-di-query-complessa)
   - [Appendice G - Stabilizzazione della connessione WiFi](#appendice-g---stabilizzazione-della-connessione-wifi)
+    - [Disabilitare il Power Management del modulo WiFi](#disabilitare-il-power-management-del-modulo-wifi)
+    - [Disabilitare il protocollo IPv6](#disabilitare-il-protocollo-ipv6)
+    - [Riavviare il sistema](#riavviare-il-sistema)
 
 ## Hardware
 
@@ -1318,3 +1321,11 @@ Verificare che il protocollo IPv6 non è più in uso:
             TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
 Per riattivare il protocollo IPv6 cancellare la riga o impostare il parametro a `0`, quindi ridare il comando `sudo sysctl -p`.
+
+### Riavviare il sistema
+
+Esistono diverse soluzioni in rete. Tra le più recenti c'è lo script `wifi-check` realizzato da [Chris Dzombak](https://github.com/cdzombak/dotfiles/blob/master/linux/pi/wifi-check.sh) (novembre 2023). Istruzioni complete alla pagina [Maintaining a solid WiFi connection on Raspberry Pi](https://www.dzombak.com/blog/2023/12/Maintaining-a-solid-WiFi-connection-on-Raspberry-Pi.html).
+
+Ho schedulato lo script (disponibile in locale [qui](../../../debian/usr/local/bin/wifi-check.sh)) in cron ogni 5 minuti con la riga:
+
+    */5 * * * * root flock -x -n -E 0 /tmp/wifi-check.lock env PING_TARGET=192.168.1.1 WLAN_IF=wlan0 /usr/local/bin/wifi-check.sh
