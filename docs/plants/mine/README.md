@@ -23,6 +23,8 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
       - [Grafana sulla porta 80](#grafana-sulla-porta-80)
     - [Solarmon](#solarmon)
       - [Strategie iniziali](#strategie-iniziali)
+    - [Dataplicity](#dataplicity)
+      - [Errore "Device not connected"](#errore-device-not-connected)
   - [Appendice A - Note su InfluxDB](#appendice-a---note-su-influxdb)
     - [Note generali](#note-generali)
     - [Importazione CSV](#importazione-csv)
@@ -371,8 +373,6 @@ Modificare il file **main.py** definendo gli opportuni insiemi di dispositivi di
 
 Seguire le [apposite istruzioni](https://github.com/gzuliani/solarmon/blob/main/systemd/install.md) per registrare l'applicativo come servizio.
 
-----
-
 #### Strategie iniziali
 
 L'acquisizione dei parametri principali avverrà ogni 30s; i campioni saranno salvati nel bucket **raw_data** che avrà una *data retention* limitata, non superiore all'anno.
@@ -391,6 +391,20 @@ Non è stata ancora definita una politica di backup; avrebbe senso effettuarne u
 - energia in entrata nell'inverter
 
 Poiché gran parte di queste grandezze sono espresse con valori con segno, bisognerà fare attenzione ad integrare separatamente le componenti positive e quelle negative. Si consideri ad esempio il parametro `battery_power` dell'inverter che esprime la potenza in uscita dalla batteria: un valore negativo indica che questa è in fase di carica. Alla luce di ciò l'energia erogata dalla batteria durante il giorno corrisponderà all'integrale nel tempo della funzione `max(0, battery_power)`, mentre per quella introdotta si userà la funzione `max(0, -battery_power)`.
+
+### Dataplicity
+
+[Dataplicity](https://dataplicity.com/) è un servizio di remotizzazione del terminale della Raspberry Pi. Offre inoltre la possibilità di pubblicare in rete un server web installato in locale (cfr. "[Host a website from your Pi](https://docs.dataplicity.com/docs/host-a-website-from-your-pi)").
+
+L'installazione è gratuita per una singola scheda. La procedura è descritta nella pagina [Installation procedure](https://docs.dataplicity.com/docs/getting-started-with-dataplicity#installation-procedure).
+
+#### Errore "Device not connected"
+
+Se il portale di Dataplicity mostra l'errore "Device not connected" la ragione spesso è la perdita della rete WiFi da parte della Raspberry Pi. A volte però è accaduto che la scheda risultasse raggiungibile attraverso rete locale. In tali situazioni è stato risolutivo il riavvio del servizio **tuxtunnel**:
+
+    pi@raspberrypi:~ $ sudo supervisorctl restart tuxtunnel
+    tuxtunnel: stopped
+    tuxtunnel: started
 
 ## Appendice A - Note su InfluxDB
 
@@ -1326,6 +1340,14 @@ Per riattivare il protocollo IPv6 cancellare la riga o impostare il parametro a 
 
 Esistono diverse soluzioni in rete. Tra le più recenti c'è lo script `wifi-check` realizzato da [Chris Dzombak](https://github.com/cdzombak/dotfiles/blob/master/linux/pi/wifi-check.sh) (novembre 2023). Istruzioni complete alla pagina [Maintaining a solid WiFi connection on Raspberry Pi](https://www.dzombak.com/blog/2023/12/Maintaining-a-solid-WiFi-connection-on-Raspberry-Pi.html).
 
-Ho schedulato lo script (disponibile in locale [qui](../../../debian/usr/local/bin/wifi-check.sh)) in cron ogni 5 minuti con la riga:
+Lo script (disponibile in locale [qui](../../../debian/usr/local/bin/wifi-check.sh)) va copiato nella cartella **/usr/local/bin** e reso eseguibile con il comando:
+
+    pi@raspberrypi:~ $ chmod +x /usr/local/bin/wifi-check.sh
+
+Ho deciso di schedulare lo script (disponibile in locale [qui](../../../debian/usr/local/bin/wifi-check.sh)) ogni 5 minuti. Per far ciò:
+
+    pi@raspberry:~ $ crontab -e
+
+quindi aggiungere la riga:
 
     */5 * * * * root flock -x -n -E 0 /tmp/wifi-check.lock env PING_TARGET=192.168.1.1 WLAN_IF=wlan0 /usr/local/bin/wifi-check.sh
