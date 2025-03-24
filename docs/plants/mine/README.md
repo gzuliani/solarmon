@@ -1350,4 +1350,10 @@ Ho deciso di schedulare lo script (disponibile in locale [qui](../../../debian/u
 
 quindi aggiungere la riga:
 
-    */5 * * * * root flock -x -n -E 0 /tmp/wifi-check.lock env PING_TARGET=192.168.1.1 WLAN_IF=wlan0 /usr/local/bin/wifi-check.sh
+    */5 * * * * flock -x -n -E 0 /tmp/wifi-check.lock env PING_TARGET=192.168.1.1 WLAN_IF=wlan0 /usr/local/bin/wifi-check.sh > /dev/null 2>&1
+
+L'analisi del log può essere effettuata attraverso il comando:
+
+    pi@raspberry:~ $ journalctl -t wifi-check.sh
+
+eventualmente corredato di uno o più filtri temporali (cfr. ad esempio flag `-S --since`, `-U --until`).
