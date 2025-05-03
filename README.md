@@ -13,8 +13,8 @@ Follow the instructions below to set up a development environment for Solarmon. 
 ### Dependencies
 
 * Python >= 3.8
-* [PyModbus v.3.6.4](https://pymodbus.readthedocs.io/en/v3.6.4/)
-* [requests v. 2.31.0](https://pypi.org/project/requests/2.31.0/)
+* [PyModbus v.3.9.2](https://pymodbus.readthedocs.io/en/v3.9.2/)
+* [requests v. 2.32.3](https://pypi.org/project/requests/2.32.3/)
 * [psutil](https://pypi.org/project/psutil/) (required by `raspberry_pi_4.RaspberryPi4` monitor)
 * [pysolarmanv5](https://github.com/jmccrohan/pysolarmanv5) (required by the `solarman.StickLoggerWiFi` communication channel)
 
@@ -25,14 +25,14 @@ First install the dependencies:
     pi@raspberrypi:~ $ cd solarmon
     pi@raspberrypi:~/solarmon $ python3 -m venv venv
     pi@raspberrypi:~/solarmon$ . venv/bin/activate
-    pi@raspberrypi:~/solarmon$ pip3 install requests==2.31.0
-    pi@raspberrypi:~/solarmon$ pip3 install pymodbus==3.6.4
-    pi@raspberrypi:~/solarmon$ pip3 install psutil
-    pi@raspberrypi:~/solarmon$ pip3 install pysolarmanv5
+    (venv) pi@raspberrypi:~/solarmon$ pip3 install requests==2.31.0
+    (venv) pi@raspberrypi:~/solarmon$ pip3 install pymodbus==3.9.2
+    (venv) pi@raspberrypi:~/solarmon$ pip3 install psutil
+    (venv) pi@raspberrypi:~/solarmon$ pip3 install pysolarmanv5
 
 Then run the tests with the following command:
 
-    pi@raspberrypi:~/solarmon$ PYTHONPATH=solarmon python3 -m unittest -v
+    (venv) pi@raspberrypi:~/solarmon$ PYTHONPATH=solarmon python3 -m unittest -v
 
 ## Implementation notes
 
@@ -90,7 +90,7 @@ The starting point is the last stable image of this distribution ([emonSD-01Feb2
 
 * connect the USB adapters to the Raspberry and set up the `etc/udev/rules.d/10-local.rules` to ensure they get a unique name. The document [docs/how-to-usb-static-names.md](https://github.com/gzuliani/solarmon/blob/main/docs/how-to-usb-static-names.md) explains how to do it, the folder [debian/udev](https://github.com/gzuliani/solarmon/tree/main/debian/udev) contains some working examples. When done, restart the **udev** server:
 
-         pi@raspberrypi:~ $ sudo udevadm trigger
+        pi@raspberrypi:~ $ sudo udevadm trigger
 
 * define the set of input and output devices in the `solarmon/main.py` source file; you can use the `solarmon/main_andrea.py` and `solarmon/main_laura.py` templates. Set the `api_key` global variable to the "Write API Key" of the EmonCMS local installation.
 

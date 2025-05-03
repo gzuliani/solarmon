@@ -15,7 +15,7 @@ import osmer_fvg
 import persistence
 import raspberry_pi_4 as rasp
 import sample
-import solarman
+#import solarman
 import ui
 
 

@@ -1,5 +1,9 @@
 # Solarmon - Dashboard con InfluxDB e Grafana
 
+Ultima modifica : 02/05/2025
+
+[!WARNING] Prendere queste istruzioni *cum grano sali*: le dinamiche dell'evoluzione del software libero tendono a renderle sempre più rapidamente obsolete.
+
 L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) consente il salvataggio dei dati acquisiti in un file CSV o il loro invio alle API di [EmonCMS](https://emoncms.org/). Nell'ottica di svincolarsi da quest'ambiente ho voluto verificare se è possibile estendere Solarmon in modo da salvare i dati in un'istanza [InfluxDB](https://www.influxdata.com/) e usare [Grafana](https://grafana.com/) per costruire una dashboard simile a quelle che si possono definire in EmonCMS.
 
 ## Indice
@@ -53,6 +57,9 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
     - [Disabilitare il Power Management del modulo WiFi](#disabilitare-il-power-management-del-modulo-wifi)
     - [Disabilitare il protocollo IPv6](#disabilitare-il-protocollo-ipv6)
     - [Riavviare il sistema](#riavviare-il-sistema)
+  - [Appendice H - Ripristino del sistema in seguito al guasto della scheda SD](#appendice-h---ripristino-del-sistema-in-seguito-al-guasto-della-scheda-sd)
+    - [Ripristino dell'ultimo backup di InfluxDB](#ripristino-dellultimo-backup-di-influxdb)
+    - [Ripristino dell'ultimo backup di Grafana](#ripristino-dellultimo-backup-di-grafana)
 
 ## Hardware
 
@@ -224,6 +231,8 @@ In seguito alla creazione dell'utente InfluxDB fornisce l'*API token* che garant
       --token <INFLUXDB-API-TOKEN> \
       --active
 
+**Conservare il token in un luogo sicuro!**
+
 Conviene a questo punto creare un altro token, quello che utilizzerà Solarmon per autenticarsi all'API di InfluxDB. Entrare nella sezione **API TOKENS** della pagina **Load Data** e premere il pulsante **GENERATE API TOKEN**, quindi selezionare la voce "All Access API Token"; fornire un nome per il token (ad esempio "Solarmon"). Conservare il token per l'uso in Solarmon (cfr. parametro `influx_api_token` in **main.py**).
 
 ### Grafana
@@ -324,16 +333,37 @@ L'alternativa suggerita, ovvero di installare e configurare **nginx** come *reve
 
 - configurare **nginx** copiando il seguente contenuto nel file **/etc/nginx/sites-enabled/grafana.conf**:
 
-        server {
-            listen 80;
-            listen [::]:80;
-            server_name 192.168.1.186;
-
-            location / {
-                proxy_set_header Host $http_host;
-                proxy_pass http://localhost:3000/login;
-            }
+        # This is required to proxy Grafana Live WebSocket connections.
+        map $http_upgrade $connection_upgrade {
+          default upgrade;
+          '' close;
         }
+        
+        upstream grafana {
+          server localhost:3000;
+        }
+        
+        server {
+          listen 80;
+          root /usr/share/nginx/html;
+          index index.html index.htm;
+        
+          location / {
+            proxy_set_header Host $host;
+            proxy_pass http://grafana;
+          }
+        
+          # Proxy Grafana Live WebSocket connections.
+          location /api/live/ {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+            proxy_set_header Host $host;
+            proxy_pass http://grafana;
+          }
+        }
+
+  Fonte: [Run Grafana behind a reverse proxy](https://grafana.com/tutorials/run-grafana-behind-a-proxy/).
 
 - eliminare il link simbolico **/etc/nginx/sites-enabled/default**:
 
@@ -349,29 +379,25 @@ L'alternativa suggerita, ovvero di installare e configurare **nginx** come *reve
 
 ### Solarmon
 
-Installare le dipendenze via `pip`:
-
-    pi@raspberry:~ $ sudo pip3 install requests==2.21.0
-    pi@raspberry:~ $ sudo pip3 install pymodbus==2.5.2
-
-----
-
-> **ATTENZIONE**: è fondamentale installare le dipendenze come super utente se si vuole far girare Solarmon come servizio. In alternativa è possibile attribuire al servizio l'utente `pi` aggiungendo la specifica:
->
->     User=pi
->
-> nel file di configurazione del servizio e modificando il sorgente **main.py** in modo che il file di log venga salvato nella cartella **/etc/log/solarmon/** dopo aver proceduto a crearla e assegnarla allo stesso utente:
->
->     pi@raspberry:~ $ sudo mkdir /var/log/solarmon
->     pi@raspberry:~ $ sudo chown pi /var/log/solarmon
-
 Installare i sorgenti del servizio clonandoli da Git:
 
     pi@raspberry:~ $ git clone https://github.com/gzuliani/solarmon.git
 
 Modificare il file **main.py** definendo gli opportuni insiemi di dispositivi di ingresso e uscita.
 
-Seguire le [apposite istruzioni](https://github.com/gzuliani/solarmon/blob/main/systemd/install.md) per registrare l'applicativo come servizio.
+Creare un *virtual env* nella cartella principale di Solarmon:
+
+    pi@raspberrypi:~/solarmon $ python -m venv venv
+
+Attivare l'ambiente virtuale ed installare le dipendenze via `pip`:
+
+    pi@raspberrypi:~/solarmon $ . venv/bin/activate
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install requests==2.32.3
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install pymodbus==3.9.2
+
+La libreria **pymodbus** non è particolarmente stabile. Solarmon è stato collaudato sulle versioni 3.0.0.rc1, 3.6.3, 3.6.4 e 3.9.2.
+
+Seguire le [apposite istruzioni](https://github.com/gzuliani/solarmon/blob/main/debian/lib/systemd/system/readme.md) per registrare l'applicativo come servizio.
 
 #### Strategie iniziali
 
@@ -513,13 +539,13 @@ Predisposto il seguente script di backup **backup.sh**:
     tar -zcvpf $BACKUP_DIR.tar.gz $BACKUP_DIR
     rm -rf $BACKUP_DIR
 
-Schedularlo ogni tre mesi, alla mezzanotte del primo giorno del mese:
+Schedularlo affinché venga effettuato alla mezzanotte del primo giorno di ogni mese:
 
     pi@raspberry:~ $ crontab -e
 
 aggiungere quindi la riga:
 
-    0 0 1 1,4,7,10 * /home/pi/solarmon/influxdb/backup.sh 2>&1 | /usr/bin/logger -t cron --rfc5424=inotq,notime,nohost
+    0 0 1 * * /home/pi/solarmon/influxdb/backup.sh 2>&1 | /usr/bin/logger -t cron --rfc5424=inotq,notime,nohost
 
 ### Restore
 
@@ -562,7 +588,7 @@ Come ricostruire l'intera serie temporale a partire dai backup periodici?
 
 Considerate le limitate risorse della Raspberry Pi conviene effettuare il ripristino su una macchina più carrozzata. Dopo aver proceduto all'installazione di una versione di InfluxDB compatibile con quello d'origine, recuperare il token amministrativo dell'istanza InfluxDB della Raspberry Pi e creare una nuova istanza sulla macchina di destinazione identica all'originale, avendo quindi cura di fornire gli stessi nome utente, organizzazione e bucket. L'unica differenza sta nela data retention del il bucket "raw_data", che in questo caso sarà illimitata:
 
-    user@host:~$ influx setup --token [ROOT-TOKEN]
+    user@host:~$ influx setup --token [ADMIN-TOKEN]
     > Welcome to InfluxDB 2.0!
     ? Please type your primary username pi
     ? Please type your password ************
@@ -1313,7 +1339,7 @@ Di norma il protocollo IPv6 è abilitato:
             TX packets 26465  bytes 24747264 (23.6 MiB)
             TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
-Per disabilitare il protocollo IPv6 aprire il file `sysctl.conf` e aggiugere la riga:
+Per disabilitare il protocollo IPv6 aprire il file `/etc/sysctl.conf` e aggiugere la riga:
 
     net.ipv6.conf.all.disable_ipv6 = 1
 
@@ -1344,16 +1370,102 @@ Lo script (disponibile in locale [qui](../../../debian/usr/local/bin/wifi-check.
 
     pi@raspberrypi:~ $ chmod +x /usr/local/bin/wifi-check.sh
 
-Ho deciso di schedulare lo script (disponibile in locale [qui](../../../debian/usr/local/bin/wifi-check.sh)) ogni 5 minuti. Per far ciò:
+Ho deciso di schedulare lo script (disponibile in locale [qui](../../../debian/usr/local/bin/wifi-check.sh)) ogni 5 minuti. Per far ciò ho creato il file `/etc/cron.d/wifi-check` contenente la seguente riga:
 
-    pi@raspberry:~ $ crontab -e
-
-quindi aggiungere la riga:
-
-    */5 * * * * flock -x -n -E 0 /tmp/wifi-check.lock env PING_TARGET=192.168.1.1 WLAN_IF=wlan0 /usr/local/bin/wifi-check.sh > /dev/null 2>&1
+    */5 * * * * root flock -x -n -E 0 /tmp/wifi-check.lock env PING_TARGET=192.168.1.1 WLAN_IF=wlan0 /usr/local/bin/wifi-check.sh
 
 L'analisi del log può essere effettuata attraverso il comando:
 
     pi@raspberry:~ $ journalctl -t wifi-check.sh
 
 eventualmente corredato di uno o più filtri temporali (cfr. ad esempio flag `-S --since`, `-U --until`).
+
+## Appendice H - Ripristino del sistema in seguito al guasto della scheda SD
+
+**Per ripristinare l'istanza InfluxDB è indispensabile disporre del token amministrativo originale!**
+
+Si procede con la preparazione del sistema come da istruzioni, con l'avvertenza di **saltare il passaggio "[Configurazione di InfluxDB](#configurazione-di-influxdb)"**. Quindi:
+
+- copiare l'immagine del sistema operativo Raspberry Pi OS sulla scheda SD ricordandosi di attivare il servizio **ssh**;
+- configurare e stabilizzare la connessione WiFi:
+  - disattivando il Power Management;
+  - disattivando il protocollo IPv6;
+  - installando e schedulando lo script **wifi-check.sh**.
+- configurare il modulo RTC;
+- configurare l'adattatore USB/RS485;
+- installare InfluxDB;
+- installare Grafana;
+- installare nginx;
+- installare Solarmon;
+- installare Dataplicity.
+
+Si procede quindi con il ripristino dei backup del database InfluxDB e dei pannelli di Grafana.
+
+### Ripristino dell'ultimo backup di InfluxDB
+
+Procedere da terminale con il comando:
+
+    pi@raspberrypi:~$ influx setup --token [ADMIN-TOKEN]
+    > Welcome to InfluxDB 2.0!
+    ? Please type your primary username pi
+    ? Please type your password ********
+    ? Please type your password again ********
+    ? Please type your primary organization name home
+    ? Please type your primary bucket name raw_data
+    ? Please type your retention period in hours, or 0 for infinite 8760
+    ? Setup with these parameters?
+      Username:          pi
+      Organization:      home
+      Bucket:            raw_data
+      Retention Period:  8760h0m0s
+     Yes
+    User    Organization    Bucket
+    pi  home        raw_data
+
+I dati immessi devono coincidere con quelli forniti in origine.
+
+Dopo aver copiato l'ultimo backup disponibile sulla scheda e averlo scompattato, si può procedere con il ripristino:
+
+    pi@raspberrypi:~$ influx restore [BACKUP-FOLDER] --full
+
+A questo punto si può schedulare il backup periodico come già descritto in precedenza.
+
+### Ripristino dell'ultimo backup di Grafana
+
+Arrestare il servizio **grafana-server** con il comando:
+
+    pi@raspberrypi:~$ sudo systemctl stop grafana-server
+
+Sostituire il file `/var/lib/grafana/grafana.db` con l'ultima versione disponibile, quindi riavviare il servizio:
+
+    pi@raspberrypi:~$ sudo systemctl start grafana-server
+
+Avviare infine il servizio **solarmon**.
+
+È conveniente caricare i dati giornalieri (assegnando loro il valore 0) per il periodo non coperto dal backup: la presenza di valori nulli rende i diagrammi prodotti da Grafana di più facile interpretazione rispetto a quando questi sono assenti. Il programma Python sottostante produce il codice in formato *line protocol* a risoluzione di 1 secondo adatto per essere caricato direttamente dall'interfaccia utente di InfluxDB:
+
+    from datetime import datetime, timedelta, timezone
+
+    measurement = 'solarmon'
+    fields = [
+        'gnd-floor_in',
+        '2nd-floor_in',
+        'air-cond_in',
+        'ind-plane_in',
+        'pv_out',
+        'battery_out',
+        'battery_in',
+        'grid_in',
+        'grid_out',
+        'inverter_in',
+        'inverter_out',
+        'load_in',
+    ]
+    
+    start_date = datetime(2025, 4, 1, 0, 0, 0, tzinfo=timezone.utc)
+    end_date = datetime(2025, 5, 1, 0, 0, 0, tzinfo=timezone.utc)
+    
+    while start_date < end_date:
+        start_date += timedelta(days=1)
+        for field in fields:
+            print(f'{measurement} {field}=0 {int(start_date.timestamp())}')

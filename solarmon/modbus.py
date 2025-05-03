@@ -52,11 +52,11 @@ class Connection:
 
     def read_holding_registers(self, addr, count, unit):
         self._read_timer.wait_next_tick()
-        return self._client.read_holding_registers(addr, count, slave=unit)
+        return self._client.read_holding_registers(addr, count=count, slave=unit)
 
     def read_input_registers(self, addr, count, unit):
         self._read_timer.wait_next_tick()
-        return self._client.read_input_registers(addr, count, slave=unit)
+        return self._client.read_input_registers(addr, count=count, slave=unit)
 
 
 class UsbRtuAdapter(Connection):
