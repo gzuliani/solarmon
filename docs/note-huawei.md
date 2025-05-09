@@ -4,14 +4,14 @@
 
 Alcuni riferimenti preliminari circa il collegamento all'inverter Huawei SUN2000:
 
-* attraverso il Cloud di Huawei: [https://forum.huawei.com/enterprise/en/communicate-with-fusionsolar-through-an-openapi-account/thread/591478-100027](Communicate with FusionSolar through an openAPI account)
-* in locale, via RS485 o Modbus/TCP: [https://forum.huawei.com/enterprise/en/modbus-tcp-guide/thread/789585-100027](MODBUS TCP Guide)
+* attraverso il Cloud di Huawei: [Communicate with FusionSolar through an openAPI account](https://forum.huawei.com/enterprise/en/communicate-with-fusionsolar-through-an-openapi-account/thread/591478-100027)
+* in locale, via RS485 o Modbus/TCP: [MODBUS TCP Guide](https://forum.huawei.com/enterprise/en/modbus-tcp-guide/thread/789585-100027)
 
-L'inverter è dotato di una Smart Dongle che rappresenta un secondo punto d'accesso locale Modbus/TCP via Wifi; sembra però meno efficiente rispetto a quello offerto dall'inverter, cfr. articolo [https://forum.huawei.com/enterprise/en/is-it-possible-to-make-usb-dongle-tcp-modbus-as-fast-reliable-as-rs-485/thread/822261-100027](Is it possible to make USB Dongle TCP Modbus as fast reliable as RS-485?) sui forum Huawei.
+L'inverter è dotato di una Smart Dongle che rappresenta un secondo punto d'accesso locale Modbus/TCP via Wifi; sembra però meno efficiente rispetto a quello offerto dall'inverter, cfr. articolo [Is it possible to make USB Dongle TCP Modbus as fast reliable as RS-485?](https://forum.huawei.com/enterprise/en/is-it-possible-to-make-usb-dongle-tcp-modbus-as-fast-reliable-as-rs-485/thread/822261-100027) sui forum Huawei.
 
-Il forum generale per gli impianti fotovoltaici Huawei è [https://forum.huawei.com/enterprise/en/Digital-Power/forum/100027](Smart PV).
+Il forum generale per gli impianti fotovoltaici Huawei è [Smart PV](https://forum.huawei.com/enterprise/en/Digital-Power/forum/100027).
 
-Un lungo e interessante thread circa questo inverter si trova nel forum [https://www.energeticambiente.it/fonti-di-energia-rinnovabile/fotovoltaico/tecnica-componentistica-e-installazione/77889-inverter-huawei-sun2000l/page9](EnergeticAmbiente.it), degni di nota sono i commenti n. 248 e 250.
+Un lungo e interessante thread circa questo inverter si trova nel forum [EnergeticAmbiente.it](https://www.energeticambiente.it/fonti-di-energia-rinnovabile/fotovoltaico/tecnica-componentistica-e-installazione/77889-inverter-huawei-sun2000l/page9), degni di nota sono i commenti n. 248 e 250.
 
 ----
 
@@ -25,22 +25,22 @@ Relativamente al doppio accesso Modbus/TCP inverter/dongle, sembra che il primo 
 >
 >3) You can deploy your own network bridge (I did it with a Raspberrry Pi) linked to inverter wifi and regular home network (or plant network) via ethernet cable. And it works.
 
-Fonte: [https://forum.huawei.com/enterprise/en/forum.php?mod=redirect&goto=findpost&ptid=789585&pid=4630919](Forum Huawei).
+Fonte: [Forum Huawei](https://forum.huawei.com/enterprise/en/forum.php?mod=redirect&goto=findpost&ptid=789585&pid=4630919).
 
 ----
 
-Su Github si trova un client Modbus/TCP scritto in Python per questo inverter, cfr. repository [https://gitlab.com/Emilv2/huawei-solar](huawei-solar).
+Su Github si trova un client Modbus/TCP scritto in Python per questo inverter, cfr. repository [huawei-solar](https://gitlab.com/Emilv2/huawei-solar).
 
 ----
 
 Supporto Modbus in EmonCMS:
 
-* [https://community.openenergymonitor.org/t/modbus-tcp-interfacer/3559](Modbus TCP Interfacer)
-* [https://github.com/openenergymonitor/emonhub/tree/master/conf/interfacer_examples/modbus](Emonhub's Modbus interface)
+* [Modbus TCP Interfacer](https://community.openenergymonitor.org/t/modbus-tcp-interfacer/3559)
+* [Emonhub's Modbus interface](https://github.com/openenergymonitor/emonhub/tree/master/conf/interfacer_examples/modbus)
 
 ----
 
-L'app Huawei di monitoraggio dell'impianto non si limita a raccogliere i dati dell'inverter; l'articolo [https://forum.huawei.com/enterprise/en/fusionsolar-how-is-selfconsumption-and-self-suffiency-calculated/thread/737443-100027](FusionSolar - How is selfconsumption and self-suffiency calculated) descrive come questi vengono determinati.
+L'app Huawei di monitoraggio dell'impianto non si limita a raccogliere i dati dell'inverter; l'articolo [FusionSolar - How is selfconsumption and self-suffiency calculated](https://forum.huawei.com/enterprise/en/fusionsolar-how-is-selfconsumption-and-self-suffiency-calculated/thread/737443-100027) descrive come questi vengono determinati.
 
 ## 20220821
 
@@ -122,7 +122,7 @@ Convertendo in ASCII la sequenza di byte ricevuta si ottiene la stringa **SUN200
 
 ----
 
-Verificato il buon funzionamento del client [https://gitlab.com/Emilv2/huawei-solar](huawei-solar). Il pacchetto ha due dipendenze, backoff e pytz.
+Verificato il buon funzionamento del client [huawei-solar](https://gitlab.com/Emilv2/huawei-solar). Il pacchetto ha due dipendenze, backoff e pytz.
 
 ----
 
@@ -146,7 +146,7 @@ Parametri da raccogliere: quelli mostrati nell'app, cioé:
 
 ----
 
-Da [https://forum.huawei.com/enterprise/en/fusionsolar-how-is-selfconsumption-and-self-suffiency-calculated/thread/737443-100027](FusionSolar - How is selfconsumption and self-suffiency calculated):
+Da [FusionSolar - How is selfconsumption and self-suffiency calculated](https://forum.huawei.com/enterprise/en/fusionsolar-how-is-selfconsumption-and-self-suffiency-calculated/thread/737443-100027):
 
 >Consumption Power (Pinv_out - Pmeter) (<0, = 0)
 >Self-consumption energy (E_generation_day - E_export_day)(<0, = 0)
@@ -155,7 +155,7 @@ Da [https://forum.huawei.com/enterprise/en/fusionsolar-how-is-selfconsumption-an
 
 ## 20220822
 
-Valutazione del client [https://gitlab.com/Emilv2/huawei-solar](huawei-solar), disponibile anche già pacchettizzato su PyPi (cfr. [https://pypi.org/project/huawei-solar/](HuaweiSolar)).
+Valutazione del client [huawei-solar](https://gitlab.com/Emilv2/huawei-solar), disponibile anche già pacchettizzato su PyPi (cfr. [HuaweiSolar](https://pypi.org/project/huawei-solar/)).
 
 Empiricamente si può verificare che per ottenere una comunicazione stabile è sufficiente assegnare ai parametri `wait` e `timeout` un valore uguale o superiore a 1. I valori di default 2/5 utilizzati dal client **huawei-solar** sembrano perciò più che ragionevoli.
 
@@ -184,7 +184,7 @@ Una scansione completa di tutti i parametri relativi a correnti/tensioni/potenze
 
 > Because the maximum length of a Modbus PDU is 253 (inferred from the maximum Modbus ADU length of 256 on RS485), up to 125 registers can be requested at once when using the RTU format, and up to 123 over TCP.
 
-Fonte: [https://en.wikipedia.org/wiki/Modbus](Wikipedia).
+Fonte: [Wikipedia](https://en.wikipedia.org/wiki/Modbus).
 
 ----
 
@@ -214,7 +214,7 @@ La lettura a blocchi è chiaramente vincente rispetto alla lettura sequenziale d
 
 Modbus prevede la possibilità di richiedere l'elenco dei dispositivi presenti sul bus, cfr. sez. 6.3.6.2 "Command for Querying a Device List" delle specifiche Modbus dell'inverter (documento "SUN2000L V200R001 MODBUS Interface Definitions").
 
-`pymodbus` consente la creazione di comandi definiti dall'utente, cfr. [https://pymodbus.readthedocs.io/en/latest/source/example/custom_message.html](Custom Message Example).
+`pymodbus` consente la creazione di comandi definiti dall'utente, cfr. [Custom Message Example](https://pymodbus.readthedocs.io/en/latest/source/example/custom_message.html).
 
 ----
 
@@ -289,7 +289,7 @@ Colpo di scena:
 
 >Unit id is an obligatory field of the Modbus command. It's the address of the target device (an equivalent of the IP address, so to speak). I believe you are using a library that defaults to unit id 0, but SDongle, over Modbus-TCP, responds to unit id 100 (as per SDongleA V100R001C00 MODBUS Interface Definitions document). Unit id 1 is its first child device, in our case it's the inverter.
 
-Fonte: [https://forum.huawei.com/enterprise/en/forum.php?mod=redirect&goto=findpost&ptid=745393&pid=4046067](Firmware V100R001C00SPC120).
+Fonte: [Firmware V100R001C00SPC120](https://forum.huawei.com/enterprise/en/forum.php?mod=redirect&goto=findpost&ptid=745393&pid=4046067).
 
 In effetti, a ben guardare, la stessa informazione è riportata a pag. 12 del documento "SDongleA - V100R001C00 - MODBUS Interface Definitions". Riassumendo, quindi: **il punto d'accesso al Modbus/TCP del sistema Huawei si trova all'indirizzo 192.168.0.11:502; l'unità `1` è la dongle, l'unità `100` l'inverter**.
 
@@ -414,8 +414,8 @@ Il problema di comunicazione era dovuto ad un conflitto: emonhub era configurato
 
 Impostazione dello script come servizio (systemd):
 
-[https://wiki.archlinux.org/title/systemd]
-[https://www.wyre-it.co.uk/blog/converting-from-sysvinit-to-systemd/]
+- https://wiki.archlinux.org/title/systemd
+- https://www.wyre-it.co.uk/blog/converting-from-sysvinit-to-systemd/
 
 1. salvare il contenuto che segue nel file `huawei_sun2000.service` in `/lib/systemd/system`:
 
@@ -461,7 +461,7 @@ Ora che l'acquisizione si svolge su lunghi periodi di tempo si evidenzia una cer
     inverter misses: 224 (18.3%)
     meter misses: 0
 
-In [https://github.com/evcc-io/evcc/discussions/1928](Huawei Inverter with smart dongle - Modbus TCP) consigliano di non interrogare la dongle troppo frequentemente.
+In [Huawei Inverter with smart dongle - Modbus TCP](https://github.com/evcc-io/evcc/discussions/1928) consigliano di non interrogare la dongle troppo frequentemente.
 
 Controintuitivamente(?!), riducendo il periodo tra un'interrogazione e la successiva da 60 a 10 secondi, gli errori sono scomparsi. Aumentando il periodo a 30 secondi gli errori sono ricomparsi, ma molto più sporadicamente.
 
