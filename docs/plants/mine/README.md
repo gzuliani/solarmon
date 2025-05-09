@@ -239,7 +239,7 @@ Conviene a questo punto creare un altro token, quello che utilizzerà Solarmon p
 
 #### Installazione di Grafana
 
-La versione più recente di Grafana è la 10.0.3. Le istruzioni per l'installazione su Raspberry Pi Desktop sono reperibili sul [sito ufficiale](https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/#2-start-the-server):
+La versione più recente di Grafana è la 11.6.1. Le istruzioni per l'installazione su Raspberry Pi Desktop sono reperibili sul [sito ufficiale](https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/#2-start-the-server):
 
 >     sudo apt-get install -y apt-transport-https
 >     sudo apt-get install -y software-properties-common wget
@@ -282,10 +282,6 @@ La pagina di riferimento è [Use Grafana with InfluxDB OSS](https://docs.influxd
 
 - InfluxDB supporta due linguaggi di interrogazione: *InfluxQL* (una sorta di SQL) e *Flux* (funzionale). Il primo è nato su InfluxDB 0.x e 1.x, per poterlo usare sulla versione 2.x occorre mappare il vecchio concetto di *database* sull'attuale *bucket* (cfr. pagina [Manage DBRP mappings](https://docs.influxdata.com/influxdb/v2.7/query-data/influxql/dbrp/));
 
-- Grafana sembra preferire InfluxQL. Sebbene la documentazione di InfluxDB riportI che InfluxDB v.2.x può essere interrogato da Grafana v.8.0 e successive per mezzo di query Flux, Grafana 10.0.1 dichiara:
-
-  > Support for Flux in Grafana is currently in beta.
-
 - InfluxQL non è utilizzabile dalla GUI di InfluxDB, che supporta solo Flux.
 
 La scelta è ricaduta su Flux, in quanto permette di definire query molto più articolate di quanto possibile con InfluxQL.
@@ -315,9 +311,9 @@ Le [istruzioni ufficiali](https://grafana.com/docs/grafana/latest/setup-grafana/
 
 l'istruzione `setcap` ha l'effetto di impedire l'avvio del server, probabilmente a causa di qualche permesso di accesso. Il file di log non viene aggiornato e per questa ragione risulta difficile risalire alla causa (Tra l'altro l'eseguibile associato al servizio risulta essere **/usr/share/grafana/bin/grafana** e non quello indicato nell'esempio).
 
-L'alternativa suggerita, ovvero di installare e configurare **nginx** come *reverse-proxy* si è rivelata funzionante, sebbene non seguendo le istruzioni originali riportate in [Run Grafana behind a reverse proxy](https://grafana.com/tutorials/run-grafana-behind-a-proxy/) ma le seguenti:
+L'alternativa suggerita, ovvero di installare e configurare **nginx** come *reverse-proxy* si è rivelata funzionante. Le istruzioni originali sono riportate in [Run Grafana behind a reverse proxy](https://grafana.com/tutorials/run-grafana-behind-a-proxy/):
 
-- configurare il nome di dominio nella sezione `server` del file di configurazione **/etc/grafana/grafana.conf** di **grafana**:
+- configurare il nome di dominio nella sezione `server` del file di configurazione **/etc/grafana/grafana.ini** di **grafana**:
 
         [server]
         # The public facing domain name used to access grafana from a browser
@@ -362,8 +358,6 @@ L'alternativa suggerita, ovvero di installare e configurare **nginx** come *reve
             proxy_pass http://grafana;
           }
         }
-
-  Fonte: [Run Grafana behind a reverse proxy](https://grafana.com/tutorials/run-grafana-behind-a-proxy/).
 
 - eliminare il link simbolico **/etc/nginx/sites-enabled/default**:
 
