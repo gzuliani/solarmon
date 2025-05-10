@@ -426,6 +426,8 @@ Se il portale di Dataplicity mostra l'errore "Device not connected" la ragione s
     tuxtunnel: stopped
     tuxtunnel: started
 
+Alcuni spunti su come migliorare l'affidabilità del servizio sono riportati nella pagina [Improving reliability](https://docs.dataplicity.com/docs/improving-reliability).
+
 ## Appendice A - Note su InfluxDB
 
 ### Note generali
