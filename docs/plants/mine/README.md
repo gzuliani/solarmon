@@ -222,13 +222,13 @@ Conettersi alla GUI di InfluxDB all'indirizzo `http://<raspberry-pi-IP>:8086` e 
 - organization name: home
 - bucket name: raw_data
 
-In seguito alla creazione dell'utente InfluxDB fornisce l'*API token* che garantisce i privilegi di amministratore, e dovrà essere specificato ogni qualvolta si invocherà il comando `influx` da terminale. È tuttavia possibile associare questo token alla connessione di default in modo da risparmiarsi la fatica di indicarlo ogni volta:
+In seguito alla creazione dell'utente InfluxDB fornisce l'*API token* amministrativo (detto anche `OPERATOR-TOKEN` o `ROOT-TOKEN`) che garantisce i privilegi di amministratore, e dovrà essere specificato ogni qualvolta si invocherà il comando `influx` da terminale. È tuttavia possibile associare questo token alla connessione di default in modo da risparmiarsi la fatica di indicarlo ogni volta:
 
     pi@raspberry:~ $ influx config create \
       --config-name default \
       --host-url http://localhost:8086 \
       --org home \
-      --token <INFLUXDB-API-TOKEN> \
+      --token <ROOT-TOKEN> \
       --active
 
 **Conservare il token in un luogo sicuro!**
@@ -584,7 +584,7 @@ Come ricostruire l'intera serie temporale a partire dai backup periodici?
 
 Considerate le limitate risorse della Raspberry Pi conviene effettuare il ripristino su una macchina più carrozzata. Dopo aver proceduto all'installazione di una versione di InfluxDB compatibile con quello d'origine, recuperare il token amministrativo dell'istanza InfluxDB della Raspberry Pi e creare una nuova istanza sulla macchina di destinazione identica all'originale, avendo quindi cura di fornire gli stessi nome utente, organizzazione e bucket. L'unica differenza sta nela data retention del il bucket "raw_data", che in questo caso sarà illimitata:
 
-    user@host:~$ influx setup --token [ADMIN-TOKEN]
+    user@host:~$ influx setup --token [ROOT-TOKEN]
     > Welcome to InfluxDB 2.0!
     ? Please type your primary username pi
     ? Please type your password ************
@@ -1401,7 +1401,7 @@ Si procede quindi con il ripristino dei backup del database InfluxDB e dei panne
 
 Procedere da terminale con il comando:
 
-    pi@raspberrypi:~$ influx setup --token [ADMIN-TOKEN]
+    pi@raspberrypi:~$ influx setup --token [ROOT-TOKEN]
     > Welcome to InfluxDB 2.0!
     ? Please type your primary username pi
     ? Please type your password ********
