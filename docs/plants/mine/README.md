@@ -63,7 +63,7 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
 
 ## Hardware
 
-Il sistema girerà su una Raspberry Pi 4 con 2GB di RAM acquistata per l'occasione, corredata del solito RTC DS3231. Necessitando la scheda necessita di raffreddamento, ho optato per una soluzione passiva, un case in lega di alluminio:
+Il sistema girerà su una Raspberry Pi 4 con 2GB di RAM acquistata per l'occasione, corredata del solito RTC DS3231. Necessitando la scheda di raffreddamento, ho optato per una soluzione passiva, un case in lega di alluminio:
 
 ![Raspberry Pi 4 aluminum case](img/rasp_case.png)
 
@@ -616,7 +616,7 @@ I comandi sono:
 
 I parametri START-TIME ed END-TIME possono essere prefissati (es. START-TIME alla data di messa in opera del sistema di monitoraggio, END-TIME la data odierna) oppure determinati dalla data del backup (es. fintanto che la data retention del bucket "raw_data" è pari a un anno: START-TIME = BACKUP-TIME - 365d, END-TIME=BACKUP-TIME)
 
-**Nota**: considerato che il bucket "raw_data" contiene i dati orari di un anno e che i backup vengono effettuati con cadenza trimestrale, per velocizzare il processo di ripristino conviene procedere rispettando la sequenza temporale dei backup iniziando dal più remoto; dei successivi sarà sufficiente estrarre i soli dati relativi agli ultimi tre mesi.
+**Nota**: considerato che il bucket "raw_data" contiene i dati orari di un anno e che i backup vengono effettuati con cadenza trimestrale, per velocizzare il processo di ripristino conviene procedere rispettando la sequenza temporale dei backup iniziando dal più remoto; dei successivi sarà sufficiente estrarre i soli dati relativi agli ultimi mesi.
 
 #### Ripristino del backup più recente
 
