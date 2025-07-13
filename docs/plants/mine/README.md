@@ -1014,6 +1014,8 @@ Il tutto ha trovato posto su un telaio realizzato su misura con una stampante 3D
 
 ![telaio con scheda di controllo e ventole montate](img/fan_frame.jpg)
 
+Il telaio è stato installato direttamente sopra il dissipatore dell'inverter: il senso di rotazione delle ventole è tale che l'aria calda prodotta dal dissipatore viene risucchiata e spinta verso l'alto.
+
 #### Effetti della ventilazione ausiliaria
 
 L'effetto della ventilazione ausiliaria è significativo: i dati dimostrano che la temperatura massima raggiunta dal dissipatore si abbassa di circa 10°C. I diagrammi sottostanti riportano i valori della temperatura esterna e quella del dissipatore dell'inverter nei tre giorni a cavallo dell'installazione delle ventole, avvenuta poco prima delle 16 del 14/06/2025 (evento indicato dalla linea tratteggiata verticale):
