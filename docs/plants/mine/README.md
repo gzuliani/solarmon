@@ -50,6 +50,9 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
     - [Stima dei consumi](#stima-dei-consumi)
     - [Anomalie](#anomalie)
     - [`load_power` nullo](#load_power-nullo)
+    - [Temperatura del dissipatore](#temperatura-del-dissipatore)
+      - [Effetti della ventilazione ausiliaria](#effetti-della-ventilazione-ausiliaria)
+      - [Programmazione scheda di controllo](#programmazione-scheda-di-controllo)
   - [Appendice D - Passaggio dall'ora legale a quella solare](#appendice-d---passaggio-dallora-legale-a-quella-solare)
   - [Appendice E - Acquisizione dati dall'OsmerFVG](#appendice-e---acquisizione-dati-dallosmerfvg)
   - [Appendice F - Esempio di query "complessa"](#appendice-f---esempio-di-query-complessa)
@@ -984,6 +987,47 @@ Può quindi accadere di vedere la linea del `load_power` scendere al di sotto de
 ![`load_power` inferiore alla potenza assorbita dai carichi](img/inconsistent_load_power_level.png)
 
 La ragione è che quei sporadici ed inattesi valori nulli del `load_power` causano un temporaneo abbassamento della media mobile mostrata nei grafici.
+
+### Temperatura del dissipatore
+
+Durante le giornate più calde la temperatura del dissipatore dell'inverter Deye facilmente raggiunge e non di rado supera i 70°C. Secondo il produttore questo è normale:
+
+> **Why Does the Inverter Feel Hot to the Touch?**
+>
+> Ever worried about the heat on your inverter casing? Well, it’s not a cause for concern, but rather a sign that the system is functioning as designed: the casing serves as an integral part of the cooling mechanism.
+>
+> [...]
+>
+> Except for the heat sink, the inverter casing itself also shares a load of heat dissipation, fastening the heat transfer process. And when placed in specific environments, like during summer when external temperatures reach 40°C, the casing’s temperature typically ranges from 55°C to 60°C, accounting for the sensation of heat when touching the inverter casing.
+>
+> In conclusion, rest assured of the mild heat you feel when touching an inverter’s casing. It is a sign of a well-functioning thermal management system, which safeguards your inverter’s components, ensuring they remain efficient and durable.
+
+Fonte: [sito ufficiale Deye](https://www.deyeinverter.com/news/industry-news/why-does-the-inverter-feel-hot-to-the-touch.html).
+
+Che effetto avrebbe sulla temperatura del dissipatore l'installazione di alcune ventole ausiliarie che agevolino l'estrazione dell'aria calda?
+
+Ho acquistato il necessario in rete: un alimentatore a 12V, una scheda di controllo (Eujgoov DC 12V PWM Fan Temperature Controller), alcune ventole per PC e qualche altro accessorio come ad esempio un terminale JACK femmina per collegare la scheda all'alimentatore e un paio di sensori di temperatura a occhiello da fissare al dissipatore dell'inverter.
+
+![scheda di controllo delle ventole](img/fan_speed_controller.png)
+
+Il tutto ha trovato posto su un telaio realizzato su misura con una stampante 3D:
+
+![telaio con scheda di controllo e ventole montate](img/fan_frame.jpg)
+
+#### Effetti della ventilazione ausiliaria
+
+L'effetto della ventilazione ausiliaria è significativo: i dati dimostrano che la temperatura massima raggiunta dal dissipatore si abbassa di circa 10°C. I diagrammi sottostanti riportano i valori della temperatura esterna e quella del dissipatore dell'inverter nei tre giorni a cavallo dell'installazione delle ventole, avvenuta poco prima delle 16 del 14/06/2025 (evento indicato dalla linea tratteggiata verticale):
+
+![temperatura esterna nei giorni dell'installazione delle ventole](img/fan_external_temp.png)
+![temperatura del dissipatore dell'inverter nei giorni dell'installazione delle ventole](img/fan_heatsink_temp.png)
+
+#### Programmazione scheda di controllo
+
+Le istruzioni a corredo della scheda non sono chiarissime. In rete ne ho trovate di più comprensibili, ad esempio:
+
+![istruzioni della scheda di controllo delle ventole](img/fan_controller_instructions.jpg)
+
+Ho programmato la scheda impostando Tu=45°C (soglia minima di intervento), Td=15°C (ventole al massimo se T>60°C), P0 a zero (ventole ferme se la temperatura è inferiore alla soglia minima).
 
 ## Appendice D - Passaggio dall'ora legale a quella solare
 
