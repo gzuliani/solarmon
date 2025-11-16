@@ -1031,6 +1031,30 @@ Le istruzioni a corredo della scheda non sono chiarissime. In rete ne ho trovate
 
 Ho programmato la scheda impostando Tu=45°C (soglia minima di intervento), Td=15°C (ventole al massimo se T>60°C), P0 a zero (ventole ferme se la temperatura è inferiore alla soglia minima).
 
+### Acquisizione della potenza in transito sulla linea "Backup Load"
+
+Per verificare la connessione "Backup Load" dell'inverter ci ho collegato una stufetta da 1kW. Dopo alcuni secondi sull'app Deye Cloud è apparsa una nuova icona, denominata "UPS":
+
+![aspetto dell'app Deye Cloud durante il test](img/backup_load_1kw.jpg)
+
+È chiaro che l'inverter sta inviando al Cloud Deye il valore di potenza in transito sulla linea di backup, ma nessuno dei registri campionati da Solarmon sembra contenere quel valore. In particolare, i registri 174 "Inverter L2 power" e #177 "Load L2 power", quelli che sospettavo potessero essere associati alla connessione "Backup Load", contengono il valore zero.
+
+Non mi dispiacerebbe acquisire anche questo valore. Ho approntato uno script per campionare tutti i registri nell'intervallo 150-195, e ho così scoperto che ce n'è un paio il cui valore è vicino a zero quando la stufetta è spenta, attorno a 1000 quando questa è accesa. Il problema è che i registri in questione sono il 179 e il 185, denominati rispettivamente "Load Current L1" e "Battery Status" secondo le specifiche V118:
+
+![stato dei registri 179 e 185 durante il test](img/backup_load_registers.png)
+
+Nessuno dei progetti open source relativi a questo tipo di inverter considera questi due registri:
+
+- [sunsynk](https://github.com/kellerza/sunsynk/blob/main/src/sunsynk/definitions/single_phase.py) (nè alcuno dei vari fork)
+- [deye-inverter-mqtt](https://github.com/kbialek/deye-inverter-mqtt/blob/main/src/deye_sensors_deye_hybrid.py)
+- [esphome-deye-modbus](https://github.com/M4GNV5/esphome-deye-modbus/blob/master/sensor/deye.yaml)
+- [Modbus-TCP-for-Deye-Inverter](https://github.com/Imanol82/Modbus-TCP-for-Deye-Inverter/blob/main/modbus.yaml)
+- ...
+
+L'unica eccezione è [esphome-deye](https://github.com/espinsta/esphome-deye/blob/main/pv_inverter/packages/deye_hybrid_1p/load.yaml) che tuttavia attribuisce al registro 179 il nome riportato nelle specifiche, mentre ignora il 185.
+
+Ho deciso di pubblicare una richiesta d'aiuto nel forum di uno dei progetti di riferimento (cfr. [Load Backup power amount](https://github.com/kellerza/sunsynk/discussions/502)) ma, a tre mesi dalla pubblicazione, nessuno ha ancora commentato.
+
 ## Appendice D - Passaggio dall'ora legale a quella solare
 
 InfluxDB aggrega i dati sulla base dei tempi UTC. Grafana mostra invece i dati nell'orario locale:
