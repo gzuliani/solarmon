@@ -53,6 +53,7 @@ L'attuale implementazione di [Solarmon](https://github.com/gzuliani/solarmon) co
     - [Temperatura del dissipatore](#temperatura-del-dissipatore)
       - [Effetti della ventilazione ausiliaria](#effetti-della-ventilazione-ausiliaria)
       - [Programmazione scheda di controllo](#programmazione-scheda-di-controllo)
+    - [Acquisizione della potenza in transito sulla linea "Backup Load"](#acquisizione-della-potenza-in-transito-sulla-linea-backup-load)
   - [Appendice D - Passaggio dall'ora legale a quella solare](#appendice-d---passaggio-dallora-legale-a-quella-solare)
   - [Appendice E - Acquisizione dati dall'OsmerFVG](#appendice-e---acquisizione-dati-dallosmerfvg)
   - [Appendice F - Esempio di query "complessa"](#appendice-f---esempio-di-query-complessa)
@@ -88,12 +89,12 @@ Il primo passo consiste nell'attivare il supporto IC2 dall'interfaccia di config
 
     pi@raspberry:~ $ sudo raspi-config
 
-Selezionare la voce "5. Interfacing Options", quindi "P5 I2C", "Yes". Confermare con "Ok". A questo punto impartire i seguenti comandi:
+Selezionare la voce "3. Interfacing Options", quindi "I5 I2C", "Yes". Confermare con "Ok". A questo punto impartire i seguenti comandi:
 
     pi@raspberry:~ $ sudo reboot
     pi@raspberry:~ $ sudo i2cdetect -y 1
 
-Alla posizione 68 della tabella emessa dal comando precedente deve comparire il codice `68` oppure `UU`:
+Alla posizione 68 della tabella emessa dal comando precedente deve comparire il codice `68` (oppure `UU` se il dispositivo è già stato configurato):
 
         0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
     00:          -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -105,6 +106,16 @@ Alla posizione 68 della tabella emessa dal comando precedente deve comparire il 
     60: -- -- -- -- -- -- -- -- 68 -- -- -- -- -- -- --
     70: -- -- -- -- -- -- -- --
 
+Aggiungere la riga:
+
+    dtoverlay=i2c-rtc,ds1307
+
+al file **/boot/firmware/config.txt**. Riavviare il sistema:
+
+    pi@raspberry:~ $ sudo reboot
+
+A questo punto il comando `sudo i2cdetect -y 1` dovrebbe mostrare il codice `UU` nella posizione 68 della tabella.
+
 Continuare con i comandi:
 
     pi@raspberry:~ $ sudo modprobe rtc-ds1307
@@ -114,6 +125,7 @@ Continuare con i comandi:
 
 Verificare l'orario dell'orologio:
 
+    pi@raspberry: sudo apt install util-linux-extra
     pi@raspberry:~ $ sudo hwclock -r
 
 Se la data non è corretta allinearla a quella di sistema (presumendo che questa sia corretta) con il comando:
@@ -126,10 +138,9 @@ Completare la configurazione con i seguenti interventi:
 - aggiungere il frammento
 
       echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
-      sudo hwclock -s
       date
 
-  in coda al file **/etc/rc.local**, prima del comando di uscita `exit`.
+  in coda al file **/etc/rc.local**, prima del comando di uscita `exit` (se il file non c'è, va creato).
 
 ### Adattatore USB/RS485
 
@@ -144,7 +155,7 @@ Poiché Linux attribuisce un nome di dispositivo arbitrario — potenzialmente d
 
 Si tratta in questo caso del secondo dispositivo in elenco.
 
-Creare il file **/etc/udev/rules.d10-usb-serial.rules** dal seguente contenuto:
+Creare il file **/etc/udev/rules.d/10-usb-serial.rules** dal seguente contenuto:
 
     # QinHeng Electronics CH340 serial converter
     SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", SYMLINK+="ttyUSB_RS485"
@@ -195,14 +206,22 @@ Fonte: [MetaGeek](https://www.metageek.com/training/resources/understanding-rssi
 
 #### Installazione di InfluxDB
 
-InfluxDB 2.x richiede un sistema operativo a 64 bit. La versione corrente di InfluxDB è la 2.7. Per installarla è sufficiente seguire le istruzioni dal [sito ufficiale](https://docs.influxdata.com/influxdb/v2.7/install/):
+InfluxDB 2.x richiede un sistema operativo a 64 bit. La versione corrente di InfluxDB è la 2.7. Per installarla è sufficiente seguire le istruzioni dal [sito ufficiale](https://docs.influxdata.com/influxdb/v2/install):
 
     pi@raspberry:~ $ cd ~/Downloads
 
->     # Ubuntu/Debian AMD64
->     wget https://dl.influxdata.com/influxdb/releases/influxdb2-2.7.0-arm64.deb
->     sudo dpkg -i influxdb2-2.7.0-arm64.deb
->     sudo service influxdb start
+>     # Ubuntu and Debian
+>     # Add the InfluxData key to verify downloads and add the repository
+>     curl --silent --location -O https://repos.influxdata.com/influxdata-archive.key
+>     gpg --show-keys --with-fingerprint --with-colons ./influxdata-archive.key 2>&1 \
+>     | grep -q '^fpr:\+24C975CBA61A024EE1B631787C3D57159FC2F927:$' \
+>     && cat influxdata-archive.key \
+>     | gpg --dearmor \
+>     | sudo tee /etc/apt/keyrings/influxdata-archive.gpg > /dev/null \
+>     && echo 'deb [signed-by=/etc/apt/keyrings/influxdata-archive.gpg] https://repos.influxdata.com/debian stable main' \
+>     | sudo tee /etc/apt/sources.list.d/influxdata.list
+>     # Install influxdb
+>     sudo apt-get update && sudo apt-get install influxdb2
 
 Riavviare la scheda e assicurarsi che il servizio sia attivo:
 
@@ -210,12 +229,12 @@ Riavviare la scheda e assicurarsi che il servizio sia attivo:
          ...
          Active: active (running) since Sat 2023-08-05 18:15:13 CEST; 31s ago
 
-Per comodità conviene installare anche l'interfaccia a riga di comando (istruzioni alla pagina [](https://docs.influxdata.com/influxdb/v2.7/tools/influx-cli/)):
+Per comodità conviene installare anche l'interfaccia a riga di comando (istruzioni alla pagina [](https://docs.influxdata.com/influxdb/v2/tools/influx-cli/)):
 
-    pi@raspberry:~ $ wget https://dl.influxdata.com/influxdb/releases/influxdb2-client-2.7.3-linux-arm64.tar.gz
-    pi@raspberry:~ $ mkdir influxdb2-client-2.7.3
-    pi@raspberry:~ $ tar -xf influxdb2-client-2.7.3-linux-arm64.tar.gz --directory ./influxdb2-client-2.7.3
-    pi@raspberry:~ $ sudo cp influxdb2-client-2.7.3/influx /usr/local/bin/
+    pi@raspberry:~ $ wget https://dl.influxdata.com/influxdb/releases/influxdb2-client-2.8.0-linux-arm64.tar.gz
+    pi@raspberry:~ $ mkdir influxdb2-client-2.8.0
+    pi@raspberry:~ $ tar xvzf ./influxdb2-client-2.8.0-linux-arm64.tar.gz --directory ./influxdb2-client-2.8.0
+    pi@raspberry:~ $ sudo cp influxdb2-client-2.8.0/influx /usr/local/bin/
 
 #### Configurazione di InfluxDB
 
@@ -242,12 +261,13 @@ Conviene a questo punto creare un altro token, quello che utilizzerà Solarmon p
 
 #### Installazione di Grafana
 
-La versione più recente di Grafana è la 11.6.1. Le istruzioni per l'installazione su Raspberry Pi Desktop sono reperibili sul [sito ufficiale](https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/#2-start-the-server):
+La versione più recente di Grafana è la 13.0.2. Le istruzioni per l'installazione su Raspberry Pi Desktop sono reperibili sul [sito ufficiale](https://grafana.com/docs/grafana/latest/setup-grafana/installation/debian/#2-start-the-server):
 
->     sudo apt-get install -y apt-transport-https
->     sudo apt-get install -y software-properties-common wget
->     sudo wget -q -O /usr/share/keyrings/grafana.key https://apt.grafana.com/gpg.key
->     echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+>     sudo apt-get install -y apt-transport-https wget gnupg
+>     sudo mkdir -p /etc/apt/keyrings
+>     sudo wget -O /etc/apt/keyrings/grafana.asc https://apt.grafana.com/gpg-full.key
+>     sudo chmod 644 /etc/apt/keyrings/grafana.asc
+>     echo "deb [signed-by=/etc/apt/keyrings/grafana.asc] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 >     sudo apt-get update
 >     sudo apt-get install grafana
 
@@ -390,7 +410,9 @@ Attivare l'ambiente virtuale ed installare le dipendenze via `pip`:
 
     pi@raspberrypi:~/solarmon $ . venv/bin/activate
     (venv) pi@raspberrypi:~/solarmon $ pip3 install requests==2.32.3
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install psutils
     (venv) pi@raspberrypi:~/solarmon $ pip3 install pymodbus==3.9.2
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install pyserial
 
 La libreria **pymodbus** non è particolarmente stabile. Solarmon è stato collaudato sulle versioni 3.0.0.rc1, 3.6.3, 3.6.4 e 3.9.2.
 
