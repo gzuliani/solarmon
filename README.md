@@ -23,16 +23,17 @@ Follow the instructions below to set up a development environment for Solarmon. 
 First install the dependencies:
 
     pi@raspberrypi:~ $ cd solarmon
-    pi@raspberrypi:~/solarmon $ python3 -m venv venv
-    pi@raspberrypi:~/solarmon$ . venv/bin/activate
-    (venv) pi@raspberrypi:~/solarmon$ pip3 install requests==2.31.0
-    (venv) pi@raspberrypi:~/solarmon$ pip3 install pymodbus==3.9.2
-    (venv) pi@raspberrypi:~/solarmon$ pip3 install psutil
-    (venv) pi@raspberrypi:~/solarmon$ pip3 install pysolarmanv5
+    pi@raspberrypi:~/solarmon $ python3 -m venv .venv
+    pi@raspberrypi:~/solarmon $ . .venv/bin/activate
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install requests==2.31.0
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install pymodbus==3.9.2
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install pyserial
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install psutil
+    (venv) pi@raspberrypi:~/solarmon $ pip3 install pysolarmanv5
 
 Then run the tests with the following command:
 
-    (venv) pi@raspberrypi:~/solarmon$ PYTHONPATH=solarmon python3 -m unittest -v
+    (venv) pi@raspberrypi:~/solarmon $ PYTHONPATH=solarmon python3 -m unittest -v
 
 ## Implementation notes
 
@@ -73,24 +74,28 @@ The starting point is the last stable image of this distribution ([emonSD-01Feb2
 
         $ cd
         pi@raspberrypi:~ $ git clone https://github.com/gzuliani/solarmon.git
+        $ cd solarmon
 
-* install the dependencies as root:
+* create and activate a Python virtual environment:
 
-        pi@raspberrypi:~ $ sudo pip3 install requests==2.31.0 # READ NOTE BELOW!
-        pi@raspberrypi:~ $ sudo pip3 install pymodbus==3.6.4  # READ NOTE BELOW!
-        pi@raspberrypi:~ $ sudo pip3 install psutil
-        pi@raspberrypi:~ $ sudo pip3 install pysolarmanv5
+        pi@raspberrypi:~/solarmon $ python3 -m venv .venv
+        pi@raspberrypi:~/solarmon $ . .venv/bin/activate
+
+* install the dependencies:
+
+        pi@raspberrypi:~/solarmon $ pip3 install requests==2.31.0
+        pi@raspberrypi:~/solarmon $ pip3 install pymodbus==3.6.4
+        pi@raspberrypi:~/solarmon $ pip3 install pyserial
+        pi@raspberrypi:~/solarmon $ pip3 install psutil
+        pi@raspberrypi:~/solarmon $ pip3 install pysolarmanv5
 
   The `psutil` package is required by the `raspberry_pi_4.py` module only. You don't need to install it if you do not intend to use such module.
 
   The `pysolarmanv5` package is required by the `solarman.py` module only. You don't need to install it if you do not intend to use such module.
 
-> [!WARNING]
-> The **EmonSD-01Feb24** image contains `requests` v. 2.28.0 and `pymodbus` v. 3.0.0. Updating these packages made the RS485 communication problematic, so better stay with the preinstalled ones.
-
 * connect the USB adapters to the Raspberry and set up the `etc/udev/rules.d/10-local.rules` to ensure they get a unique name. The document [docs/how-to-usb-static-names.md](https://github.com/gzuliani/solarmon/blob/main/docs/how-to-usb-static-names.md) explains how to do it, the folder [debian/udev](https://github.com/gzuliani/solarmon/tree/main/debian/udev) contains some working examples. When done, restart the **udev** server:
 
-        pi@raspberrypi:~ $ sudo udevadm trigger
+        pi@raspberrypi:~/solarmon $ sudo udevadm trigger
 
 * define the set of input and output devices in the `solarmon/main.py` source file; you can use the `solarmon/main_andrea.py` and `solarmon/main_laura.py` templates. Set the `api_key` global variable to the "Write API Key" of the EmonCMS local installation.
 
