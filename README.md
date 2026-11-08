@@ -83,11 +83,15 @@ The starting point is the last stable image of this distribution ([emonSD-01Feb2
 
 * install the dependencies:
 
-        pi@raspberrypi:~/solarmon $ pip3 install requests==2.31.0
-        pi@raspberrypi:~/solarmon $ pip3 install pymodbus==3.6.4
-        pi@raspberrypi:~/solarmon $ pip3 install pyserial
-        pi@raspberrypi:~/solarmon $ pip3 install psutil
-        pi@raspberrypi:~/solarmon $ pip3 install pysolarmanv5
+        (.venv) pi@raspberrypi:~/solarmon $ pip3 install requests==2.31.0
+        (.venv) pi@raspberrypi:~/solarmon $ pip3 install pymodbus==3.6.4
+        (.venv) pi@raspberrypi:~/solarmon $ pip3 install pyserial
+        (.venv) pi@raspberrypi:~/solarmon $ pip3 install psutil
+        (.venv) pi@raspberrypi:~/solarmon $ pip3 install pysolarmanv5
+
+* deactivate the Python virtual environment:
+
+        (.venv) pi@raspberrypi:~/solarmon $ deactivate
 
   The `psutil` package is required by the `raspberry_pi_4.py` module only. You don't need to install it if you do not intend to use such module.
 
